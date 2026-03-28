@@ -9,11 +9,8 @@
     // See also https://aka.ms/tsconfig/module
     "module": "commonjs",
     "target": "ES6",
-    "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
+    "types": ["node"],
+    "lib": ["ES6"],
 
     // Other Outputs
     "sourceMap": true,
@@ -41,5 +38,7 @@
     // "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["prisma.config.ts", "node_modules", "dist"]
 }

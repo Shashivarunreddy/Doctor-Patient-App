@@ -1,16 +1,14 @@
 import app from "./app";
-import dotenv from "dotenv";
+import { env } from "./config/env";
+import { seedAdmin } from "./modules/auth/auth.service";
 
-// Load environment variables
-dotenv.config();
-
-const PORT = process.env.PORT || 5000;
-
-// Start Server
 const startServer = async () => {
   try {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+    // Seed the single admin user if it doesn't exist
+    await seedAdmin();
+
+    app.listen(env.PORT, () => {
+      console.log(`Server running on port ${env.PORT}`);
     });
   } catch (error) {
     console.error("Server failed to start:", error);
