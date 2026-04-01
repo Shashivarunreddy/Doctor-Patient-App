@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
 import { ProtectedRoute } from './ProtectedRoute';
+import { PublicRoute } from './PublicRoute';
 import { Role } from '../types/auth';
 
 // Lazy load pages for performance
@@ -28,15 +29,15 @@ export const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        
+        {/* Public Routes (Redirect to dashboard if logged in) */}
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/" element={<Home />} />
+        </Route>
+
         {/* Protected Routes inside MainLayout */}
         <Route element={<MainLayout />}>
-          <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-
           {/* Role specific routes */}
           <Route element={<ProtectedRoute allowedRoles={[Role.PATIENT]} />}>
             <Route path="/patient-dashboard" element={<PatientDashboard />} />

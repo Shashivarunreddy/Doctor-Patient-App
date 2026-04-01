@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
+import { ShieldCheck, CalendarRange, Clock, Edit3, DollarSign } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 interface DoctorProfileData {
   specializations: string[];
@@ -77,8 +82,6 @@ const DoctorProfile = () => {
     try {
       await api.put('/doctor/profile', payload);
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
-      
-      // Update form data state with cleaned formats
       setSpecializationsInput(payload.specializations.join(', '));
       setQualificationsInput(payload.qualifications.join(', '));
     } catch (err: any) {
@@ -91,116 +94,135 @@ const DoctorProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" style={{ animation: 'spin 1s linear infinite' }}></div>
+      <div className="flex justify-center p-12">
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <h1 className="text-2xl font-bold text-gray-900">Doctor Profile</h1>
-        <p className="text-gray-600 mt-1">Manage your professional details, specialties and availability</p>
+    <div className="max-w-4xl mx-auto space-y-8 font-sans px-4 py-8">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row items-center justify-between bg-white p-8 rounded-3xl shadow-sm border border-zinc-200">
+        <div className="flex items-center gap-4">
+           <div className="p-4 bg-orange-50 text-primary rounded-2xl">
+             <Edit3 className="h-8 w-8" />
+           </div>
+           <div>
+             <h1 className="text-3xl font-extrabold text-zinc-900 tracking-tight">Profile Settings</h1>
+             <p className="text-zinc-500 mt-1 font-medium">Manage your professional details, specialties and availability</p>
+           </div>
+        </div>
       </div>
 
       {message && (
-        <div className={`p-4 rounded-lg shadow-sm border ${message.type === 'success' ? 'bg-green-50 text-green-800 border-green-200' : 'bg-red-50 text-red-800 border-red-200'}`}>
+        <div className={`p-4 rounded-xl shadow-sm border font-semibold flex items-center gap-2 ${message.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`}>
+          {message.type === 'success' && <ShieldCheck className="h-5 w-5" />}
           {message.text}
         </div>
       )}
 
-      <form onSubmit={handleSave} className="glass-panel p-8 rounded-xl shadow-sm space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Specializations (comma separated)</label>
-            <input 
-              type="text" 
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g. Cardiologist, General Physician"
-              value={specializationsInput}
-              onChange={e => setSpecializationsInput(e.target.value)}
-            />
-          </div>
+      {/* Form Card */}
+      <Card className="rounded-3xl border-zinc-200 shadow-sm overflow-hidden bg-white">
+        <CardContent className="p-8">
+          <form onSubmit={handleSave} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              
+              <div className="space-y-2">
+                <Label className="text-zinc-700 font-bold">Specializations (comma separated)</Label>
+                <Input 
+                  type="text" 
+                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl"
+                  placeholder="e.g. Cardiologist, General Physician"
+                  value={specializationsInput}
+                  onChange={e => setSpecializationsInput(e.target.value)}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Qualifications (comma separated)</label>
-            <input 
-              type="text" 
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g. MBBS, MD"
-              value={qualificationsInput}
-              onChange={e => setQualificationsInput(e.target.value)}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label className="text-zinc-700 font-bold">Qualifications (comma separated)</Label>
+                <Input 
+                  type="text" 
+                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl"
+                  placeholder="e.g. MBBS, MD"
+                  value={qualificationsInput}
+                  onChange={e => setQualificationsInput(e.target.value)}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Years of Experience</label>
-            <input 
-              type="number" 
-              min="0"
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.experience}
-              onChange={e => setFormData({ ...formData, experience: Number(e.target.value) })}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label className="text-zinc-700 font-bold flex items-center gap-2">
+                  <CalendarRange className="h-4 w-4 text-primary" /> Years of Experience
+                </Label>
+                <Input 
+                  type="number" 
+                  min="0"
+                  required
+                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl"
+                  value={formData.experience}
+                  onChange={e => setFormData({ ...formData, experience: Number(e.target.value) })}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Consultation Fee ($)</label>
-            <input 
-              type="number" 
-              min="0"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.consultationFee || ''}
-              onChange={e => setFormData({ ...formData, consultationFee: Number(e.target.value) })}
-            />
-          </div>
+              <div className="space-y-2">
+                <Label className="text-zinc-700 font-bold flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-primary" /> Consultation Fee ($)
+                </Label>
+                <Input 
+                  type="number" 
+                  min="0"
+                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl"
+                  value={formData.consultationFee || ''}
+                  onChange={e => setFormData({ ...formData, consultationFee: Number(e.target.value) })}
+                />
+              </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Availability From (HH:MM)</label>
-            <input 
-              type="time" 
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.availableFrom || ''}
-              onChange={e => setFormData({ ...formData, availableFrom: e.target.value })}
-            />
-          </div>
+              <div className="space-y-2 flex flex-col justify-end">
+                <Label className="text-zinc-700 font-bold flex items-center gap-2 mb-2">
+                  <Clock className="h-4 w-4 text-primary" /> Availability Time Window
+                </Label>
+                <div className="flex items-center gap-4">
+                  <Input 
+                    type="time" 
+                    className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl flex-1"
+                    value={formData.availableFrom || ''}
+                    onChange={e => setFormData({ ...formData, availableFrom: e.target.value })}
+                  />
+                  <span className="text-zinc-400 font-bold">TO</span>
+                  <Input 
+                    type="time" 
+                    className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl flex-1"
+                    value={formData.availableTo || ''}
+                    onChange={e => setFormData({ ...formData, availableTo: e.target.value })}
+                  />
+                </div>
+              </div>
+              
+            </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">Availability To (HH:MM)</label>
-            <input 
-              type="time" 
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={formData.availableTo || ''}
-              onChange={e => setFormData({ ...formData, availableTo: e.target.value })}
-            />
-          </div>
-          
-        </div>
+            <div className="space-y-2 pt-4 border-t border-zinc-100">
+              <Label className="text-zinc-700 font-bold">Professional Bio</Label>
+              <textarea 
+                rows={4}
+                className="w-full p-4 bg-zinc-50 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary resize-none text-sm"
+                placeholder="Tell your patients about your practice..."
+                value={formData.bio || ''}
+                onChange={e => setFormData({ ...formData, bio: e.target.value })}
+              />
+            </div>
 
-        <div className="space-y-2 pt-2">
-          <label className="text-sm font-semibold text-gray-700">Professional Bio</label>
-          <textarea 
-            rows={4}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            placeholder="Tell your patients about your practice..."
-            value={formData.bio || ''}
-            onChange={e => setFormData({ ...formData, bio: e.target.value })}
-          />
-        </div>
-
-        <div className="flex justify-end pt-4 border-t border-gray-100">
-          <button 
-            type="submit" 
-            disabled={isSaving}
-            className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors shadow-md shadow-blue-500/30"
-          >
-            {isSaving ? 'Saving Changes...' : 'Save Profile Details'}
-          </button>
-        </div>
-      </form>
+            <div className="flex justify-end pt-6">
+              <Button 
+                type="submit" 
+                disabled={isSaving}
+                className="px-8 h-12 bg-primary hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-transform active:scale-95 text-base"
+              >
+                {isSaving ? 'Saving Changes...' : 'Save Profile Details'}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };

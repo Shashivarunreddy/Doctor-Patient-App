@@ -50,17 +50,17 @@ const DoctorDetails = () => {
   if (isLoading) {
     return (
       <div className="flex justify-center p-12">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent"></div>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="max-w-4xl mx-auto text-center p-12 bg-white rounded-xl shadow-sm border border-red-100">
+      <div className="max-w-4xl mx-auto text-center p-12 bg-white rounded-3xl shadow-sm border border-red-100 font-sans">
         <h2 className="text-2xl font-bold text-red-600 mb-2">Profile Not Found</h2>
-        <p className="text-gray-600 mb-6">{error || "We couldn't locate this doctor's profile."}</p>
-        <Link to="/patient-dashboard/doctors" className="text-blue-600 font-medium hover:underline inline-flex items-center">
+        <p className="text-zinc-600 mb-6 font-medium">{error || "We couldn't locate this doctor's profile."}</p>
+        <Link to="/patient-dashboard/doctors" className="text-primary font-bold hover:underline inline-flex items-center">
           <ChevronLeft size={16} className="mr-1" /> Back to Directory
         </Link>
       </div>
@@ -70,92 +70,101 @@ const DoctorDetails = () => {
   const { user, profile } = data;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
-      <Link to="/patient-dashboard/doctors" className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors mb-2">
+    <div className="max-w-5xl mx-auto space-y-6 font-sans px-4 py-8">
+      <Link to="/patient-dashboard/doctors" className="inline-flex items-center text-sm font-bold text-zinc-500 hover:text-primary transition-colors bg-white hover:bg-orange-50 px-4 py-2 rounded-full border border-zinc-200">
         <ChevronLeft size={16} className="mr-1" /> Back to Doctors
       </Link>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-700"></div>
-        <div className="px-8 pb-8">
-          <div className="relative flex justify-between items-end -mt-12 mb-6">
-            <div className="h-24 w-24 rounded-full bg-white p-1 shadow-md">
-               <div className="h-full w-full rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                 <User size={48} />
+      <div className="bg-white rounded-[2rem] shadow-sm border border-zinc-200 overflow-hidden relative">
+        {/* Abstract Header Graphic */}
+        <div className="h-40 bg-gradient-to-r from-orange-400 to-primary relative overflow-hidden">
+           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+Cgk8cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIGZpbGw9Im5vbmUiLz4KCTxwb2x5Z29uIHBvaW50cz0iMjAsMjAgMCwyMCAwLDAiIGZpbGw9IiNmOWNhMjQiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8L3N2Zz4=')] opacity-30 mix-blend-overlay" />
+        </div>
+        
+        <div className="px-10 pb-12">
+          {/* Avatar & Action row */}
+          <div className="relative flex justify-between items-end -mt-16 mb-8">
+            <div className="h-32 w-32 rounded-[2rem] bg-white p-2 shadow-xl border border-zinc-100 transform rotate-3">
+               <div className="h-full w-full rounded-2xl bg-orange-50 flex items-center justify-center text-primary transform -rotate-3">
+                 <User size={64} className="opacity-80" />
                </div>
             </div>
-            {profile?.consultationFee != null && (
-              <div className="bg-green-50 text-green-700 border border-green-200 px-4 py-2 rounded-lg font-semibold flex items-center shadow-sm">
-                <DollarSign size={16} className="mr-1" />
-                {profile.consultationFee} / session
-              </div>
-            )}
+            
+            <div className="flex gap-4 items-center">
+              {profile?.consultationFee != null && (
+                <div className="bg-white text-zinc-800 border border-zinc-200 px-6 py-3 rounded-xl font-bold flex items-center shadow-lg transform -translate-y-2">
+                  <DollarSign size={18} className="mr-1 text-green-600" />
+                  <span className="text-xl">{profile.consultationFee}</span> <span className="text-zinc-400 text-sm ml-1 font-medium">/ session</span>
+                </div>
+              )}
+            </div>
           </div>
           
-          <h1 className="text-3xl font-extrabold text-gray-900">Dr. {user.name}</h1>
-          <p className="text-gray-500 mt-1">{user.email}</p>
+          <h1 className="text-4xl font-extrabold text-zinc-900 tracking-tight">Dr. {user.name}</h1>
+          <p className="text-zinc-500 mt-2 font-medium">{user.email}</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-            <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12 pt-12 border-t border-zinc-100">
+            <div className="space-y-10">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 flex items-center border-b pb-2 mb-3">
-                  <Briefcase size={20} className="mr-2 text-blue-500" /> Professional Summary
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4 flex items-center">
+                  <Briefcase size={16} className="mr-2" /> Professional Summary
                 </h3>
-                <p className="text-gray-700 leading-relaxed font-medium">
-                  {profile?.experience || 0} Years of Clinical Experience
-                </p>
-                <p className="text-gray-600 mt-3 leading-relaxed">
-                  {profile?.bio || 'This doctor has not provided a biographical summary yet.'}
-                </p>
+                <div className="bg-zinc-50 rounded-2xl p-6 border border-zinc-100">
+                  <div className="text-3xl font-extrabold text-zinc-900 mb-2">{profile?.experience || 0} <span className="text-lg text-zinc-500 font-bold">Years</span></div>
+                  <p className="text-zinc-500 font-medium">Clinical Experience</p>
+                  <p className="text-zinc-700 mt-6 leading-relaxed">
+                    {profile?.bio || 'This doctor has not provided a biographical summary yet.'}
+                  </p>
+                </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 flex items-center border-b pb-2 mb-3">
-                  <Clock size={20} className="mr-2 text-blue-500" /> Availability
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4 flex items-center">
+                  <Clock size={16} className="mr-2" /> Availability
                 </h3>
                 {(profile?.availableFrom && profile?.availableTo) ? (
-                  <div className="flex items-center text-gray-700 font-medium">
-                     <span className="bg-gray-100 px-3 py-1 rounded border border-gray-200">{profile.availableFrom}</span>
-                     <span className="mx-3 text-gray-400">to</span>
-                     <span className="bg-gray-100 px-3 py-1 rounded border border-gray-200">{profile.availableTo}</span>
+                  <div className="flex items-center gap-4 bg-orange-50/50 rounded-2xl p-6 border border-orange-100/50">
+                     <span className="bg-white text-zinc-800 font-bold px-4 py-2 rounded-xl border border-zinc-200 shadow-sm">{profile.availableFrom}</span>
+                     <span className="text-zinc-400 font-bold uppercase text-sm">to</span>
+                     <span className="bg-white text-zinc-800 font-bold px-4 py-2 rounded-xl border border-zinc-200 shadow-sm">{profile.availableTo}</span>
                   </div>
                 ) : (
-                  <p className="text-gray-500 italic">Schedule not configured</p>
+                  <p className="text-zinc-500 italic bg-zinc-50 p-6 rounded-2xl border border-zinc-100">Schedule not configured</p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-10">
               <div>
-                <h3 className="text-lg font-bold text-gray-900 flex items-center border-b pb-2 mb-3">
-                  <Award size={20} className="mr-2 text-blue-500" /> Specializations
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4 flex items-center">
+                  <Award size={16} className="mr-2" /> Specializations
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {profile?.specializations && profile.specializations.length > 0 ? (
                     profile.specializations.map((spec, idx) => (
-                      <span key={idx} className="bg-blue-50 text-blue-700 font-medium px-3 py-1.5 rounded-lg border border-blue-100">
+                      <span key={idx} className="bg-white text-zinc-800 font-bold px-5 py-2.5 rounded-xl border border-zinc-200 shadow-sm hover:border-primary transition-colors cursor-default">
                         {spec}
                       </span>
                     ))
                   ) : (
-                    <p className="text-gray-500 italic">None listed</p>
+                    <p className="text-zinc-500 italic pb-4">None listed</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <h3 className="text-lg font-bold text-gray-900 flex items-center border-b pb-2 mb-3">
-                  <Award size={20} className="mr-2 text-blue-500" /> Qualifications
+                <h3 className="text-xs font-bold text-primary tracking-widest uppercase mb-4 flex items-center">
+                  <Award size={16} className="mr-2" /> Qualifications
                 </h3>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {profile?.qualifications && profile.qualifications.length > 0 ? (
                     profile.qualifications.map((qual, idx) => (
-                      <span key={idx} className="bg-gray-50 text-gray-800 font-medium px-3 py-1.5 rounded-lg border border-gray-200">
+                      <span key={idx} className="bg-zinc-800 text-white font-bold px-5 py-2.5 rounded-xl shadow-sm cursor-default">
                         {qual}
                       </span>
                     ))
                   ) : (
-                    <p className="text-gray-500 italic">None listed</p>
+                    <p className="text-zinc-500 italic">None listed</p>
                   )}
                 </div>
               </div>
