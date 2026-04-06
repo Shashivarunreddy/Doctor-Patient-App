@@ -1,24 +1,24 @@
-# DevOps — Doctor-Patient App
+# DevOps — Doctor-Patient App (Oshadhi)
 
 > Infrastructure and deployment documentation for the Doctor-Patient platform.
-> Maintained by: DevOps Engineer (Contributer)
+> Maintained by: DevOps Engineer (Contributor)
 
 ---
 
 ## Overview
 
 This folder contains the complete infrastructure and deployment documentation
-for the Oshadhi Doctor-Patient App — a healthcare appointment platform built
+for the Doctor-Patient App — a healthcare appointment platform built
 with React, Node.js, PostgreSQL, and Agora RTC for video consultations.
 
 ---
 
 ## Deployment Strategy
 
-The deployment follows a 3-phase approach 
-- local verification ,
-- containerization via Docker compose, 
-- AWS cloud : EC2 , 
+The deployment follows a 3-phase approach:
+- Local verification — full stack runs on localhost, no Docker
+- Containerization — Docker Compose orchestrates all services
+- AWS Cloud — Docker Compose deployed to EC2 for production
 
 This approach ensures the app is fully verified before any cloud costs are incurred,
 and allows the client to review a working demo before committing to AWS infrastructure.
@@ -31,26 +31,29 @@ and allows the client to review a working demo before committing to AWS infrastr
 **Status: Complete**
 
 Full stack verified running locally on Windows:
-- PostgreSQL 18 (local)
+- PostgreSQL 18 (local) on port 5432
 - Node.js + Express backend on port 5000
 - React + Vite frontend on port 5173
 - All 3 roles verified end-to-end (Admin, Doctor, Patient)
+- Full appointment lifecycle verified (register → approve → book → call → end)
 - Agora video call token generation confirmed
 
-→ See [local.md](./local.md)
+→ See [local-setup.md](./local-setup.md)
 
 ---
 
-### 🔄 Phase 2 — Docker Compose
-**Status: In Progress**
+### ✅ Phase 2 — Docker Compose
+**Status: Complete**
 
-All services containerized into a single `docker-compose.yml`:
-- `db` → PostgreSQL container
-- `backend` → Node.js API container
-- `frontend` → React app served via Nginx container
-- Single `docker compose up` runs the entire stack
+All services containerized into a single `docker-compose.yaml`:
+- `oshadhi_db` → PostgreSQL 16 container (host port 5433)
+- `oshadhi_backend` → Node.js API container (port 5000)
+- `oshadhi_frontend` → React app served via Nginx (port 80)
+- Single `docker compose up -d` runs the entire stack
+- Prisma migrations run automatically on backend startup
+- Nginx proxies `/api/*` requests to backend container
 
-→ See [docker.md](./docker.md)
+→ See [docker-setup.md](./docker-setup.md)
 
 ---
 
@@ -59,26 +62,28 @@ All services containerized into a single `docker-compose.yml`:
 
 Docker Compose stack deployed to AWS EC2:
 - Single EC2 instance (t3.medium)
+- Docker + Docker Compose installed on EC2
+- Repo cloned on EC2, `.env` configured, `docker compose up -d`
 - Nginx reverse proxy for routing
-- Domain or EC2 public IP for client demo
-- After client approval → migrate to client AWS account with RDS
+- EC2 public IP for client demo
+- After client approval → migrate to client AWS account
 
-→ See [aws-ec2.md](./aws-ec2.md)
+→ See [aws-ec2-setup.md](./aws-ec2-setup.md)
 
 ---
 
 ## Tech Stack
 
-| Layer            | Technology                               |
-|------------------|------------------------------------------|
-| Frontend         | React 18, Vite, TypeScript               |
-| Backend          | Node.js, Express, TypeScript, Prisma ORM |
-| Database         | PostgreSQL 18                            |
-| Video            | Agora RTC (token-based)                  |
-| Containerization | Docker, Docker Compose                   |
-| Cloud            | AWS EC2                                  |
-| Reverse Proxy    | Nginx                                    |
-| CI/CD            | GitHub (PR-based workflow)               |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, Vite, TypeScript |
+| Backend | Node.js, Express, TypeScript, Prisma ORM |
+| Database | PostgreSQL 18 (local) / PostgreSQL 16 (Docker) |
+| Video | Agora RTC (token-based) |
+| Containerization | Docker 28, Docker Compose v2 |
+| Cloud | AWS EC2 |
+| Reverse Proxy | Nginx |
+| CI/CD | GitHub Actions (Phase 3) |
 
 ---
 
@@ -111,9 +116,11 @@ Never push directly to `main` on the client repo.
 
 devops/
 ├── README.md          ← this file — overview of all phases
-├── phase1-local.md    ← local development setup guide
-├── phase2-docker.md   ← Docker Compose setup (in progress)
-└── phase3-ec2.md      ← AWS EC2 deployment (planned)
+├── local-setup.md     ← Phase 1: local development setup guide
+├── docker-setup.md    ← Phase 2: Docker Compose setup guide
+└── aws-ec2-setup.md   ← Phase 3: AWS EC2 deployment guide
+
+---
 
 ## 👤 Author
 
@@ -122,5 +129,3 @@ Cloud & DevOps Engineer
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/sriharshareddy-adapala-781a76299/)
 [![Gmail](https://img.shields.io/badge/Gmail-Mail-red)](mailto:adapalasriharshareddy@gmail.com)
-
----
