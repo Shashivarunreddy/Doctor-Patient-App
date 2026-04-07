@@ -1,5 +1,6 @@
 # DevOps — Doctor-Patient App (Oshadhi)
 
+🚀 Production-ready deployment pipeline established
 > Infrastructure and deployment documentation for the Doctor-Patient platform.
 > Maintained by: DevOps Engineer (Contributor)
 
@@ -15,18 +16,29 @@ with React, Node.js, PostgreSQL, and Agora RTC for video consultations.
 
 ## Deployment Strategy
 
-The deployment follows a 4-phase approach:
+The deployment follows a **4-phase approach**:
 
 * Local verification — full stack runs on localhost
 * Containerization — Docker Compose orchestrates all services
 * AWS Cloud — image-based deployment on EC2 using DockerHub
-  CI/CD Pipelines  — automate deploymentation using github actions 
+* CI/CD Pipelines — automated deployment using GitHub Actions
 
 This ensures:
 
 * Full validation before cloud deployment
 * Clean separation between development and production
-* Scalable path to  automation
+* Scalable and automated deployment workflow
+
+---
+
+## Final Status
+
+```text
+Phase 1 — Local            ✅ Complete
+Phase 2 — Docker           ✅ Complete
+Phase 3 — EC2              ✅ Complete
+Phase 4 — CI/CD            ✅ Complete
+```
 
 ---
 
@@ -59,7 +71,7 @@ Containerized full stack using build-based setup:
 * `oshadhi_backend` → Node.js API container
 * `oshadhi_frontend` → React app via Nginx
 * Single command deployment (`docker compose up -d`)
-* Prisma migrations executed on startup
+* Prisma migrations executed on backend startup
 
 → See [docker-setup.md](./docker-setup.md)
 
@@ -94,6 +106,26 @@ Production deployment using **image-based containerization**:
 
 ---
 
+### ✅ Phase 4 — CI/CD Automation
+
+**Status: Complete**
+
+Automated build and deployment using GitHub Actions:
+
+* Backend CI → builds & pushes backend image
+* Frontend CI → builds & pushes frontend image
+* Deploy workflow → SSH into EC2 and updates containers
+* Fully automated flow:
+
+  ```text
+  push → build → push → deploy → live
+  ```
+* Manual trigger support for debugging (`workflow_dispatch`)
+
+→ See [cicd-setup.md](./cicd-setup.md)
+
+---
+
 ## Tech Stack
 
 | Layer            | Technology                                     |
@@ -105,7 +137,7 @@ Production deployment using **image-based containerization**:
 | Containerization | Docker, Docker Compose                         |
 | Cloud            | AWS EC2                                        |
 | Reverse Proxy    | Nginx                                          |
-| CI/CD            | GitHub Actions (Planned)                       |
+| CI/CD            | GitHub Actions                                 |
 
 ---
 
@@ -116,9 +148,9 @@ Production deployment using **image-based containerization**:
 | `main`    | Production-ready code (client repo) |
 | `staging` | DevOps changes before PR            |
 
-**GIT Workflow:**
+**Git Workflow:**
 
-local → staging → PR → client review → merge to main 
+local → staging → PR → client review → merge to main
 
 Never push directly to `main`.
 
@@ -143,7 +175,7 @@ devops/
 ├── local-setup.md
 ├── docker-setup.md
 ├── cloud-setup.md
-├── workflow-setup.md
+├── cicd-setup.md
 ```
 
 ---
@@ -158,10 +190,13 @@ Cloud & DevOps Engineer
 
 ---
 
-## Next Phase
+## Final Status
 
-⏳ Phase 4 — CI/CD Automation (GitHub Actions)
+```text
+Phase 1 — Local            ✅ Complete
+Phase 2 — Docker           ✅ Complete
+Phase 3 — EC2              ✅ Complete
+Phase 4 — CI/CD            ✅ Complete
+```
 
-* Auto build & push Docker images
-* EC2 auto-deploy via SSH
-* Zero manual deployment
+
