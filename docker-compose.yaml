@@ -20,6 +20,7 @@ services:
       retries: 5
 
   backend:
+    image: sriharshareddy6464/doc-backend:v1.0.1
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -40,6 +41,7 @@ services:
       - "5000:5000"
 
   frontend:
+    image: sriharshareddy6464/doc-frontend:v1.0.1
     build:
       context: ./frontend
       dockerfile: Dockerfile

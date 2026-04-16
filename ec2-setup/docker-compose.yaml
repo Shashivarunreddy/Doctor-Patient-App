@@ -20,7 +20,7 @@ services:
       retries: 5
 
   backend:
-    image: sriharshareddy6464/doc-backend:latest
+    image: sriharshareddy6464/doc-backend:v1.0.1
     container_name: oshadhi_backend
     restart: always
     env_file:
@@ -37,7 +37,7 @@ services:
       - "5000:5000"
 
   frontend:
-    image: sriharshareddy6464/doc-frontend:latest
+    image: sriharshareddy6464/doc-frontend:v1.0.1
     container_name: oshadhi_frontend
     restart: always
     depends_on:
