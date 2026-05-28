@@ -26,7 +26,7 @@ jobs:
       - name: Deploy on EC2
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-            cd docco
+            cd doctoroncall
             docker compose pull
             docker compose up -d --force-recreate
           EOF
