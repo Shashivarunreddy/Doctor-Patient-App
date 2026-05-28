@@ -42,38 +42,48 @@ export default function AdminPatientsScreen() {
     return (
       <View style={[styles.card, Shadows.md]}>
         <View style={styles.cardHeader}>
-          <Avatar name={item.name} size={48} />
+          <Avatar name={item.name} size={52} />
           <View style={styles.cardInfo}>
             <Text style={styles.cardName}>{item.name}</Text>
             <Text style={styles.cardEmail}>{item.email}</Text>
           </View>
         </View>
+
         <View style={styles.details}>
           {profile?.phone && (
             <View style={styles.detailRow}>
-              <Ionicons name="call-outline" size={14} color={Colors.primary} />
+              <View style={styles.detailIconWrap}>
+                <Ionicons name="call" size={14} color={Colors.primary} />
+              </View>
               <Text style={styles.detailText}>{profile.phone}</Text>
             </View>
           )}
           {profile?.gender && (
             <View style={styles.detailRow}>
-              <Ionicons name="person-outline" size={14} color={Colors.accent} />
+              <View style={styles.detailIconWrap}>
+                <Ionicons name="person" size={14} color={Colors.accent} />
+              </View>
               <Text style={styles.detailText}>{profile.gender}</Text>
             </View>
           )}
           {profile?.bloodGroup && (
             <View style={styles.detailRow}>
-              <Ionicons name="water-outline" size={14} color={Colors.danger} />
+              <View style={styles.detailIconWrap}>
+                <Ionicons name="water" size={14} color={Colors.danger} />
+              </View>
               <Text style={styles.detailText}>{profile.bloodGroup}</Text>
             </View>
           )}
           <View style={styles.detailRow}>
-            <Ionicons name="calendar-outline" size={14} color={Colors.success} />
-            <Text style={styles.detailText}>{item._count?.patientAppointments || 0} appointments</Text>
+            <View style={styles.detailIconWrap}>
+              <Ionicons name="calendar" size={14} color={Colors.success} />
+            </View>
+            <Text style={styles.detailText}>{item._count?.patientAppointments || 0} bookings</Text>
           </View>
         </View>
+
         <Text style={styles.dateText}>
-          Joined: {new Date(item.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+          Registered: {new Date(item.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
         </Text>
       </View>
     );
@@ -81,9 +91,10 @@ export default function AdminPatientsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
-        <Text style={styles.title}>Patients</Text>
-        <Text style={styles.subtitle}>{patients.length} patients</Text>
+      {/* Frameless Header */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
+        <Text style={styles.title}>Patients List</Text>
+        <Text style={styles.subtitle}>{patients.length} patients registered</Text>
       </View>
 
       <FlatList
@@ -92,7 +103,14 @@ export default function AdminPatientsScreen() {
         renderItem={renderPatient}
         contentContainerStyle={styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchPatients(); }} tintColor={Colors.primary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              fetchPatients();
+            }}
+            tintColor={Colors.primary}
+          />
         }
         ListEmptyComponent={<EmptyState title="No Patients" subtitle="No patient registrations yet" />}
         showsVerticalScrollIndicator={false}
@@ -102,24 +120,87 @@ export default function AdminPatientsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.lg,
-    backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.borderLight,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
   },
-  title: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.text },
-  subtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: 2 },
-  list: { padding: Spacing.lg },
-
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.lg, marginBottom: Spacing.md },
-  cardHeader: { flexDirection: 'row', alignItems: 'center' },
-  cardInfo: { flex: 1, marginLeft: Spacing.md },
-  cardName: { fontSize: Fonts.sizes.md, fontWeight: '700', color: Colors.text },
-  cardEmail: { fontSize: Fonts.sizes.xs, color: Colors.textSecondary, marginTop: 1 },
-
-  details: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md, marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: Colors.borderLight },
-  detailRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  detailText: { fontSize: Fonts.sizes.xs, color: Colors.textSecondary, fontWeight: '500' },
-
-  dateText: { fontSize: Fonts.sizes.xs, color: Colors.textTertiary, marginTop: Spacing.md },
+  header: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.md,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.text,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  list: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
+  },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardInfo: {
+    flex: 1,
+    marginLeft: Spacing.md,
+  },
+  cardName: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.text,
+  },
+  cardEmail: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  details: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  detailIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: Radii.xs,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  detailText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+  },
+  dateText: {
+    fontSize: 11,
+    color: Colors.textTertiary,
+    marginTop: Spacing.md,
+    fontWeight: '500',
+  },
 });
+

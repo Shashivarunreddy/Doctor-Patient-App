@@ -24,8 +24,8 @@ type RejectModalType = { id: string; phase: 1 | 2 } | null;
 
 function getPhaseLabel(status: DoctorApprovalStatus): { label: string; color: string; bgColor: string } {
   switch (status) {
-    case 'PHASE1_PENDING': return { label: 'Phase 1 — Pending', color: Colors.warning, bgColor: '#FEF3C7' };
-    case 'PHASE1_APPROVED': return { label: 'Phase 1 ✓ Approved', color: Colors.primary, bgColor: Colors.primaryFaded };
+    case 'PHASE1_PENDING': return { label: 'Phase 1 — Pending', color: Colors.warning, bgColor: Colors.warningLight };
+    case 'PHASE1_APPROVED': return { label: 'Phase 1 APPROVED', color: Colors.primary, bgColor: Colors.primaryFaded };
     case 'REJECTED': return { label: 'Rejected', color: Colors.danger, bgColor: Colors.dangerLight };
     case 'PHASE2_PENDING': return { label: 'Phase 2 — Under Review', color: '#7c3aed', bgColor: '#EDE9FE' };
     case 'PHASE2_APPROVED': return { label: 'Fully Verified ✓', color: Colors.success, bgColor: Colors.successLight };
@@ -164,7 +164,7 @@ export default function AdminDoctorsScreen() {
       <View style={[styles.card, Shadows.md]}>
         {/* Header */}
         <View style={styles.cardHeader}>
-          <Avatar name={item.name} size={48} />
+          <Avatar name={item.name} size={52} />
           <View style={styles.cardInfo}>
             <Text style={styles.cardName}>Dr. {item.name}</Text>
             <Text style={styles.cardEmail}>{item.email}</Text>
@@ -182,7 +182,9 @@ export default function AdminDoctorsScreen() {
           <View style={styles.details}>
             {item.doctorProfile.specializations?.length > 0 && (
               <View style={styles.detailRow}>
-                <Ionicons name="briefcase-outline" size={14} color={Colors.primary} />
+                <View style={styles.detailIconWrap}>
+                  <Ionicons name="briefcase" size={14} color={Colors.primary} />
+                </View>
                 <Text style={styles.detailText} numberOfLines={1}>
                   {item.doctorProfile.specializations.join(', ')}
                 </Text>
@@ -190,25 +192,33 @@ export default function AdminDoctorsScreen() {
             )}
             {item.doctorProfile.experience > 0 && (
               <View style={styles.detailRow}>
-                <Ionicons name="trending-up-outline" size={14} color={Colors.success} />
+                <View style={styles.detailIconWrap}>
+                  <Ionicons name="trending-up" size={14} color={Colors.success} />
+                </View>
                 <Text style={styles.detailText}>{item.doctorProfile.experience} yrs exp</Text>
               </View>
             )}
             {item.doctorProfile.consultationFee != null && (
               <View style={styles.detailRow}>
-                <Ionicons name="cash-outline" size={14} color={Colors.warning} />
+                <View style={styles.detailIconWrap}>
+                  <Ionicons name="cash" size={14} color={Colors.warning} />
+                </View>
                 <Text style={styles.detailText}>₹{item.doctorProfile.consultationFee}</Text>
               </View>
             )}
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color={Colors.accent} />
-              <Text style={styles.detailText}>{item._count?.doctorAppointments || 0} appointments</Text>
+              <View style={styles.detailIconWrap}>
+                <Ionicons name="calendar" size={14} color={Colors.accent} />
+              </View>
+              <Text style={styles.detailText}>{item._count?.doctorAppointments || 0} bookings</Text>
             </View>
 
             {/* License number (Phase 2+) */}
             {item.doctorProfile.licenseNumber && (
               <View style={[styles.detailRow, styles.licenseRow]}>
-                <Ionicons name="card-outline" size={14} color={Colors.primary} />
+                <View style={styles.detailIconWrap}>
+                  <Ionicons name="card" size={14} color={Colors.primary} />
+                </View>
                 <Text style={styles.licenseText}>License: {item.doctorProfile.licenseNumber}</Text>
               </View>
             )}
@@ -217,14 +227,14 @@ export default function AdminDoctorsScreen() {
 
         {/* Rejection reasons */}
         {status === 'REJECTED' && item.doctorProfile?.rejectionReason && (
-          <View style={styles.reasonBanner}>
-            <Ionicons name="warning-outline" size={14} color={Colors.danger} />
+          <View style={[styles.reasonBanner, Shadows.sm]}>
+            <Ionicons name="warning" size={14} color={Colors.danger} />
             <Text style={styles.reasonText}>Phase 1 rejected: {item.doctorProfile.rejectionReason}</Text>
           </View>
         )}
         {status === 'PHASE2_REJECTED' && item.doctorProfile?.phase2RejectionReason && (
-          <View style={styles.reasonBanner}>
-            <Ionicons name="warning-outline" size={14} color={Colors.danger} />
+          <View style={[styles.reasonBanner, Shadows.sm]}>
+            <Ionicons name="warning" size={14} color={Colors.danger} />
             <Text style={styles.reasonText}>Phase 2 rejected: {item.doctorProfile.phase2RejectionReason}</Text>
           </View>
         )}
@@ -254,7 +264,7 @@ export default function AdminDoctorsScreen() {
 
         {/* Account active status */}
         <View style={styles.statusRow}>
-          <View style={[styles.activeChip, { backgroundColor: item.isActive ? Colors.successLight : Colors.dangerLight }]}>
+          <View style={[styles.activeChip, { backgroundColor: item.isActive ? Colors.successLight + '20' : Colors.dangerLight + '20', borderColor: item.isActive ? Colors.successLight : Colors.dangerLight }]}>
             <View style={[styles.activeDot, { backgroundColor: item.isActive ? Colors.success : Colors.danger }]} />
             <Text style={[styles.activeText, { color: item.isActive ? Colors.success : Colors.danger }]}>
               {item.isActive ? 'Active' : 'Inactive'}
@@ -302,12 +312,23 @@ export default function AdminDoctorsScreen() {
             </>
           )}
 
-          {/* Account ban/unban (separate from appointment toggle) */}
+          {/* Account deactivate/activate (separate from appointment toggle) */}
           {isPhase2Approved && item.isActive && (
-            <Button title="Deactivate Account" onPress={() => handleDeactivate(item.id)} variant="ghost" size="sm" />
+            <Button
+              title="Deactivate Account"
+              onPress={() => handleDeactivate(item.id)}
+              variant="ghost"
+              size="sm"
+              style={styles.deactivateBtn}
+            />
           )}
           {!item.isActive && (
-            <Button title="Activate Account" onPress={() => handleActivate(item.id)} variant="secondary" size="sm" />
+            <Button
+              title="Activate Account"
+              onPress={() => handleActivate(item.id)}
+              variant="secondary"
+              size="sm"
+            />
           )}
         </View>
       </View>
@@ -316,7 +337,8 @@ export default function AdminDoctorsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
+      {/* Frameless Header */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
         <Text style={styles.title}>Manage Doctors</Text>
         <Text style={styles.subtitle}>{doctors.length} doctors registered</Text>
       </View>
@@ -327,7 +349,14 @@ export default function AdminDoctorsScreen() {
         renderItem={renderDoctor}
         contentContainerStyle={styles.list}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); fetchDoctors(); }} tintColor={Colors.primary} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              fetchDoctors();
+            }}
+            tintColor={Colors.primary}
+          />
         }
         ListEmptyComponent={<EmptyState title="No Doctors" subtitle="No doctor registrations yet" />}
         showsVerticalScrollIndicator={false}
@@ -336,7 +365,7 @@ export default function AdminDoctorsScreen() {
       {/* Reject Modal */}
       <Modal visible={!!rejectModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
+          <View style={[styles.modalContent, Shadows.xl]}>
             <Text style={styles.modalTitle}>
               {rejectModal?.phase === 1 ? 'Reject Phase 1 Application' : 'Reject Phase 2 Details'}
             </Text>
@@ -365,47 +394,216 @@ export default function AdminDoctorsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: { paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.lg, backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
-  title: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.text },
-  subtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: 2 },
-  list: { padding: Spacing.lg },
-
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.lg, marginBottom: Spacing.md },
-  cardHeader: { flexDirection: 'row', alignItems: 'flex-start' },
-  cardInfo: { flex: 1, marginLeft: Spacing.md, marginRight: Spacing.sm },
-  cardName: { fontSize: Fonts.sizes.md, fontWeight: '700', color: Colors.text },
-  cardEmail: { fontSize: Fonts.sizes.xs, color: Colors.textSecondary, marginTop: 1 },
-  cardPhone: { fontSize: Fonts.sizes.xs, color: Colors.textTertiary, marginTop: 1 },
-
-  phaseBadge: { borderRadius: Radii.sm, paddingHorizontal: Spacing.sm, paddingVertical: 3, maxWidth: 130 },
-  phaseBadgeText: { fontSize: 10, fontWeight: '700', textAlign: 'center' },
-
-  details: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md, marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: Colors.borderLight },
-  detailRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  detailText: { fontSize: Fonts.sizes.xs, color: Colors.textSecondary, fontWeight: '500' },
-
-  licenseRow: { width: '100%' },
-  licenseText: { fontSize: Fonts.sizes.xs, color: Colors.primary, fontWeight: '600' },
-
-  reasonBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 6, marginTop: Spacing.md, backgroundColor: Colors.dangerLight, borderRadius: Radii.sm, padding: Spacing.sm },
-  reasonText: { flex: 1, fontSize: Fonts.sizes.xs, color: Colors.danger, fontWeight: '500' },
-
-  toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: Colors.borderLight },
-  toggleInfo: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  toggleLabel: { fontSize: Fonts.sizes.sm, fontWeight: '600' },
-
-  statusRow: { marginTop: Spacing.md },
-  activeChip: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-start', paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: Radii.full },
-  activeDot: { width: 8, height: 8, borderRadius: 4 },
-  activeText: { fontSize: Fonts.sizes.xs, fontWeight: '600' },
-
-  actions: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginTop: Spacing.md },
-
-  modalOverlay: { flex: 1, backgroundColor: Colors.overlay, justifyContent: 'center', padding: Spacing.xxl },
-  modalContent: { backgroundColor: Colors.card, borderRadius: Radii.xl, padding: Spacing.xxl },
-  modalTitle: { fontSize: Fonts.sizes.xl, fontWeight: '700', color: Colors.text },
-  modalSubtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: Spacing.xs, marginBottom: Spacing.lg },
-  modalInput: { borderWidth: 1, borderColor: Colors.border, borderRadius: Radii.md, padding: Spacing.md, fontSize: Fonts.sizes.md, color: Colors.text, minHeight: 80, textAlignVertical: 'top', marginBottom: Spacing.lg },
-  modalActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.sm },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.md,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.text,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  list: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
+  },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+  cardInfo: {
+    flex: 1,
+    marginLeft: Spacing.md,
+    marginRight: Spacing.sm,
+  },
+  cardName: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.text,
+  },
+  cardEmail: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  cardPhone: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textTertiary,
+    marginTop: 2,
+  },
+  phaseBadge: {
+    borderRadius: Radii.full,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 4,
+    alignSelf: 'flex-start',
+  },
+  phaseBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  details: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+    marginTop: Spacing.lg,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  detailIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: Radii.xs,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  detailText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+  },
+  licenseRow: {
+    width: '100%',
+    marginTop: Spacing.xs,
+  },
+  licenseText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.primary,
+    fontWeight: '700',
+  },
+  reasonBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    marginTop: Spacing.md,
+    backgroundColor: Colors.dangerLight + '20',
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+  },
+  reasonText: {
+    flex: 1,
+    fontSize: Fonts.sizes.xs,
+    color: Colors.danger,
+    fontWeight: '600',
+    lineHeight: Fonts.lineHeights.sm,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: '#f1f5f9',
+  },
+  toggleInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+  },
+  toggleLabel: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  statusRow: {
+    marginTop: Spacing.md,
+  },
+  activeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 4,
+    borderRadius: Radii.full,
+    borderWidth: 1.5,
+  },
+  activeDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  activeText: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  actions: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginTop: Spacing.lg,
+  },
+  deactivateBtn: {
+    borderColor: Colors.dangerLight,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: Colors.overlay,
+    justifyContent: 'center',
+    padding: Spacing.xxl,
+  },
+  modalContent: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.xl,
+    padding: Spacing.xl,
+  },
+  modalTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '800',
+    color: Colors.text,
+  },
+  modalSubtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 4,
+    marginBottom: Spacing.lg,
+    lineHeight: Fonts.lineHeights.sm,
+  },
+  modalInput: {
+    backgroundColor: '#F1F5F9',
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+    fontSize: Fonts.sizes.md,
+    color: Colors.text,
+    minHeight: 80,
+    textAlignVertical: 'top',
+    marginBottom: Spacing.lg,
+    borderWidth: 1.5,
+    borderColor: 'transparent',
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: Spacing.sm,
+  },
 });
+

@@ -133,7 +133,7 @@ export default function SubmitDetailsScreen() {
           style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}
         >
           <View style={styles.headerIcon}>
-            <Ionicons name="document-text" size={28} color={Colors.textInverse} />
+            <Ionicons name="document-text" size={28} color="#fff" />
           </View>
           <Text style={styles.headerTitle}>
             {isResubmit ? 'Re-submit Your Details' : 'Complete Your Profile'}
@@ -159,15 +159,15 @@ export default function SubmitDetailsScreen() {
             </View>
           </View>
           <View style={styles.stepLabels}>
-            <Text style={[styles.stepLabel, { color: Colors.success }]}>Account</Text>
+            <Text style={[styles.stepLabel, { color: Colors.success, fontWeight: '700' }]}>Account</Text>
             <Text style={[styles.stepLabel, { color: Colors.primary, fontWeight: '700' }]}>Details</Text>
             <Text style={[styles.stepLabel, { color: Colors.textTertiary }]}>Practice</Text>
           </View>
 
           {/* Rejection banner (re-submit flow) */}
           {isResubmit && phase2Reason && (
-            <View style={styles.rejectionBanner}>
-              <Ionicons name="warning" size={20} color={Colors.danger} />
+            <View style={[styles.rejectionBanner, Shadows.sm]}>
+              <Ionicons name="alert-circle" size={22} color={Colors.danger} />
               <View style={{ flex: 1 }}>
                 <Text style={styles.rejectionTitle}>Previous Submission Rejected</Text>
                 <Text style={styles.rejectionText}>{phase2Reason}</Text>
@@ -178,7 +178,7 @@ export default function SubmitDetailsScreen() {
           {/* Info banner */}
           {!isResubmit && (
             <View style={styles.infoBanner}>
-              <Ionicons name="shield-checkmark-outline" size={18} color={Colors.primary} />
+              <Ionicons name="shield-checkmark" size={18} color={Colors.primary} />
               <Text style={styles.infoBannerText}>
                 Your information will be reviewed by our admin team. Once approved, you can start receiving patients.
               </Text>
@@ -232,7 +232,7 @@ export default function SubmitDetailsScreen() {
           <View style={[styles.card, Shadows.md]}>
             <Text style={styles.sectionTitle}>Practice License</Text>
             <View style={styles.licenseNote}>
-              <Ionicons name="information-circle-outline" size={16} color={Colors.primary} />
+              <Ionicons name="information-circle" size={18} color={Colors.primary} />
               <Text style={styles.licenseNoteText}>
                 Enter your medical council registration or license number. Document upload will be available in a future update.
               </Text>
@@ -299,10 +299,13 @@ export default function SubmitDetailsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   header: {
-    paddingHorizontal: Spacing.xxl,
-    paddingBottom: Spacing.xxl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xl,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     alignItems: 'center',
@@ -316,48 +319,147 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md,
   },
-  headerTitle: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.textInverse, textAlign: 'center' },
-  headerSubtitle: { fontSize: Fonts.sizes.sm, color: 'rgba(255,255,255,0.8)', marginTop: 4, textAlign: 'center' },
+  headerTitle: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.textInverse,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: 'rgba(255,255,255,0.8)',
+    marginTop: 4,
+    textAlign: 'center',
+  },
 
-  content: { padding: Spacing.xl },
+  content: {
+    padding: Spacing.xl,
+  },
 
-  stepRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginVertical: Spacing.lg },
+  stepRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: Spacing.lg,
+  },
   stepDone: {
-    width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.success,
-    justifyContent: 'center', alignItems: 'center',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.success,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   stepActive: {
-    width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.primary,
-    justifyContent: 'center', alignItems: 'center',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  stepActiveText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  stepActiveText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 13,
+  },
   stepLocked: {
-    width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.borderLight,
-    justifyContent: 'center', alignItems: 'center',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.borderLight,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  stepLine: { flex: 1, height: 2, backgroundColor: Colors.success, maxWidth: 48 },
-  stepLabels: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: Spacing.xl, paddingHorizontal: Spacing.lg },
-  stepLabel: { fontSize: Fonts.sizes.xs, fontWeight: '600', color: Colors.textSecondary, textAlign: 'center', flex: 1 },
+  stepLine: {
+    flex: 1,
+    height: 2,
+    backgroundColor: Colors.success,
+    maxWidth: 48,
+  },
+  stepLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+  },
+  stepLabel: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    flex: 1,
+  },
 
   infoBanner: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm,
-    backgroundColor: Colors.primaryFaded, borderRadius: Radii.md, padding: Spacing.md, marginBottom: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.lg,
   },
-  infoBannerText: { flex: 1, fontSize: Fonts.sizes.sm, color: Colors.primary, fontWeight: '500', lineHeight: Fonts.lineHeights.sm },
+  infoBannerText: {
+    flex: 1,
+    fontSize: Fonts.sizes.sm,
+    color: Colors.primary,
+    fontWeight: '500',
+    lineHeight: Fonts.lineHeights.sm,
+  },
 
   rejectionBanner: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md,
-    backgroundColor: Colors.dangerLight, borderRadius: Radii.md, padding: Spacing.md, marginBottom: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.md,
+    backgroundColor: Colors.dangerLight + '20',
+    borderRadius: Radii.md,
+    borderWidth: 1,
+    borderColor: Colors.dangerLight,
+    padding: Spacing.md,
+    marginBottom: Spacing.lg,
   },
-  rejectionTitle: { fontSize: Fonts.sizes.sm, fontWeight: '700', color: Colors.danger, marginBottom: 2 },
-  rejectionText: { fontSize: Fonts.sizes.xs, color: Colors.danger, lineHeight: Fonts.lineHeights.sm },
+  rejectionTitle: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '700',
+    color: Colors.danger,
+    marginBottom: 2,
+  },
+  rejectionText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.danger,
+    lineHeight: Fonts.lineHeights.sm,
+  },
 
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.xl, marginBottom: Spacing.lg },
-  sectionTitle: { fontSize: Fonts.sizes.lg, fontWeight: '700', color: Colors.text, marginBottom: Spacing.lg },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  sectionTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.lg,
+  },
 
   licenseNote: {
-    flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm,
-    backgroundColor: Colors.primaryFaded, borderRadius: Radii.sm, padding: Spacing.md, marginBottom: Spacing.md,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
   },
-  licenseNoteText: { flex: 1, fontSize: Fonts.sizes.xs, color: Colors.primary, lineHeight: Fonts.lineHeights.sm },
+  licenseNoteText: {
+    flex: 1,
+    fontSize: Fonts.sizes.xs,
+    color: Colors.primary,
+    lineHeight: Fonts.lineHeights.sm,
+  },
 });
+

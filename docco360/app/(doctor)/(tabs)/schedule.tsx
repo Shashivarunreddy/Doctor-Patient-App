@@ -69,13 +69,13 @@ export default function DoctorScheduleScreen() {
   if (canTakeAppointments === false) {
     return (
       <View style={[styles.container, styles.gateContainer]}>
-        <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
+        <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
           <Text style={styles.title}>Manage Schedule</Text>
           <Text style={styles.subtitle}>Configure your available time slots</Text>
         </View>
         <View style={styles.gateContent}>
           <View style={styles.gateIconRing}>
-            <Ionicons name="lock-closed" size={40} color={Colors.textTertiary} />
+            <Ionicons name="lock-closed" size={40} color={Colors.primary} />
           </View>
           <Text style={styles.gateTitle}>Appointment Booking Not Enabled</Text>
           <Text style={styles.gateText}>
@@ -93,7 +93,8 @@ export default function DoctorScheduleScreen() {
       contentContainerStyle={{ paddingBottom: 40 }}
       showsVerticalScrollIndicator={false}
     >
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
+      {/* Frameless Header */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
         <Text style={styles.title}>Manage Schedule</Text>
         <Text style={styles.subtitle}>Configure your available time slots</Text>
       </View>
@@ -101,33 +102,41 @@ export default function DoctorScheduleScreen() {
       {/* Date Selector */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Select Date</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {dates.map((d) => (
-            <TouchableOpacity
-              key={d.full}
-              style={[styles.dateChip, selectedDate === d.full && styles.dateChipActive]}
-              onPress={() => {
-                setSelectedDate(d.full);
-                setCreatedSlots([]);
-              }}
-            >
-              <Text style={[styles.dateDay, selectedDate === d.full && styles.dateDayActive]}>
-                {d.day}
-              </Text>
-              <Text style={[styles.dateNum, selectedDate === d.full && styles.dateNumActive]}>
-                {d.date}
-              </Text>
-              <Text style={[styles.dateMonth, selectedDate === d.full && styles.dateMonthActive]}>
-                {d.month}
-              </Text>
-            </TouchableOpacity>
-          ))}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.dateScrollContainer}>
+          {dates.map((d) => {
+            const isActive = selectedDate === d.full;
+            return (
+              <TouchableOpacity
+                key={d.full}
+                style={[
+                  styles.dateChip,
+                  isActive && styles.dateChipActive,
+                  isActive && Shadows.sm,
+                ]}
+                onPress={() => {
+                  setSelectedDate(d.full);
+                  setCreatedSlots([]);
+                }}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.dateDay, isActive && styles.dateDayActive]}>
+                  {d.day}
+                </Text>
+                <Text style={[styles.dateNum, isActive && styles.dateNumActive]}>
+                  {d.date}
+                </Text>
+                <Text style={[styles.dateMonth, isActive && styles.dateMonthActive]}>
+                  {d.month}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       </View>
 
       {/* Time Range */}
       <View style={[styles.card, Shadows.md]}>
-        <Text style={styles.sectionTitle}>Working Hours</Text>
+        <Text style={styles.cardSectionTitle}>Working Hours</Text>
         <Text style={styles.helperText}>
           Slots will be auto-generated in 30-minute intervals
         </Text>
@@ -135,51 +144,58 @@ export default function DoctorScheduleScreen() {
         <View style={styles.timeRow}>
           <View style={styles.timeCol}>
             <Text style={styles.timeLabel}>Start Time</Text>
-            <ScrollView style={styles.timePicker} nestedScrollEnabled>
-              {timeOptions.map((t) => (
-                <TouchableOpacity
-                  key={`start-${t}`}
-                  style={[styles.timeOption, startTime === t && styles.timeOptionActive]}
-                  onPress={() => setStartTime(t)}
-                >
-                  <Text
-                    style={[styles.timeText, startTime === t && styles.timeTextActive]}
+            <View style={styles.timePickerContainer}>
+              <ScrollView style={styles.timePicker} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                {timeOptions.map((t) => (
+                  <TouchableOpacity
+                    key={`start-${t}`}
+                    style={[styles.timeOption, startTime === t && styles.timeOptionActive]}
+                    onPress={() => setStartTime(t)}
                   >
-                    {t}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+                    <Text
+                      style={[styles.timeText, startTime === t && styles.timeTextActive]}
+                    >
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
           </View>
 
           <View style={styles.timeDivider}>
-            <Ionicons name="arrow-forward" size={20} color={Colors.textTertiary} />
+            <Ionicons name="arrow-forward" size={20} color={Colors.primary} />
           </View>
 
           <View style={styles.timeCol}>
             <Text style={styles.timeLabel}>End Time</Text>
-            <ScrollView style={styles.timePicker} nestedScrollEnabled>
-              {timeOptions.map((t) => (
-                <TouchableOpacity
-                  key={`end-${t}`}
-                  style={[styles.timeOption, endTime === t && styles.timeOptionActive]}
-                  onPress={() => setEndTime(t)}
-                >
-                  <Text
-                    style={[styles.timeText, endTime === t && styles.timeTextActive]}
+            <View style={styles.timePickerContainer}>
+              <ScrollView style={styles.timePicker} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+                {timeOptions.map((t) => (
+                  <TouchableOpacity
+                    key={`end-${t}`}
+                    style={[styles.timeOption, endTime === t && styles.timeOptionActive]}
+                    onPress={() => setEndTime(t)}
                   >
-                    {t}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+                    <Text
+                      style={[styles.timeText, endTime === t && styles.timeTextActive]}
+                    >
+                      {t}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
           </View>
         </View>
 
         <View style={styles.summary}>
-          <Ionicons name="time" size={16} color={Colors.primary} />
+          <Ionicons name="time" size={18} color={Colors.primary} />
           <Text style={styles.summaryText}>
-            {selectedDate || '(select date)'} • {startTime} → {endTime}
+            {selectedDate
+              ? new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              : '(select date)'}{' '}
+            • {startTime} → {endTime}
           </Text>
         </View>
 
@@ -196,7 +212,7 @@ export default function DoctorScheduleScreen() {
       {/* Created Slots */}
       {createdSlots.length > 0 && (
         <View style={[styles.card, Shadows.md]}>
-          <Text style={styles.sectionTitle}>
+          <Text style={styles.cardSectionTitle}>
             Created Slots ({createdSlots.length})
           </Text>
           <View style={styles.slotsGrid}>
@@ -229,57 +245,229 @@ export default function DoctorScheduleScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   header: {
-    paddingHorizontal: Spacing.xxl,
-    paddingBottom: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.md,
+    backgroundColor: Colors.background,
   },
-  title: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.text },
-  subtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: 2 },
-  section: { padding: Spacing.lg },
-  sectionTitle: { fontSize: Fonts.sizes.lg, fontWeight: '700', color: Colors.text, marginBottom: Spacing.md },
-  helperText: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginBottom: Spacing.lg },
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.xl, marginHorizontal: Spacing.lg, marginBottom: Spacing.lg },
+  title: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.text,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  section: {
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.md,
+  },
+  cardSectionTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.xs,
+  },
+  helperText: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.lg,
+  },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginHorizontal: Spacing.xl,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
 
-  gateContainer: {},
-  gateContent: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xxl },
-  gateIconRing: { width: 96, height: 96, borderRadius: 48, backgroundColor: Colors.surfaceAlt, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.xl },
-  gateTitle: { fontSize: Fonts.sizes.xl, fontWeight: '700', color: Colors.text, textAlign: 'center', marginBottom: Spacing.md },
-  gateText: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, textAlign: 'center', lineHeight: Fonts.lineHeights.sm },
+  gateContainer: {
+    justifyContent: 'flex-start',
+  },
+  gateContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.xxl,
+    marginTop: 40,
+  },
+  gateIconRing: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  gateTitle: {
+    fontSize: Fonts.sizes.xl,
+    fontWeight: '700',
+    color: Colors.text,
+    textAlign: 'center',
+    marginBottom: Spacing.md,
+  },
+  gateText: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: Fonts.lineHeights.sm,
+  },
 
+  dateScrollContainer: {
+    gap: Spacing.sm,
+    paddingBottom: Spacing.xs,
+  },
   dateChip: {
-    width: 64, alignItems: 'center', paddingVertical: Spacing.md, marginRight: Spacing.sm,
-    borderRadius: Radii.md, borderWidth: 1.5, borderColor: Colors.border, backgroundColor: Colors.surfaceAlt,
+    width: 64,
+    height: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radii.md,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    backgroundColor: Colors.surface,
   },
-  dateChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
-  dateDay: { fontSize: Fonts.sizes.xs, fontWeight: '600', color: Colors.textSecondary },
-  dateDayActive: { color: 'rgba(255,255,255,0.8)' },
-  dateNum: { fontSize: Fonts.sizes.xl, fontWeight: '800', color: Colors.text, marginVertical: 2 },
-  dateNumActive: { color: Colors.textInverse },
-  dateMonth: { fontSize: Fonts.sizes.xs, color: Colors.textTertiary },
-  dateMonthActive: { color: 'rgba(255,255,255,0.7)' },
+  dateChipActive: {
+    backgroundColor: Colors.primary,
+    borderColor: Colors.primary,
+  },
+  dateDay: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  dateDayActive: {
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  dateNum: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '800',
+    color: Colors.text,
+    marginVertical: 2,
+  },
+  dateNumActive: {
+    color: '#fff',
+  },
+  dateMonth: {
+    fontSize: 9,
+    color: Colors.textTertiary,
+    textTransform: 'uppercase',
+  },
+  dateMonthActive: {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
 
-  timeRow: { flexDirection: 'row', marginBottom: Spacing.lg },
-  timeCol: { flex: 1 },
-  timeDivider: { justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing.md, paddingTop: Spacing.xxl },
-  timeLabel: { fontSize: Fonts.sizes.sm, fontWeight: '600', color: Colors.textSecondary, marginBottom: Spacing.sm },
-  timePicker: { maxHeight: 180, borderRadius: Radii.sm, borderWidth: 1, borderColor: Colors.border },
-  timeOption: { paddingVertical: Spacing.sm + 2, paddingHorizontal: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
-  timeOptionActive: { backgroundColor: Colors.primaryFaded },
-  timeText: { fontSize: Fonts.sizes.md, color: Colors.text, textAlign: 'center' },
-  timeTextActive: { color: Colors.primary, fontWeight: '700' },
+  timeRow: {
+    flexDirection: 'row',
+    marginBottom: Spacing.lg,
+  },
+  timeCol: {
+    flex: 1,
+  },
+  timeDivider: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.xl,
+  },
+  timeLabel: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+    marginBottom: Spacing.sm,
+  },
+  timePickerContainer: {
+    borderRadius: Radii.md,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    overflow: 'hidden',
+    backgroundColor: Colors.surface,
+  },
+  timePicker: {
+    maxHeight: 160,
+  },
+  timeOption: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+    alignItems: 'center',
+  },
+  timeOptionActive: {
+    backgroundColor: Colors.primaryFaded,
+  },
+  timeText: {
+    fontSize: Fonts.sizes.md,
+    color: Colors.textSecondary,
+  },
+  timeTextActive: {
+    color: Colors.primary,
+    fontWeight: '700',
+  },
 
-  summary: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.lg, padding: Spacing.md, backgroundColor: Colors.primaryFaded, borderRadius: Radii.sm },
-  summaryText: { fontSize: Fonts.sizes.sm, fontWeight: '600', color: Colors.primary },
+  summary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    padding: Spacing.md,
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.md,
+  },
+  summaryText: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '600',
+    color: Colors.primary,
+  },
 
-  slotsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  slotChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: Radii.sm },
-  slotAvailable: { backgroundColor: Colors.successLight },
-  slotBooked: { backgroundColor: Colors.surfaceAlt },
-  slotTime: { fontSize: Fonts.sizes.xs, fontWeight: '600' },
-  slotTimeAvailable: { color: Colors.success },
-  slotTimeBooked: { color: Colors.textTertiary },
+  slotsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+    marginTop: Spacing.md,
+  },
+  slotChip: {
+    width: '47.5%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: Spacing.md,
+    borderRadius: Radii.md,
+    borderWidth: 1.5,
+  },
+  slotAvailable: {
+    backgroundColor: Colors.successLight + '20',
+    borderColor: Colors.successLight,
+  },
+  slotBooked: {
+    backgroundColor: Colors.surface,
+    borderColor: '#e2e8f0',
+  },
+  slotTime: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '600',
+  },
+  slotTimeAvailable: {
+    color: Colors.success,
+  },
+  slotTimeBooked: {
+    color: Colors.textTertiary,
+  },
 });
+

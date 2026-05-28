@@ -8,12 +8,11 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { Avatar } from '@/components/Avatar';
-import { Colors, Fonts, Spacing, Radii, Gradients, Shadows } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 
 type MenuItem = {
   id: string;
@@ -92,41 +91,44 @@ export default function AdminProfileScreen() {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 60 }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header */}
-      <LinearGradient
-        colors={Gradients.dark}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}
-      >
-        <Avatar name={user?.name || 'A'} size={80} />
+      {/* Header Profile Section */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
+        <View style={styles.avatarWrapper}>
+          <Avatar name={user?.name || 'A'} size={88} />
+        </View>
         <Text style={styles.name}>{user?.name}</Text>
         <Text style={styles.email}>{user?.email}</Text>
         <View style={styles.rolePill}>
-          <Ionicons name="shield-checkmark" size={13} color={Colors.warning} />
+          <Ionicons name="shield-checkmark" size={13} color={Colors.primary} />
           <Text style={styles.roleText}>System Administrator</Text>
         </View>
-      </LinearGradient>
+      </View>
 
-      {/* Info cards */}
+      {/* Info cards (Bento Style) */}
       <View style={styles.infoRow}>
         <View style={[styles.infoCard, Shadows.sm]}>
-          <Ionicons name="shield-outline" size={22} color={Colors.primary} />
+          <View style={styles.infoIconWrap}>
+            <Ionicons name="shield" size={20} color={Colors.primary} />
+          </View>
           <Text style={styles.infoCardTitle}>Full Access</Text>
-          <Text style={styles.infoCardSub}>All Permissions</Text>
+          <Text style={styles.infoCardSub}>Permissions</Text>
         </View>
         <View style={[styles.infoCard, Shadows.sm]}>
-          <Ionicons name="server-outline" size={22} color={Colors.success} />
+          <View style={[styles.infoIconWrap, { backgroundColor: Colors.successLight + '20' }]}>
+            <Ionicons name="server" size={20} color={Colors.success} />
+          </View>
           <Text style={styles.infoCardTitle}>System</Text>
           <Text style={styles.infoCardSub}>Active</Text>
         </View>
         <View style={[styles.infoCard, Shadows.sm]}>
-          <Ionicons name="key-outline" size={22} color={Colors.warning} />
-          <Text style={styles.infoCardTitle}>Admin</Text>
-          <Text style={styles.infoCardSub}>Role</Text>
+          <View style={[styles.infoIconWrap, { backgroundColor: Colors.warningLight + '20' }]}>
+            <Ionicons name="key" size={20} color={Colors.warning} />
+          </View>
+          <Text style={styles.infoCardTitle}>Role</Text>
+          <Text style={styles.infoCardSub}>Owner</Text>
         </View>
       </View>
 
@@ -143,7 +145,7 @@ export default function AdminProfileScreen() {
                     onPress={item.onPress}
                     activeOpacity={0.7}
                   >
-                    <View style={[styles.menuIconWrap, { backgroundColor: item.danger ? Colors.dangerLight : Colors.primaryFaded }]}>
+                    <View style={[styles.menuIconWrap, { backgroundColor: item.danger ? Colors.dangerLight + '20' : Colors.primaryFaded }]}>
                       <Ionicons
                         name={item.icon}
                         size={20}
@@ -180,19 +182,21 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingBottom: Spacing.xxl,
-    borderBottomLeftRadius: 28,
-    borderBottomRightRadius: 28,
+    paddingBottom: Spacing.xl,
+    backgroundColor: Colors.background,
+  },
+  avatarWrapper: {
+    marginBottom: Spacing.md,
   },
   name: {
     fontSize: Fonts.sizes.xl,
     fontWeight: '800',
-    color: Colors.textInverse,
-    marginTop: Spacing.md,
+    color: Colors.text,
+    marginTop: Spacing.sm,
   },
   email: {
     fontSize: Fonts.sizes.sm,
-    color: 'rgba(255,255,255,0.65)',
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   rolePill: {
@@ -200,15 +204,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.xs,
     marginTop: Spacing.md,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: Colors.primaryFaded,
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xs,
+    paddingVertical: 5,
     borderRadius: Radii.full,
   },
   roleText: {
-    fontSize: Fonts.sizes.xs,
+    fontSize: 10,
     fontWeight: '700',
-    color: Colors.warning,
+    color: Colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -216,8 +220,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.md,
     paddingHorizontal: Spacing.xl,
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.lg,
   },
   infoCard: {
     flex: 1,
@@ -225,22 +228,34 @@ const styles = StyleSheet.create({
     borderRadius: Radii.lg,
     padding: Spacing.md,
     alignItems: 'center',
-    gap: Spacing.xs,
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  infoIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: Radii.sm,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
   },
   infoCardTitle: {
     fontSize: Fonts.sizes.xs,
     fontWeight: '700',
     color: Colors.text,
-    marginTop: 2,
+    textAlign: 'center',
   },
   infoCardSub: {
-    fontSize: 10,
+    fontSize: 9,
     color: Colors.textSecondary,
     fontWeight: '500',
+    marginTop: 2,
+    textAlign: 'center',
   },
   content: {
     paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.md,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -258,6 +273,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     borderRadius: Radii.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
   },
   menuItem: {
     flexDirection: 'row',
@@ -287,11 +304,12 @@ const styles = StyleSheet.create({
   menuSublabel: {
     fontSize: Fonts.sizes.xs,
     color: Colors.textSecondary,
-    marginTop: 1,
+    marginTop: 2,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.borderLight,
+    backgroundColor: '#f1f5f9',
     marginLeft: Spacing.lg + 40 + Spacing.md,
   },
 });
+

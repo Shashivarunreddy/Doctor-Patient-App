@@ -7,14 +7,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  SafeAreaView,
 } from 'react-native';
 import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { Colors, Fonts, Spacing, Radii, Gradients } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 import { ApiError } from '@/services/api';
 
 type Role = 'PATIENT' | 'DOCTOR';
@@ -49,7 +49,7 @@ export default function RegisterScreen() {
   };
 
   const getPasswordStrength = () => {
-    if (!password) return { level: 0, label: '', color: Colors.border };
+    if (!password) return { level: 0, label: 'Enter a password', color: Colors.border };
     let score = 0;
     if (password.length >= 8) score++;
     if (/[A-Z]/.test(password)) score++;
@@ -57,10 +57,10 @@ export default function RegisterScreen() {
     if (/\d/.test(password)) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 2) return { level: score, label: 'Weak', color: Colors.danger };
-    if (score <= 3) return { level: score, label: 'Fair', color: Colors.warning };
-    if (score <= 4) return { level: score, label: 'Good', color: Colors.primary };
-    return { level: score, label: 'Strong', color: Colors.success };
+    if (score <= 2) return { level: 1, label: 'Weak', color: Colors.danger };
+    if (score <= 3) return { level: 2, label: 'Fair', color: Colors.warning };
+    if (score <= 4) return { level: 3, label: 'Good', color: Colors.primary };
+    return { level: 4, label: 'Strong', color: Colors.success };
   };
 
   const handleRegister = async () => {
@@ -101,187 +101,170 @@ export default function RegisterScreen() {
   const strength = getPasswordStrength();
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Header */}
-        <LinearGradient
-          colors={Gradients.primary}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color={Colors.textInverse} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Create Account</Text>
-          <Text style={styles.headerSubtitle}>Join Docco360 today</Text>
-        </LinearGradient>
-
-        {/* Form */}
-        <View style={styles.form}>
-          {/* Role Selector */}
-          <View style={styles.roleContainer}>
-            <Text style={styles.roleLabel}>I am a</Text>
-            <View style={styles.roleSelector}>
-              <TouchableOpacity
-                style={[styles.roleOption, role === 'PATIENT' && styles.roleActive]}
-                onPress={() => setRole('PATIENT')}
-              >
-                <Ionicons
-                  name="person"
-                  size={18}
-                  color={role === 'PATIENT' ? Colors.textInverse : Colors.textSecondary}
-                />
-                <Text
-                  style={[styles.roleText, role === 'PATIENT' && styles.roleTextActive]}
-                >
-                  Patient
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.roleOption, role === 'DOCTOR' && styles.roleActive]}
-                onPress={() => setRole('DOCTOR')}
-              >
-                <Ionicons
-                  name="medkit"
-                  size={18}
-                  color={role === 'DOCTOR' ? Colors.textInverse : Colors.textSecondary}
-                />
-                <Text
-                  style={[styles.roleText, role === 'DOCTOR' && styles.roleTextActive]}
-                >
-                  Doctor
-                </Text>
-              </TouchableOpacity>
+          {/* Top Navbar Header */}
+          <View style={styles.topHeader}>
+            <View style={styles.topHeaderLeft}>
+              <Ionicons name="medical" size={24} color={Colors.primary} />
+              <Text style={styles.topHeaderTitle}>Docco360</Text>
             </View>
+            <TouchableOpacity style={styles.helpButton}>
+              <Ionicons name="help-circle-outline" size={24} color={Colors.primary} />
+            </TouchableOpacity>
           </View>
 
-          {role === 'DOCTOR' && (
-            <View style={styles.infoBanner}>
-              <Ionicons name="information-circle" size={18} color={Colors.primary} />
-              <Text style={styles.infoBannerText}>
-                Doctor accounts require a 2-step admin approval before you can start practicing.
-              </Text>
+          {/* Main Auth Card */}
+          <View style={styles.card}>
+            {/* Header & Branding */}
+            <View style={styles.header}>
+              <Text style={styles.appName}>Create Account</Text>
+              <Text style={styles.tagline}>Your journey to serenity starts here.</Text>
             </View>
-          )}
 
-          {errors.general && (
-            <View style={styles.errorBanner}>
-              <Ionicons name="alert-circle" size={18} color={Colors.danger} />
-              <Text style={styles.errorBannerText}>{errors.general}</Text>
+            {/* Role Selection Tabs */}
+            <View style={styles.roleTabsContainer}>
+              <TouchableOpacity
+                style={[styles.roleTab, role === 'PATIENT' && styles.roleTabActive]}
+                onPress={() => setRole('PATIENT')}
+              >
+                <Text style={[styles.roleTabText, role === 'PATIENT' && styles.roleTabTextActive]}>Patient</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.roleTab, role === 'DOCTOR' && styles.roleTabActive]}
+                onPress={() => setRole('DOCTOR')}
+              >
+                <Text style={[styles.roleTabText, role === 'DOCTOR' && styles.roleTabTextActive]}>Doctor</Text>
+              </TouchableOpacity>
             </View>
-          )}
 
-          <Input
-            label="Full Name"
-            placeholder="Enter your full name"
-            icon="person-outline"
-            autoCapitalize="words"
-            value={name}
-            onChangeText={setName}
-            error={errors.name}
-          />
+            {/* Form */}
+            <View style={styles.form}>
+              {errors.general && (
+                <View style={styles.errorBanner}>
+                  <Ionicons name="alert-circle" size={18} color={Colors.danger} />
+                  <Text style={styles.errorBannerText}>{errors.general}</Text>
+                </View>
+              )}
 
-          <Input
-            label="Phone Number"
-            placeholder="Enter your phone number"
-            icon="call-outline"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-            error={errors.phone}
-          />
+              <Input
+                label="Full Name"
+                placeholder="John Doe"
+                icon="person-outline"
+                autoCapitalize="words"
+                value={name}
+                onChangeText={setName}
+                error={errors.name}
+              />
 
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            icon="mail-outline"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-            value={email}
-            onChangeText={setEmail}
-            error={errors.email}
-          />
+              <Input
+                label="Email Address"
+                placeholder="name@email.com"
+                icon="mail-outline"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                value={email}
+                onChangeText={setEmail}
+                error={errors.email}
+              />
 
-          <Input
-            label="Password"
-            placeholder="Create a strong password"
-            icon="lock-closed-outline"
-            secureTextEntry={!showPassword}
-            rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
-            onRightIconPress={() => setShowPassword(!showPassword)}
-            value={password}
-            onChangeText={setPassword}
-            error={errors.password}
-          />
+              <Input
+                label="Phone Number"
+                placeholder="+1 (555) 000-0000"
+                icon="call-outline"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+                error={errors.phone}
+              />
 
-          {/* Password Strength Indicator */}
-          {password.length > 0 && (
-            <View style={styles.strengthContainer}>
-              <View style={styles.strengthBar}>
-                {[1, 2, 3, 4, 5].map((i) => (
-                  <View
-                    key={i}
-                    style={[
-                      styles.strengthSegment,
-                      {
-                        backgroundColor:
-                          i <= strength.level ? strength.color : Colors.borderLight,
-                      },
-                    ]}
-                  />
-                ))}
+              <View style={styles.passwordContainer}>
+                <Input
+                  label="Password"
+                  placeholder="••••••••"
+                  icon="lock-closed-outline"
+                  secureTextEntry={!showPassword}
+                  rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  onRightIconPress={() => setShowPassword(!showPassword)}
+                  value={password}
+                  onChangeText={setPassword}
+                  error={errors.password}
+                />
+                {/* Strength Meter */}
+                <View style={styles.strengthContainer}>
+                  <View style={styles.strengthBarsRow}>
+                    {[1, 2, 3, 4].map((i) => (
+                      <View
+                        key={i}
+                        style={[
+                          styles.strengthBar,
+                          {
+                            backgroundColor:
+                              i <= strength.level ? strength.color : Colors.borderLight,
+                          },
+                        ]}
+                      />
+                    ))}
+                  </View>
+                  <Text style={[styles.strengthLabel, { color: strength.level > 0 ? strength.color : Colors.textTertiary }]}>
+                    {strength.label}
+                  </Text>
+                </View>
               </View>
-              <Text style={[styles.strengthLabel, { color: strength.color }]}>
-                {strength.label}
-              </Text>
+
+              {role === 'DOCTOR' && (
+                <Input
+                  label="Medical Specialization"
+                  placeholder="e.g. Cardiologist, Dermatologist"
+                  icon="briefcase-outline"
+                  autoCapitalize="words"
+                  value={specialization}
+                  onChangeText={setSpecialization}
+                  error={errors.specialization}
+                />
+              )}
+
+              {/* Terms Checkbox placeholder - visual only for matching design */}
+              <View style={styles.termsContainer}>
+                <Ionicons name="checkbox" size={20} color={Colors.primary} />
+                <Text style={styles.termsText}>
+                  I agree to the <Text style={styles.termsLink}>Terms of Service</Text> and <Text style={styles.termsLink}>Privacy Policy</Text>.
+                </Text>
+              </View>
+
+              <Button
+                title="Register Account"
+                onPress={handleRegister}
+                loading={loading}
+                fullWidth
+                size="lg"
+                style={styles.submitButton}
+              />
             </View>
-          )}
 
-          {/* Doctor-only: Specialization */}
-          {role === 'DOCTOR' && (
-            <Input
-              label="Medical Specialization"
-              placeholder="e.g. Cardiologist, Dermatologist"
-              icon="briefcase-outline"
-              autoCapitalize="words"
-              value={specialization}
-              onChangeText={setSpecialization}
-              error={errors.specialization}
-            />
-          )}
+            {/* Login Link */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>
+                Already have an account?{' '}
+              </Text>
+              <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
+                <Text style={styles.footerLink}>Log in</Text>
+              </TouchableOpacity>
+            </View>
 
-          <Button
-            title="Create Account"
-            onPress={handleRegister}
-            loading={loading}
-            fullWidth
-            size="lg"
-          />
-
-          <TouchableOpacity
-            style={styles.linkContainer}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.linkText}>
-              Already have an account?{' '}
-              <Text style={styles.linkBold}>Sign In</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -290,96 +273,87 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
+  keyboardView: {
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
+    paddingTop: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
-  header: {
-    paddingTop: 60,
-    paddingBottom: 36,
-    paddingHorizontal: Spacing.xxl,
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-  },
-  headerTitle: {
-    fontSize: Fonts.sizes.xxl,
-    fontWeight: '800',
-    color: Colors.textInverse,
-  },
-  headerSubtitle: {
-    fontSize: Fonts.sizes.md,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: Spacing.xs,
-  },
-  form: {
-    padding: Spacing.xxl,
-    paddingTop: Spacing.xxl,
-  },
-  roleContainer: {
-    marginBottom: Spacing.xl,
-  },
-  roleLabel: {
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '600',
-    color: Colors.text,
-    marginBottom: Spacing.sm,
-  },
-  roleSelector: {
+  topHeader: {
     flexDirection: 'row',
-    backgroundColor: Colors.surfaceAlt,
-    borderRadius: Radii.md,
-    padding: 4,
-    borderWidth: 1,
-    borderColor: Colors.border,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xxl,
   },
-  roleOption: {
-    flex: 1,
+  topHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.sm,
     gap: Spacing.sm,
   },
-  roleActive: {
-    backgroundColor: Colors.primary,
-    shadowColor: Colors.primary,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+  topHeaderTitle: {
+    fontSize: Fonts.sizes.xl,
+    fontWeight: '700',
+    color: Colors.primary,
   },
-  roleText: {
+  helpButton: {
+    padding: Spacing.sm,
+  },
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radii.xl,
+    padding: Spacing.xl,
+    ...Shadows.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  appName: {
+    fontSize: Fonts.sizes.xxxl,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.xs,
+  },
+  tagline: {
+    fontSize: Fonts.sizes.md,
+    color: Colors.textSecondary,
+    fontWeight: '400',
+  },
+  roleTabsContainer: {
+    flexDirection: 'row',
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.md,
+    padding: 4,
+    marginBottom: Spacing.xl,
+  },
+  roleTab: {
+    flex: 1,
+    paddingVertical: Spacing.md,
+    borderRadius: Radii.sm,
+    alignItems: 'center',
+  },
+  roleTabActive: {
+    backgroundColor: '#2e72da', // primary-container from design
+    ...Shadows.sm,
+  },
+  roleTabText: {
     fontSize: Fonts.sizes.md,
     fontWeight: '600',
     color: Colors.textSecondary,
   },
-  roleTextActive: {
-    color: Colors.textInverse,
+  roleTabTextActive: {
+    color: Colors.surface,
   },
-  infoBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.primaryFaded,
-    borderRadius: Radii.md,
-    padding: Spacing.md,
+  form: {
     marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  infoBannerText: {
-    fontSize: Fonts.sizes.sm,
-    color: Colors.primary,
-    flex: 1,
-    fontWeight: '500',
-    lineHeight: Fonts.lineHeights.sm,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -396,36 +370,61 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: '500',
   },
+  passwordContainer: {
+    marginBottom: Spacing.md,
+  },
   strengthContainer: {
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
+  },
+  strengthBarsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: -Spacing.sm,
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
+    gap: Spacing.xs,
+    height: 4,
+    marginBottom: Spacing.xs,
   },
   strengthBar: {
     flex: 1,
-    flexDirection: 'row',
-    gap: 3,
-  },
-  strengthSegment: {
-    flex: 1,
-    height: 4,
-    borderRadius: 2,
+    borderRadius: Radii.full,
   },
   strengthLabel: {
-    fontSize: Fonts.sizes.xs,
+    fontSize: 10,
+    textTransform: 'uppercase',
     fontWeight: '600',
+    letterSpacing: 0.5,
   },
-  linkContainer: {
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+    paddingHorizontal: Spacing.xs,
+  },
+  termsText: {
+    flex: 1,
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  termsLink: {
+    color: Colors.primary,
+    fontWeight: '500',
+  },
+  submitButton: {
+    marginTop: Spacing.sm,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: Spacing.xxl,
+    marginTop: Spacing.md,
   },
-  linkText: {
+  footerText: {
     fontSize: Fonts.sizes.md,
     color: Colors.textSecondary,
   },
-  linkBold: {
+  footerLink: {
+    fontSize: Fonts.sizes.md,
     color: Colors.primary,
     fontWeight: '700',
   },

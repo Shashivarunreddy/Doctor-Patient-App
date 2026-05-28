@@ -5,18 +5,17 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { TouchableOpacity } from 'react-native';
 import { patientService } from '@/services/patient';
 import { Avatar } from '@/components/Avatar';
 import { Badge, getStatusBadgeVariant } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { LoadingScreen } from '@/components/LoadingScreen';
-import { Colors, Fonts, Spacing, Radii, Shadows, Gradients } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 import type { Appointment } from '@/services/doctor';
 
 export default function PatientAppointmentDetailScreen() {
@@ -79,34 +78,31 @@ export default function PatientAppointmentDetailScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={Gradients.primary}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.header, { paddingTop: insets.top + Spacing.md }]}
-      >
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textInverse} />
+      {/* Header */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <Ionicons name="arrow-back" size={24} color={Colors.text} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Appointment Details</Text>
-      </LinearGradient>
+        <Text style={styles.headerTitle}>Appointment Info</Text>
+        <View style={{ width: 40 }} />
+      </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Status */}
+        {/* Status Badges */}
         <View style={styles.statusRow}>
-          <Badge label={appointment.status} variant={getStatusBadgeVariant(appointment.status)} />
-          <Badge label={appointment.callStatus} variant={getStatusBadgeVariant(appointment.callStatus)} />
-          <Badge label={appointment.paymentStatus} variant={getStatusBadgeVariant(appointment.paymentStatus)} />
+          <Badge label={`Status: ${appointment.status}`} variant={getStatusBadgeVariant(appointment.status)} />
+          <Badge label={`Call: ${appointment.callStatus}`} variant={getStatusBadgeVariant(appointment.callStatus)} />
+          <Badge label={`Payment: ${appointment.paymentStatus}`} variant={getStatusBadgeVariant(appointment.paymentStatus)} />
         </View>
 
-        {/* Doctor */}
+        {/* Doctor Info Card */}
         {doctor && (
           <View style={[styles.card, Shadows.md]}>
-            <View style={styles.cardRow}>
-              <Avatar name={doctor.name} size={52} />
-              <View style={styles.cardInfo}>
-                <Text style={styles.cardName}>Dr. {doctor.name}</Text>
-                <Text style={styles.cardEmail}>{doctor.email}</Text>
+            <View style={styles.doctorInfoRow}>
+              <Avatar name={doctor.name} size={60} />
+              <View style={styles.doctorText}>
+                <Text style={styles.doctorName}>Dr. {doctor.name}</Text>
+                <Text style={styles.doctorEmail}>{doctor.email}</Text>
               </View>
             </View>
           </View>
@@ -116,28 +112,36 @@ export default function PatientAppointmentDetailScreen() {
         <View style={[styles.card, Shadows.md]}>
           <Text style={styles.sectionTitle}>Schedule</Text>
           <View style={styles.infoRow}>
-            <Ionicons name="calendar" size={18} color={Colors.primary} />
+            <View style={styles.iconWrap}>
+              <Ionicons name="calendar" size={18} color={Colors.primary} />
+            </View>
             <Text style={styles.infoText}>
               {slot?.date ? new Date(slot.date + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }) : ''}
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Ionicons name="time" size={18} color={Colors.primary} />
+            <View style={styles.iconWrap}>
+              <Ionicons name="time" size={18} color={Colors.primary} />
+            </View>
             <Text style={styles.infoText}>{slot?.startTime} - {slot?.endTime}</Text>
           </View>
         </View>
 
         {/* Payment */}
         <View style={[styles.card, Shadows.md]}>
-          <Text style={styles.sectionTitle}>Payment</Text>
+          <Text style={styles.sectionTitle}>Payment Summary</Text>
           <View style={styles.infoRow}>
-            <Ionicons name="cash" size={18} color={Colors.success} />
+            <View style={[styles.iconWrap, { backgroundColor: Colors.successLight }]}>
+              <Ionicons name="cash" size={18} color={Colors.success} />
+            </View>
             <Text style={styles.infoText}>₹{appointment.amount}</Text>
           </View>
           {appointment.paymentId && (
             <View style={styles.infoRow}>
-              <Ionicons name="receipt" size={18} color={Colors.textSecondary} />
-              <Text style={styles.infoText}>{appointment.paymentId}</Text>
+              <View style={styles.iconWrap}>
+                <Ionicons name="receipt" size={18} color={Colors.textSecondary} />
+              </View>
+              <Text style={styles.infoText}>TXN: {appointment.paymentId}</Text>
             </View>
           )}
         </View>
@@ -145,12 +149,12 @@ export default function PatientAppointmentDetailScreen() {
         {/* Notes */}
         {appointment.notes && (
           <View style={[styles.card, Shadows.md]}>
-            <Text style={styles.sectionTitle}>Notes</Text>
+            <Text style={styles.sectionTitle}>Symptoms/Notes</Text>
             <Text style={styles.notesText}>{appointment.notes}</Text>
           </View>
         )}
 
-        {/* Actions */}
+        {/* Action buttons */}
         <View style={styles.actions}>
           {canJoin && (
             <Button
@@ -159,7 +163,7 @@ export default function PatientAppointmentDetailScreen() {
               loading={actionLoading}
               fullWidth
               size="lg"
-              icon={<Ionicons name="videocam" size={20} color={Colors.textInverse} />}
+              icon={<Ionicons name="videocam" size={20} color="#fff" />}
             />
           )}
           {canEnd && (
@@ -170,7 +174,7 @@ export default function PatientAppointmentDetailScreen() {
               fullWidth
               size="lg"
               variant="danger"
-              icon={<Ionicons name="call" size={20} color={Colors.danger} />}
+              icon={<Ionicons name="call" size={20} color="#fff" />}
             />
           )}
         </View>
@@ -180,26 +184,99 @@ export default function PatientAppointmentDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
   header: {
-    paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.xl,
-    borderBottomLeftRadius: 24, borderBottomRightRadius: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.sm,
+    backgroundColor: Colors.background,
   },
   backBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  headerTitle: { fontSize: Fonts.sizes.xl, fontWeight: '800', color: Colors.textInverse, marginTop: Spacing.md },
-  content: { padding: Spacing.lg, paddingBottom: 40 },
-  statusRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.lg, flexWrap: 'wrap' },
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.xl, marginBottom: Spacing.md },
-  cardRow: { flexDirection: 'row', alignItems: 'center' },
-  cardInfo: { marginLeft: Spacing.md, flex: 1 },
-  cardName: { fontSize: Fonts.sizes.lg, fontWeight: '700', color: Colors.text },
-  cardEmail: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: 2 },
-  sectionTitle: { fontSize: Fonts.sizes.md, fontWeight: '700', color: Colors.text, marginBottom: Spacing.md },
-  infoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: Spacing.sm },
-  infoText: { fontSize: Fonts.sizes.md, color: Colors.textSecondary },
-  notesText: { fontSize: Fonts.sizes.md, color: Colors.text, lineHeight: Fonts.lineHeights.md },
-  actions: { gap: Spacing.md, marginTop: Spacing.lg },
+  headerTitle: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '700',
+    color: Colors.text,
+  },
+  content: {
+    padding: Spacing.xl,
+    paddingBottom: 60,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  doctorInfoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  doctorText: {
+    marginLeft: Spacing.md,
+    flex: 1,
+  },
+  doctorName: {
+    fontSize: Fonts.sizes.lg,
+    fontWeight: '700',
+    color: Colors.text,
+  },
+  doctorEmail: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  sectionTitle: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.md,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  iconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  infoText: {
+    fontSize: Fonts.sizes.md,
+    color: Colors.textSecondary,
+    fontWeight: '500',
+  },
+  notesText: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.text,
+    lineHeight: Fonts.lineHeights.md,
+  },
+  actions: {
+    marginTop: Spacing.xl,
+    gap: Spacing.md,
+  },
 });

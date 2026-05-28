@@ -102,134 +102,219 @@ export default function PatientProfileScreen() {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={{ paddingBottom: 40 }}
+      contentContainerStyle={{ paddingBottom: 60 }}
       showsVerticalScrollIndicator={false}
     >
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
-        <Avatar name={user?.name || 'U'} size={72} />
-        <Text style={styles.name}>{user?.name}</Text>
-        <Text style={styles.email}>{user?.email}</Text>
-        <View style={styles.roleBadge}>
-          <Text style={styles.roleText}>Patient</Text>
+        <View style={styles.avatarWrapper}>
+          <Avatar name={user?.name || 'U'} size={88} />
+          <TouchableOpacity
+            style={[styles.editAvatarBtn, Shadows.md]}
+            onPress={() => setEditing(!editing)}
+            activeOpacity={0.8}
+          >
+            <Ionicons name={editing ? 'close' : 'create'} size={18} color="#fff" />
+          </TouchableOpacity>
         </View>
+        <Text style={styles.name}>{user?.name}</Text>
+        <Text style={styles.email}>Patient ID: #PAT-{user?.id?.slice(-4).toUpperCase()}</Text>
       </View>
 
       <View style={styles.content}>
-        {/* Actions */}
-        <View style={styles.actionsRow}>
-          {!editing ? (
-            <Button
-              title="Edit Profile"
-              onPress={() => setEditing(true)}
-              variant="secondary"
-              icon={<Ionicons name="create-outline" size={18} color={Colors.primary} />}
-              size="sm"
-            />
-          ) : (
-            <Button
-              title="Cancel"
-              onPress={() => {
-                setEditing(false);
-                fetchProfile();
-              }}
-              variant="ghost"
-              size="sm"
-            />
-          )}
-        </View>
-
-        {/* Profile Fields */}
-        <View style={[styles.card, Shadows.md]}>
-          <Text style={styles.sectionTitle}>Personal Information</Text>
-
-          <Input
-            label="Phone"
-            placeholder="Enter phone number"
-            icon="call-outline"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={setPhone}
-            editable={editing}
-          />
-
-          <Text style={styles.fieldLabel}>Gender</Text>
-          <View style={styles.genderRow}>
-            {genderOptions.map((g) => (
-              <TouchableOpacity
-                key={g}
-                style={[styles.genderOption, gender === g && styles.genderActive]}
-                onPress={() => editing && setGender(g)}
-                disabled={!editing}
-              >
-                <Text
-                  style={[styles.genderText, gender === g && styles.genderTextActive]}
-                >
-                  {g}
-                </Text>
+        {editing ? (
+          // Edit Mode Form
+          <View style={styles.editForm}>
+            <View style={styles.editHeaderRow}>
+              <Text style={styles.sectionTitle}>Edit Profile Info</Text>
+              <TouchableOpacity onPress={() => setEditing(false)}>
+                <Text style={styles.cancelLink}>Cancel</Text>
               </TouchableOpacity>
-            ))}
+            </View>
+
+            <View style={[styles.card, Shadows.sm]}>
+              <Input
+                label="Phone"
+                placeholder="Enter phone number"
+                icon="call-outline"
+                keyboardType="phone-pad"
+                value={phone}
+                onChangeText={setPhone}
+              />
+
+              <Text style={styles.fieldLabel}>Gender</Text>
+              <View style={styles.genderRow}>
+                {genderOptions.map((g) => (
+                  <TouchableOpacity
+                    key={g}
+                    style={[styles.genderOption, gender === g && styles.genderActive]}
+                    onPress={() => setGender(g)}
+                  >
+                    <Text
+                      style={[styles.genderText, gender === g && styles.genderTextActive]}
+                    >
+                      {g}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Input
+                label="Blood Group"
+                placeholder="e.g. A+, B-, O+"
+                icon="water-outline"
+                value={bloodGroup}
+                onChangeText={setBloodGroup}
+              />
+
+              <Input
+                label="Address"
+                placeholder="Enter your address"
+                icon="location-outline"
+                value={address}
+                onChangeText={setAddress}
+                multiline
+              />
+            </View>
+
+            <View style={[styles.card, Shadows.sm]}>
+              <Text style={styles.cardSubTitle}>Medical & Health Details</Text>
+              <Input
+                label="Allergies"
+                placeholder="Comma separated (e.g. Peanuts, Penicillin)"
+                icon="alert-circle-outline"
+                value={allergies}
+                onChangeText={setAllergies}
+              />
+
+              <Input
+                label="Medical History"
+                placeholder="Any relevant medical history"
+                icon="document-text-outline"
+                value={medicalHistory}
+                onChangeText={setMedicalHistory}
+                multiline
+                numberOfLines={4}
+                style={{ minHeight: 80, textAlignVertical: 'top' }}
+              />
+            </View>
+
+            <Button
+              title="Save Changes"
+              onPress={handleSave}
+              loading={saving}
+              fullWidth
+              size="lg"
+            />
           </View>
+        ) : (
+          // View Mode (Bento Grid)
+          <View style={styles.bentoContainer}>
+            {/* Personal Information Bento Grid */}
+            <Text style={styles.bentoSectionTitle}>Personal Information</Text>
+            <View style={styles.bentoGrid}>
+              {/* Email Card */}
+              <View style={[styles.bentoCard, Shadows.sm]}>
+                <View style={styles.bentoIconWrap}>
+                  <Ionicons name="mail" size={20} color={Colors.primary} />
+                </View>
+                <View style={styles.bentoInfo}>
+                  <Text style={styles.bentoLabel}>Email</Text>
+                  <Text style={styles.bentoValue} numberOfLines={1}>{user?.email}</Text>
+                </View>
+              </View>
 
-          <Input
-            label="Blood Group"
-            placeholder="e.g. A+, B-, O+"
-            icon="water-outline"
-            value={bloodGroup}
-            onChangeText={setBloodGroup}
-            editable={editing}
-          />
+              {/* Phone Card */}
+              <View style={[styles.bentoCard, Shadows.sm]}>
+                <View style={styles.bentoIconWrap}>
+                  <Ionicons name="call" size={20} color={Colors.primary} />
+                </View>
+                <View style={styles.bentoInfo}>
+                  <Text style={styles.bentoLabel}>Phone</Text>
+                  <Text style={styles.bentoValue}>{phone || 'Not provided'}</Text>
+                </View>
+              </View>
 
-          <Input
-            label="Address"
-            placeholder="Enter your address"
-            icon="location-outline"
-            value={address}
-            onChangeText={setAddress}
-            editable={editing}
-            multiline
-          />
-        </View>
+              {/* Gender Card */}
+              <View style={[styles.bentoCard, Shadows.sm]}>
+                <View style={styles.bentoIconWrap}>
+                  <Ionicons name="person" size={20} color={Colors.primary} />
+                </View>
+                <View style={styles.bentoInfo}>
+                  <Text style={styles.bentoLabel}>Gender</Text>
+                  <Text style={styles.bentoValue}>{gender || 'Not provided'}</Text>
+                </View>
+              </View>
 
-        <View style={[styles.card, Shadows.md]}>
-          <Text style={styles.sectionTitle}>Medical Information</Text>
+              {/* Address Card */}
+              <View style={[styles.bentoCard, Shadows.sm, { width: '100%' }]}>
+                <View style={styles.bentoIconWrap}>
+                  <Ionicons name="location" size={20} color={Colors.primary} />
+                </View>
+                <View style={styles.bentoInfo}>
+                  <Text style={styles.bentoLabel}>Address</Text>
+                  <Text style={styles.bentoValue}>{address || 'Not provided'}</Text>
+                </View>
+              </View>
+            </View>
 
-          <Input
-            label="Allergies"
-            placeholder="Comma separated (e.g. Peanuts, Penicillin)"
-            icon="alert-circle-outline"
-            value={allergies}
-            onChangeText={setAllergies}
-            editable={editing}
-          />
+            {/* Medical Overview Bento Card */}
+            <Text style={styles.bentoSectionTitle}>Medical Overview</Text>
+            <View style={styles.medicalRow}>
+              <View style={[styles.medicalItem, Shadows.sm, { backgroundColor: Colors.primaryFaded }]}>
+                <Text style={styles.medicalLabel}>Blood Group</Text>
+                <Text style={[styles.medicalValue, { color: Colors.primary }]}>{bloodGroup || 'N/A'}</Text>
+              </View>
+              <View style={[styles.medicalItem, Shadows.sm, { backgroundColor: Colors.dangerLight }]}>
+                <Text style={[styles.medicalLabel, { color: Colors.danger }]}>Allergies</Text>
+                <Text style={[styles.medicalValue, { color: Colors.danger }]} numberOfLines={1}>
+                  {allergies || 'None'}
+                </Text>
+              </View>
+            </View>
 
-          <Input
-            label="Medical History"
-            placeholder="Any relevant medical history"
-            icon="document-text-outline"
-            value={medicalHistory}
-            onChangeText={setMedicalHistory}
-            editable={editing}
-            multiline
-            numberOfLines={4}
-            style={{ minHeight: 80, textAlignVertical: 'top' }}
-          />
-        </View>
+            {/* Medical History */}
+            {medicalHistory ? (
+              <View style={[styles.historyCard, Shadows.sm]}>
+                <Text style={styles.historyTitle}>Past Medical History</Text>
+                <Text style={styles.historyText}>{medicalHistory}</Text>
+              </View>
+            ) : null}
 
-        {editing && (
-          <Button
-            title="Save Changes"
-            onPress={handleSave}
-            loading={saving}
-            fullWidth
-            size="lg"
-          />
+            {/* Settings & Action Card */}
+            <Text style={styles.bentoSectionTitle}>Account Settings</Text>
+            <View style={[styles.settingsCard, Shadows.md]}>
+              <TouchableOpacity style={styles.settingsRow} activeOpacity={0.7}>
+                <View style={styles.settingsLabelWrap}>
+                  <View style={styles.settingsIconWrap}>
+                    <Ionicons name="card-outline" size={18} color={Colors.primary} />
+                  </View>
+                  <Text style={styles.settingsLabel}>Payment Methods</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
+              </TouchableOpacity>
+              <View style={styles.settingsDivider} />
+              <TouchableOpacity style={styles.settingsRow} activeOpacity={0.7}>
+                <View style={styles.settingsLabelWrap}>
+                  <View style={styles.settingsIconWrap}>
+                    <Ionicons name="lock-closed-outline" size={18} color={Colors.primary} />
+                  </View>
+                  <Text style={styles.settingsLabel}>Privacy & Security</Text>
+                </View>
+                <Ionicons name="chevron-forward" size={18} color={Colors.textTertiary} />
+              </TouchableOpacity>
+              <View style={styles.settingsDivider} />
+              <TouchableOpacity style={styles.settingsRow} activeOpacity={0.7} onPress={handleLogout}>
+                <View style={styles.settingsLabelWrap}>
+                  <View style={[styles.settingsIconWrap, { backgroundColor: Colors.dangerLight }]}>
+                    <Ionicons name="log-out-outline" size={18} color={Colors.danger} />
+                  </View>
+                  <Text style={[styles.settingsLabel, { color: Colors.danger }]}>Log Out</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
         )}
-
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={20} color={Colors.danger} />
-          <Text style={styles.logoutText}>Logout</Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -242,53 +327,71 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    paddingBottom: Spacing.xxl,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    paddingBottom: Spacing.xl,
+    backgroundColor: Colors.background,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginBottom: Spacing.md,
+  },
+  editAvatarBtn: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: Colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.background,
   },
   name: {
     fontSize: Fonts.sizes.xl,
     fontWeight: '800',
     color: Colors.text,
-    marginTop: Spacing.md,
   },
   email: {
     fontSize: Fonts.sizes.sm,
     color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  roleBadge: {
-    marginTop: Spacing.sm,
-    backgroundColor: Colors.primaryFaded,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xs,
-    borderRadius: Radii.full,
-  },
-  roleText: {
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '700',
-    color: Colors.primary,
-    textTransform: 'uppercase',
+    marginTop: 4,
   },
   content: {
-    padding: Spacing.xl,
+    paddingHorizontal: Spacing.xl,
   },
-  actionsRow: {
+  editForm: {
+    marginBottom: Spacing.xl,
+  },
+  editHeaderRow: {
     flexDirection: 'row',
-    marginBottom: Spacing.lg,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  cancelLink: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '600',
+    color: Colors.primary,
   },
   card: {
     backgroundColor: Colors.card,
     borderRadius: Radii.lg,
     padding: Spacing.xl,
     marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  cardSubTitle: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.lg,
   },
   sectionTitle: {
     fontSize: Fonts.sizes.lg,
     fontWeight: '700',
     color: Colors.text,
-    marginBottom: Spacing.lg,
   },
   fieldLabel: {
     fontSize: Fonts.sizes.sm,
@@ -321,17 +424,130 @@ const styles = StyleSheet.create({
   genderTextActive: {
     color: Colors.textInverse,
   },
-  logoutButton: {
+  bentoContainer: {
+    marginBottom: Spacing.xl,
+  },
+  bentoSectionTitle: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '700',
+    color: Colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: Spacing.sm,
+    marginTop: Spacing.lg,
+  },
+  bentoGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+  },
+  bentoCard: {
+    width: '47.5%',
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    marginTop: Spacing.xxl,
-    paddingVertical: Spacing.lg,
+    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
   },
-  logoutText: {
+  bentoIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bentoInfo: {
+    flex: 1,
+  },
+  bentoLabel: {
+    fontSize: Fonts.sizes.xs - 1,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+  },
+  bentoValue: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '700',
+    color: Colors.text,
+    marginTop: 2,
+  },
+  medicalRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  medicalItem: {
+    flex: 1,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  medicalLabel: {
+    fontSize: Fonts.sizes.xs,
+    fontWeight: '700',
+    color: Colors.textSecondary,
+    marginBottom: 4,
+  },
+  medicalValue: {
+    fontSize: Fonts.sizes.xl,
+    fontWeight: '800',
+  },
+  historyCard: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginTop: Spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  historyTitle: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.text,
+    marginBottom: Spacing.sm,
+  },
+  historyText: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    lineHeight: Fonts.lineHeights.md,
+  },
+  settingsCard: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
+  },
+  settingsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  settingsLabelWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  settingsIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: Colors.primaryFaded,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  settingsLabel: {
     fontSize: Fonts.sizes.md,
     fontWeight: '600',
-    color: Colors.danger,
+    color: Colors.text,
+  },
+  settingsDivider: {
+    height: 1,
+    backgroundColor: Colors.borderLight,
+    marginLeft: Spacing.xl + 36 + Spacing.md,
   },
 });
