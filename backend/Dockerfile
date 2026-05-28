@@ -34,7 +34,7 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
 # Copy generated Prisma client
-COPY --from=builder /app/src/generated ./src/generated
+# COPY --from=builder /app/src/generated ./src/generated
 
 EXPOSE 5000
 
