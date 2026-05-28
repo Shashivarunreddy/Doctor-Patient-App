@@ -3,20 +3,27 @@ import {
   View,
   Text,
   StyleSheet,
-  SectionList,
+  FlatList,
   RefreshControl,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { patientService } from '@/services/patient';
 import { AppointmentCard } from '@/components/AppointmentCard';
 import { LoadingScreen, EmptyState } from '@/components/LoadingScreen';
-import { Colors, Fonts, Spacing } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 import type { Appointment } from '@/services/doctor';
+
+type TabType = 'CONFIRMED' | 'COMPLETED' | 'CANCELLED';
 
 export default function PatientAppointmentsScreen() {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [activeTab, setActiveTab] = useState<TabType>('CONFIRMED');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -59,42 +66,60 @@ export default function PatientAppointmentsScreen() {
     }
   };
 
-  const sections = [
-    {
-      title: 'Upcoming',
-      data: appointments.filter((a) => a.status === 'CONFIRMED'),
-    },
-    {
-      title: 'Completed',
-      data: appointments.filter((a) => a.status === 'COMPLETED'),
-    },
-    {
-      title: 'Cancelled',
-      data: appointments.filter((a) => a.status === 'CANCELLED'),
-    },
-  ].filter((s) => s.data.length > 0);
+  const filteredAppointments = appointments.filter((a) => a.status === activeTab);
 
   if (loading) return <LoadingScreen />;
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
-        <Text style={styles.title}>My Appointments</Text>
-        <Text style={styles.subtitle}>{appointments.length} total</Text>
+        <View style={styles.headerTitleRow}>
+          <Text style={styles.title}>Appointments</Text>
+          <TouchableOpacity style={styles.filterButton} activeOpacity={0.7}>
+            <Ionicons name="funnel-outline" size={20} color={Colors.primary} />
+          </TouchableOpacity>
+        </View>
       </View>
-      <SectionList
-        sections={sections}
+
+      {/* Tabs */}
+      <View style={styles.tabContainer}>
+        <View style={styles.segmentedControl}>
+          {(['CONFIRMED', 'COMPLETED', 'CANCELLED'] as TabType[]).map((tab) => {
+            const isActive = activeTab === tab;
+            const label = tab === 'CONFIRMED' ? 'Upcoming' : tab === 'COMPLETED' ? 'Completed' : 'Cancelled';
+            return (
+              <TouchableOpacity
+                key={tab}
+                style={[
+                  styles.tabButton,
+                  isActive && styles.tabButtonActive,
+                  isActive && Shadows.sm,
+                ]}
+                onPress={() => setActiveTab(tab)}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+                  {label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+      </View>
+
+      {/* List */}
+      <FlatList
+        data={filteredAppointments}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <AppointmentCard
             appointment={item}
             role="patient"
+            onPress={() => router.push(`/(patient)/appointment/${item.id}`)}
             onJoinCall={() => handleJoinCall(item.id)}
             onEndCall={() => handleEndCall(item.id)}
           />
-        )}
-        renderSectionHeader={({ section }) => (
-          <Text style={styles.sectionTitle}>{section.title}</Text>
         )}
         contentContainerStyle={styles.list}
         refreshControl={
@@ -109,12 +134,11 @@ export default function PatientAppointmentsScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            title="No Appointments"
-            subtitle="Book your first appointment by browsing available doctors"
+            title={activeTab === 'CONFIRMED' ? 'No Upcoming Appointments' : activeTab === 'COMPLETED' ? 'No Completed Appointments' : 'No Cancelled Appointments'}
+            subtitle={activeTab === 'CONFIRMED' ? 'Book your next consultation by browsing doctors' : 'Your session history will appear here'}
           />
         }
         showsVerticalScrollIndicator={false}
-        stickySectionHeadersEnabled={false}
       />
     </View>
   );
@@ -126,30 +150,60 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
   header: {
-    paddingHorizontal: Spacing.xxl,
-    paddingBottom: Spacing.lg,
-    backgroundColor: Colors.surface,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.borderLight,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.sm,
+    backgroundColor: Colors.background,
+  },
+  headerTitleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   title: {
     fontSize: Fonts.sizes.xxl,
     fontWeight: '800',
     color: Colors.text,
   },
-  subtitle: {
-    fontSize: Fonts.sizes.sm,
-    color: Colors.textSecondary,
-    marginTop: 2,
+  filterButton: {
+    width: 40,
+    height: 40,
+    borderRadius: Radii.full,
+    backgroundColor: Colors.surface,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  sectionTitle: {
-    fontSize: Fonts.sizes.lg,
+  tabContainer: {
+    paddingHorizontal: Spacing.xl,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+  },
+  segmentedControl: {
+    flexDirection: 'row',
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.lg,
+    padding: 4,
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: Spacing.md - 2,
+    borderRadius: Radii.md,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabButtonActive: {
+    backgroundColor: Colors.primary,
+  },
+  tabText: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '600',
+    color: Colors.textSecondary,
+  },
+  tabTextActive: {
+    color: '#fff',
     fontWeight: '700',
-    color: Colors.text,
-    marginBottom: Spacing.md,
-    marginTop: Spacing.lg,
   },
   list: {
-    padding: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
   },
 });

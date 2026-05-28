@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { adminService } from '@/services/admin';
 import { AppointmentCard } from '@/components/AppointmentCard';
 import { LoadingScreen, EmptyState } from '@/components/LoadingScreen';
-import { Colors, Fonts, Spacing } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii } from '@/constants/theme';
 import type { Appointment } from '@/services/doctor';
 
 export default function AdminAppointmentsScreen() {
@@ -59,9 +59,10 @@ export default function AdminAppointmentsScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}>
+      {/* Frameless Header */}
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
         <Text style={styles.title}>All Appointments</Text>
-        <Text style={styles.subtitle}>{appointments.length} appointments</Text>
+        <Text style={styles.subtitle}>{appointments.length} appointments booked</Text>
       </View>
 
       <FlatList
@@ -78,7 +79,10 @@ export default function AdminAppointmentsScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => { setRefreshing(true); fetchAppointments(); }}
+            onRefresh={() => {
+              setRefreshing(true);
+              fetchAppointments();
+            }}
             tintColor={Colors.primary}
           />
         }
@@ -90,12 +94,28 @@ export default function AdminAppointmentsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  header: {
-    paddingHorizontal: Spacing.xxl, paddingBottom: Spacing.lg,
-    backgroundColor: Colors.surface, borderBottomWidth: 1, borderBottomColor: Colors.borderLight,
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
   },
-  title: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.text },
-  subtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginTop: 2 },
-  list: { padding: Spacing.lg },
+  header: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.md,
+    backgroundColor: Colors.background,
+  },
+  title: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.text,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.textSecondary,
+    marginTop: 2,
+  },
+  list: {
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xxxl,
+  },
 });
+

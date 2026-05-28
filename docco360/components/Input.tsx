@@ -83,16 +83,21 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
+    backgroundColor: '#F1F5F9',
     borderRadius: Radii.md,
     borderWidth: 1.5,
-    borderColor: Colors.border,
+    borderColor: 'transparent',
     paddingHorizontal: Spacing.lg,
     minHeight: 52,
   },
   inputFocused: {
     borderColor: Colors.primary,
     backgroundColor: Colors.surface,
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   inputError: {
     borderColor: Colors.danger,

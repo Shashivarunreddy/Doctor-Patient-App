@@ -7,15 +7,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  Alert,
+  SafeAreaView,
 } from 'react-native';
 import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { Colors, Fonts, Spacing, Radii, Gradients } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 import { ApiError } from '@/services/api';
 
 export default function LoginScreen() {
@@ -59,146 +58,156 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.keyboardView}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        {/* Header */}
-        <LinearGradient
-          colors={Gradients.primary}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <View style={styles.logoContainer}>
-            <View style={styles.logoCircle}>
-              <Ionicons name="medical" size={32} color={Colors.primary} />
+          {/* Decorative Background Elements could go here */}
+
+          {/* Main Auth Card */}
+          <View style={styles.card}>
+            {/* Header & Branding */}
+            <View style={styles.header}>
+              <View style={styles.logoContainer}>
+                <Ionicons name="medical" size={32} color={Colors.textInverse} />
+              </View>
+              <Text style={styles.appName}>Docco360</Text>
+              <Text style={styles.tagline}>Sign in to your patient dashboard</Text>
+            </View>
+
+            {/* Form */}
+            <View style={styles.form}>
+              {errors.general && (
+                <View style={styles.errorBanner}>
+                  <Ionicons name="alert-circle" size={18} color={Colors.danger} />
+                  <Text style={styles.errorBannerText}>{errors.general}</Text>
+                </View>
+              )}
+
+              <Input
+                label="Email Address"
+                placeholder="name@example.com"
+                icon="mail-outline"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoComplete="email"
+                value={email}
+                onChangeText={setEmail}
+                error={errors.email}
+              />
+
+              <View style={styles.passwordContainer}>
+                <View style={styles.passwordHeader}>
+                  <Text style={styles.inputLabel}>Password</Text>
+                  <TouchableOpacity>
+                    <Text style={styles.forgotPassword}>Forgot?</Text>
+                  </TouchableOpacity>
+                </View>
+                <Input
+                  placeholder="••••••••"
+                  icon="lock-closed-outline"
+                  secureTextEntry={!showPassword}
+                  rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  onRightIconPress={() => setShowPassword(!showPassword)}
+                  value={password}
+                  onChangeText={setPassword}
+                  error={errors.password}
+                />
+              </View>
+
+              <Button
+                title="Sign In"
+                onPress={handleLogin}
+                loading={loading}
+                fullWidth
+                size="lg"
+                style={styles.submitButton}
+              />
+            </View>
+
+            {/* Register Link */}
+            <View style={styles.footer}>
+              <Text style={styles.footerText}>
+                New to Docco360?{' '}
+              </Text>
+              <TouchableOpacity onPress={() => router.push('/(auth)/register')}>
+                <Text style={styles.footerLink}>Create an account</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Trust Badges */}
+            <View style={styles.trustContainer}>
+              <View style={styles.trustBadge}>
+                <Ionicons name="shield-checkmark-outline" size={16} color={Colors.textSecondary} />
+                <Text style={styles.trustText}>HIPAA COMPLIANT</Text>
+              </View>
+              <View style={styles.trustBadge}>
+                <Ionicons name="lock-closed-outline" size={16} color={Colors.textSecondary} />
+                <Text style={styles.trustText}>SECURE SSL</Text>
+              </View>
             </View>
           </View>
-          <Text style={styles.appName}>Docco360</Text>
-          <Text style={styles.tagline}>Your Health, Our Priority</Text>
-        </LinearGradient>
-
-        {/* Form */}
-        <View style={styles.form}>
-          <Text style={styles.formTitle}>Welcome Back</Text>
-          <Text style={styles.formSubtitle}>Sign in to continue</Text>
-
-          {errors.general && (
-            <View style={styles.errorBanner}>
-              <Ionicons name="alert-circle" size={18} color={Colors.danger} />
-              <Text style={styles.errorBannerText}>{errors.general}</Text>
-            </View>
-          )}
-
-          <Input
-            label="Email"
-            placeholder="Enter your email"
-            icon="mail-outline"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoComplete="email"
-            value={email}
-            onChangeText={setEmail}
-            error={errors.email}
-          />
-
-          <Input
-            label="Password"
-            placeholder="Enter your password"
-            icon="lock-closed-outline"
-            secureTextEntry={!showPassword}
-            rightIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
-            onRightIconPress={() => setShowPassword(!showPassword)}
-            value={password}
-            onChangeText={setPassword}
-            error={errors.password}
-          />
-
-          <Button
-            title="Sign In"
-            onPress={handleLogin}
-            loading={loading}
-            fullWidth
-            size="lg"
-          />
-
-          <TouchableOpacity
-            style={styles.linkContainer}
-            onPress={() => router.push('/(auth)/register')}
-          >
-            <Text style={styles.linkText}>
-              Don't have an account?{' '}
-              <Text style={styles.linkBold}>Register</Text>
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primaryFaded, // Using the light bluish background from the design
+  },
+  keyboardView: {
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radii.xl,
+    padding: Spacing.xl,
+    ...Shadows.lg,
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
   },
   header: {
-    paddingTop: 80,
-    paddingBottom: 48,
     alignItems: 'center',
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+    marginBottom: Spacing.xl,
   },
   logoContainer: {
-    marginBottom: Spacing.lg,
-  },
-  logoCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    backgroundColor: Colors.textInverse,
+    width: 64,
+    height: 64,
+    backgroundColor: Colors.primary,
+    borderRadius: Radii.md,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 8,
+    marginBottom: Spacing.md,
+    ...Shadows.md,
   },
   appName: {
     fontSize: Fonts.sizes.xxxl,
-    fontWeight: '800',
-    color: Colors.textInverse,
-    letterSpacing: -0.5,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginBottom: Spacing.xs,
   },
   tagline: {
     fontSize: Fonts.sizes.md,
-    color: 'rgba(255,255,255,0.8)',
-    marginTop: Spacing.xs,
+    color: Colors.textSecondary,
+    fontWeight: '400',
   },
   form: {
-    padding: Spacing.xxl,
-    paddingTop: Spacing.xxxl,
-  },
-  formTitle: {
-    fontSize: Fonts.sizes.xxl,
-    fontWeight: '800',
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  formSubtitle: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xxl,
+    marginBottom: Spacing.lg,
   },
   errorBanner: {
     flexDirection: 'row',
@@ -215,16 +224,61 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: '500',
   },
-  linkContainer: {
-    alignItems: 'center',
-    marginTop: Spacing.xxl,
+  passwordContainer: {
+    marginTop: Spacing.sm,
   },
-  linkText: {
+  passwordHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  inputLabel: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '500',
+    color: Colors.text,
+  },
+  forgotPassword: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.primary,
+    fontWeight: '500',
+  },
+  submitButton: {
+    marginTop: Spacing.md,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  footerText: {
     fontSize: Fonts.sizes.md,
     color: Colors.textSecondary,
   },
-  linkBold: {
+  footerLink: {
+    fontSize: Fonts.sizes.md,
     color: Colors.primary,
-    fontWeight: '700',
+    fontWeight: '600',
+  },
+  trustContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Spacing.xl,
+    paddingTop: Spacing.xl,
+    borderTopWidth: 1,
+    borderTopColor: Colors.borderLight,
+  },
+  trustBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+  },
+  trustText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.textSecondary,
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
 });

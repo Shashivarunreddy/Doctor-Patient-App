@@ -13,7 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
-import { Colors, Fonts, Spacing, Radii } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
 
 export default function ContactAdminScreen() {
   const insets = useSafeAreaInsets();
@@ -55,7 +55,7 @@ export default function ContactAdminScreen() {
   return (
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <LinearGradient
-        colors={['#FFF7ED', '#FFFBEB', '#FFFFFF']}
+        colors={['#FFF7ED', '#FFFBEB', Colors.background]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={StyleSheet.absoluteFill}
@@ -65,7 +65,7 @@ export default function ContactAdminScreen() {
         {/* Icon */}
         <Animated.View style={[styles.iconRing, { transform: [{ scale: pulseAnim }] }]}>
           <LinearGradient
-            colors={['#6366f1', '#4f46e5']}
+            colors={['#6366f1', Colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.iconGradient}
@@ -78,7 +78,7 @@ export default function ContactAdminScreen() {
         <Text style={styles.subtitle}>Your profile is verified!</Text>
 
         {/* Status card */}
-        <View style={styles.card}>
+        <View style={[styles.card, Shadows.md]}>
           <View style={styles.statusRow}>
             <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
             <Text style={styles.statusText}>Account & documents fully verified</Text>
@@ -105,7 +105,7 @@ export default function ContactAdminScreen() {
         {/* Doctor info */}
         {user && (
           <View style={styles.profileChip}>
-            <Ionicons name="person-circle-outline" size={20} color={Colors.primary} />
+            <Ionicons name="person-circle" size={20} color={Colors.primary} />
             <Text style={styles.profileText}>Dr. {user.name} • {user.email}</Text>
           </View>
         )}
@@ -126,61 +126,157 @@ export default function ContactAdminScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background },
-  content: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: Spacing.xxl, paddingVertical: Spacing.xxl },
+  container: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.xl,
+  },
 
   iconRing: {
-    width: 120, height: 120, borderRadius: 60,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     backgroundColor: 'rgba(99,102,241,0.08)',
-    justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
   },
   iconGradient: {
-    width: 96, height: 96, borderRadius: 48,
-    justifyContent: 'center', alignItems: 'center',
-    shadowColor: '#6366f1', shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35, shadowRadius: 16, elevation: 10,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: Colors.primary,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.2,
+    shadowRadius: 16,
+    elevation: 8,
   },
 
-  title: { fontSize: Fonts.sizes.xxl, fontWeight: '800', color: Colors.text, textAlign: 'center', letterSpacing: -0.5, marginBottom: Spacing.xs },
-  subtitle: { fontSize: Fonts.sizes.md, color: Colors.success, textAlign: 'center', fontWeight: '600', marginBottom: Spacing.xl },
+  title: {
+    fontSize: Fonts.sizes.xxl,
+    fontWeight: '800',
+    color: Colors.text,
+    textAlign: 'center',
+    letterSpacing: -0.5,
+    marginBottom: Spacing.xs,
+  },
+  subtitle: {
+    fontSize: Fonts.sizes.md,
+    color: Colors.success,
+    textAlign: 'center',
+    fontWeight: '600',
+    marginBottom: Spacing.xl,
+  },
 
   card: {
-    width: '100%', backgroundColor: Colors.surface, borderRadius: Radii.lg,
-    padding: Spacing.lg, marginBottom: Spacing.lg,
-    borderWidth: 1, borderColor: Colors.borderLight,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
+    width: '100%',
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
   },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, paddingVertical: Spacing.xs },
-  statusText: { fontSize: Fonts.sizes.sm, fontWeight: '600', color: Colors.text, flex: 1 },
-  divider: { height: 1, backgroundColor: Colors.borderLight, marginVertical: Spacing.sm },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    paddingVertical: Spacing.xs,
+  },
+  statusText: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '600',
+    color: Colors.text,
+    flex: 1,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#f1f5f9',
+    marginVertical: Spacing.sm,
+  },
 
   infoCard: {
-    width: '100%', backgroundColor: Colors.primaryFaded, borderRadius: Radii.md,
-    padding: Spacing.lg, marginBottom: Spacing.lg,
+    width: '100%',
+    backgroundColor: Colors.primaryFaded,
+    borderRadius: Radii.md,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
-  infoTitle: { fontSize: Fonts.sizes.sm, fontWeight: '700', color: Colors.primary, marginBottom: Spacing.sm },
-  infoText: { fontSize: Fonts.sizes.xs, color: Colors.primary, lineHeight: Fonts.lineHeights.sm },
+  infoTitle: {
+    fontSize: Fonts.sizes.sm,
+    fontWeight: '700',
+    color: Colors.primary,
+    marginBottom: Spacing.sm,
+  },
+  infoText: {
+    fontSize: Fonts.sizes.xs,
+    color: Colors.primary,
+    lineHeight: Fonts.lineHeights.sm,
+  },
 
   profileChip: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
-    backgroundColor: Colors.surfaceAlt, borderRadius: Radii.full,
-    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, marginBottom: Spacing.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    backgroundColor: Colors.surface,
+    borderRadius: Radii.full,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    marginBottom: Spacing.xl,
+    borderWidth: 1.5,
+    borderColor: 'rgba(194, 198, 213, 0.3)',
   },
-  profileText: { fontSize: Fonts.sizes.sm, color: Colors.text, fontWeight: '500' },
+  profileText: {
+    fontSize: Fonts.sizes.sm,
+    color: Colors.text,
+    fontWeight: '500',
+  },
 
   refreshButton: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
-    paddingVertical: Spacing.md, paddingHorizontal: Spacing.xl,
-    borderRadius: Radii.full, borderWidth: 1.5, borderColor: Colors.primary,
-    backgroundColor: 'transparent', marginBottom: Spacing.md, width: '100%', justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: Radii.full,
+    borderWidth: 1.5,
+    borderColor: Colors.primary,
+    backgroundColor: 'transparent',
+    marginBottom: Spacing.md,
+    width: '100%',
+    justifyContent: 'center',
   },
-  refreshButtonText: { fontSize: Fonts.sizes.md, fontWeight: '700', color: Colors.primary },
+  refreshButtonText: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.primary,
+  },
 
   logoutButton: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
-    paddingVertical: Spacing.md, paddingHorizontal: Spacing.xl,
-    borderRadius: Radii.full, borderWidth: 1.5, borderColor: Colors.danger,
-    backgroundColor: 'transparent', width: '100%', justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: Radii.full,
+    borderWidth: 1.5,
+    borderColor: Colors.danger,
+    backgroundColor: 'transparent',
+    width: '100%',
+    justifyContent: 'center',
   },
-  logoutButtonText: { fontSize: Fonts.sizes.md, fontWeight: '700', color: Colors.danger },
+  logoutButtonText: {
+    fontSize: Fonts.sizes.md,
+    fontWeight: '700',
+    color: Colors.danger,
+  },
 });
+

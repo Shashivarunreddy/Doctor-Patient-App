@@ -17,7 +17,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { patientService } from '@/services/patient';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { Colors, Fonts, Spacing, Radii, Gradients, Shadows } from '@/constants/theme';
+import { Colors, Fonts, Spacing, Radii, Shadows, Gradients } from '@/constants/theme';
 
 type Gender = 'MALE' | 'FEMALE' | 'OTHER';
 
@@ -90,7 +90,7 @@ export default function CompleteProfileScreen() {
           style={[styles.header, { paddingTop: insets.top + Spacing.lg }]}
         >
           <View style={styles.headerIcon}>
-            <Ionicons name="heart" size={28} color={Colors.textInverse} />
+            <Ionicons name="heart" size={28} color="#fff" />
           </View>
           <Text style={styles.headerTitle}>Complete Your Profile</Text>
           <Text style={styles.headerSubtitle}>
@@ -133,6 +133,7 @@ export default function CompleteProfileScreen() {
                   key={g}
                   style={[styles.optionChip, gender === g && styles.optionChipActive]}
                   onPress={() => setGender(g)}
+                  activeOpacity={0.8}
                 >
                   <Ionicons
                     name={g === 'MALE' ? 'male' : g === 'FEMALE' ? 'female' : 'person'}
@@ -155,6 +156,7 @@ export default function CompleteProfileScreen() {
                   key={bg}
                   style={[styles.bloodChip, bloodGroup === bg && styles.bloodChipActive]}
                   onPress={() => setBloodGroup(bloodGroup === bg ? '' : bg)}
+                  activeOpacity={0.8}
                 >
                   <Text style={[styles.bloodChipText, bloodGroup === bg && styles.bloodChipTextActive]}>
                     {bg}
@@ -238,8 +240,8 @@ export default function CompleteProfileScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
   header: {
-    paddingHorizontal: Spacing.xxl,
-    paddingBottom: Spacing.xxl,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.xl,
     borderBottomLeftRadius: 28,
     borderBottomRightRadius: 28,
     alignItems: 'center',
@@ -259,7 +261,12 @@ const styles = StyleSheet.create({
   infoBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, backgroundColor: Colors.primaryFaded, borderRadius: Radii.md, padding: Spacing.md, marginBottom: Spacing.lg },
   infoBannerText: { flex: 1, fontSize: Fonts.sizes.sm, color: Colors.primary, fontWeight: '500', lineHeight: Fonts.lineHeights.sm },
 
-  card: { backgroundColor: Colors.card, borderRadius: Radii.lg, padding: Spacing.xl, marginBottom: Spacing.lg },
+  card: {
+    backgroundColor: Colors.card,
+    borderRadius: Radii.lg,
+    padding: Spacing.xl,
+    marginBottom: Spacing.lg,
+  },
   sectionTitle: { fontSize: Fonts.sizes.lg, fontWeight: '700', color: Colors.text, marginBottom: Spacing.xs },
   sectionSubtitle: { fontSize: Fonts.sizes.sm, color: Colors.textSecondary, marginBottom: Spacing.lg, lineHeight: Fonts.lineHeights.sm },
 
@@ -269,7 +276,7 @@ const styles = StyleSheet.create({
   optionRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.lg },
   optionChip: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.xs,
-    paddingVertical: Spacing.md, borderRadius: Radii.sm, borderWidth: 1.5, borderColor: Colors.border,
+    paddingVertical: Spacing.md, borderRadius: Radii.md, borderWidth: 1, borderColor: Colors.borderLight,
     backgroundColor: Colors.surfaceAlt,
   },
   optionChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
@@ -277,8 +284,8 @@ const styles = StyleSheet.create({
   optionTextActive: { color: Colors.textInverse },
 
   optionRowWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginBottom: Spacing.lg },
-  bloodChip: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: Radii.sm, borderWidth: 1.5, borderColor: Colors.border, backgroundColor: Colors.surfaceAlt },
-  bloodChipActive: { backgroundColor: Colors.danger, borderColor: Colors.danger },
+  bloodChip: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: Radii.md, borderWidth: 1, borderColor: Colors.borderLight, backgroundColor: Colors.surfaceAlt },
+  bloodChipActive: { backgroundColor: Colors.primary, borderColor: Colors.primary },
   bloodChipText: { fontSize: Fonts.sizes.sm, fontWeight: '700', color: Colors.textSecondary },
   bloodChipTextActive: { color: '#fff' },
 

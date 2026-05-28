@@ -1,324 +1,100 @@
-import React, { useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Animated,
-  Easing,
-  TouchableOpacity,
-} from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Colors, Fonts, Spacing, Radii, Gradients } from '@/constants/theme';
+import { Button } from '@/components/Button';
+import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function PendingApprovalScreen() {
-  const insets = useSafeAreaInsets();
+  const { logout } = useAuth();
 
-  // Pulse animation for the icon container
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  // Gentle float animation
-  const floatAnim = useRef(new Animated.Value(0)).current;
-  // Fade-in for content
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  // Dots animation
-  const dot1 = useRef(new Animated.Value(0.3)).current;
-  const dot2 = useRef(new Animated.Value(0.3)).current;
-  const dot3 = useRef(new Animated.Value(0.3)).current;
-
-  useEffect(() => {
-    // Fade in content
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 600,
-      useNativeDriver: true,
-    }).start();
-
-    // Pulse the icon ring
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.08,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 1200,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Float the icon up/down
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim, {
-          toValue: -10,
-          duration: 2000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim, {
-          toValue: 0,
-          duration: 2000,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-
-    // Staggered dot blink
-    const animateDot = (dot: Animated.Value, delay: number) =>
-      Animated.loop(
-        Animated.sequence([
-          Animated.delay(delay),
-          Animated.timing(dot, { toValue: 1, duration: 400, useNativeDriver: true }),
-          Animated.timing(dot, { toValue: 0.3, duration: 400, useNativeDriver: true }),
-          Animated.delay(800),
-        ]),
-      ).start();
-
-    animateDot(dot1, 0);
-    animateDot(dot2, 250);
-    animateDot(dot3, 500);
-  }, []);
+  const handleLogout = async () => {
+    await logout();
+    router.replace('/(auth)/login');
+  };
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      {/* Background gradient */}
-      <LinearGradient
-        colors={['#EEF2FF', '#F0FDF4', '#FFFFFF']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={StyleSheet.absoluteFill}
-      />
-
-      <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
-        {/* Animated icon section */}
-        <Animated.View style={{ transform: [{ translateY: floatAnim }] }}>
-          <Animated.View style={[styles.iconRing, { transform: [{ scale: pulseAnim }] }]}>
-            <LinearGradient
-              colors={Gradients.primary}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.iconGradient}
-            >
-              <Ionicons name="hourglass-outline" size={52} color="#fff" />
-            </LinearGradient>
-          </Animated.View>
-        </Animated.View>
-
-        {/* Waiting dots */}
-        <View style={styles.dotsRow}>
-          {[dot1, dot2, dot3].map((dot, i) => (
-            <Animated.View key={i} style={[styles.dot, { opacity: dot }]} />
-          ))}
-        </View>
-
-        {/* Title */}
-        <Text style={styles.title}>Application Submitted!</Text>
-        <Text style={styles.subtitle}>Awaiting Admin Approval</Text>
-
-        {/* Info card */}
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
         <View style={styles.card}>
-          <View style={styles.cardRow}>
-            <View style={styles.stepIcon}>
-              <Ionicons name="checkmark-circle" size={22} color={Colors.success} />
-            </View>
-            <View style={styles.stepText}>
-              <Text style={styles.stepTitle}>Account Created</Text>
-              <Text style={styles.stepDesc}>Your doctor account has been registered successfully.</Text>
-            </View>
+          <View style={styles.iconContainer}>
+            <Ionicons name="time-outline" size={48} color={Colors.warning} />
           </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.cardRow}>
-            <View style={styles.stepIcon}>
-              <Ionicons name="time-outline" size={22} color={Colors.warning} />
-            </View>
-            <View style={styles.stepText}>
-              <Text style={styles.stepTitle}>Under Review</Text>
-              <Text style={styles.stepDesc}>Our admin team is verifying your credentials. This usually takes 24–48 hours.</Text>
-            </View>
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.cardRow}>
-            <View style={styles.stepIcon}>
-              <Ionicons name="lock-closed-outline" size={22} color={Colors.textSecondary} />
-            </View>
-            <View style={styles.stepText}>
-              <Text style={styles.stepTitle}>Access Granted</Text>
-              <Text style={styles.stepDesc}>Once approved, you can log in and start seeing patients.</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Notice */}
-        <View style={styles.noticeBanner}>
-          <Ionicons name="information-circle-outline" size={16} color={Colors.primary} />
-          <Text style={styles.noticeText}>
-            You will be notified once your account is approved. Please check back after 24–48 hours.
+          
+          <Text style={styles.title}>Account Pending Approval</Text>
+          
+          <Text style={styles.message}>
+            Thank you for registering as a doctor on Docco360. Your application is currently under review by our administration team.
           </Text>
+          
+          <Text style={styles.subMessage}>
+            This process typically takes 1-2 business days. We will notify you via email once your account has been approved and activated.
+          </Text>
+          
+          <Button
+            title="Back to Login"
+            onPress={handleLogout}
+            style={styles.button}
+            variant="outline"
+          />
         </View>
-
-        {/* Back to login */}
-        <TouchableOpacity
-          style={styles.loginButton}
-          onPress={() => router.replace('/(auth)/login')}
-          activeOpacity={0.8}
-        >
-          <Ionicons name="arrow-back-outline" size={18} color={Colors.primary} />
-          <Text style={styles.loginButtonText}>Back to Login</Text>
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: Colors.primaryFaded,
   },
   content: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.xxl,
-    paddingVertical: Spacing.xxl,
+    alignItems: 'center',
+    padding: Spacing.lg,
   },
-  iconRing: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: 'rgba(99,102,241,0.08)',
+  card: {
+    backgroundColor: Colors.surface,
+    borderRadius: Radii.xl,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    width: '100%',
+    maxWidth: 400,
+    ...Shadows.lg,
+  },
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.warningLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
-  },
-  iconGradient: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    elevation: 10,
-  },
-  dotsRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: Spacing.xl,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: Colors.primary,
   },
   title: {
     fontSize: Fonts.sizes.xxl,
-    fontWeight: '800',
+    fontWeight: '700',
     color: Colors.text,
+    marginBottom: Spacing.md,
     textAlign: 'center',
-    letterSpacing: -0.5,
-    marginBottom: Spacing.xs,
   },
-  subtitle: {
+  message: {
     fontSize: Fonts.sizes.md,
     color: Colors.textSecondary,
     textAlign: 'center',
-    fontWeight: '500',
-    marginBottom: Spacing.xxl,
+    lineHeight: 24,
+    marginBottom: Spacing.md,
   },
-  card: {
-    width: '100%',
-    backgroundColor: Colors.surface,
-    borderRadius: Radii.lg,
-    padding: Spacing.xl,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 12,
-    elevation: 3,
-  },
-  cardRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.md,
-  },
-  stepIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: Colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  stepText: {
-    flex: 1,
-  },
-  stepTitle: {
+  subMessage: {
     fontSize: Fonts.sizes.sm,
-    fontWeight: '700',
-    color: Colors.text,
-    marginBottom: 2,
+    color: Colors.textTertiary,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: Spacing.xl,
   },
-  stepDesc: {
-    fontSize: Fonts.sizes.xs,
-    color: Colors.textSecondary,
-    lineHeight: Fonts.lineHeights.sm,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.borderLight,
-    marginVertical: Spacing.md,
-  },
-  noticeBanner: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-    backgroundColor: Colors.primaryFaded,
-    borderRadius: Radii.md,
-    padding: Spacing.md,
+  button: {
     width: '100%',
-    marginBottom: Spacing.xxl,
-  },
-  noticeText: {
-    flex: 1,
-    fontSize: Fonts.sizes.xs,
-    color: Colors.primary,
-    fontWeight: '500',
-    lineHeight: Fonts.lineHeights.sm,
-  },
-  loginButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: Radii.full,
-    borderWidth: 1.5,
-    borderColor: Colors.primary,
-    backgroundColor: 'transparent',
-  },
-  loginButtonText: {
-    fontSize: Fonts.sizes.md,
-    fontWeight: '700',
-    color: Colors.primary,
   },
 });
