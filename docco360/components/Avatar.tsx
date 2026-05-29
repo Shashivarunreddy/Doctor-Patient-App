@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Colors, Fonts, Spacing, Radii } from '@/constants/theme';
+import { View, Text } from 'react-native';
+import { Colors } from '@/constants/theme';
 
 interface AvatarProps {
   name: string;
@@ -20,8 +20,8 @@ export function Avatar({ name, size = 48, color }: AvatarProps) {
 
   return (
     <View
+      className="justify-center items-center"
       style={[
-        styles.container,
         {
           width: size,
           height: size,
@@ -30,7 +30,7 @@ export function Avatar({ name, size = 48, color }: AvatarProps) {
         },
       ]}
     >
-      <Text style={[styles.text, { fontSize: size * 0.38 }]}>{initials}</Text>
+      <Text className="text-white font-bold" style={[{ fontSize: size * 0.38 }]}>{initials}</Text>
     </View>
   );
 }
@@ -53,13 +53,4 @@ function getColorForName(name: string): string {
   return colors[Math.abs(hash) % colors.length];
 }
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: Colors.textInverse,
-    fontWeight: '700',
-  },
-});
+

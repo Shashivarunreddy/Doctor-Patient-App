@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 import { Avatar } from './Avatar';
 import { Badge, getStatusBadgeVariant } from './Badge';
 import type { Appointment } from '@/services/doctor';
@@ -49,16 +49,16 @@ export function AppointmentCard({
 
   return (
     <TouchableOpacity
-      style={[styles.card, Shadows.md]}
+      className="bg-card rounded-2xl p-6 mb-3 border border-[#c2c6d5]/30 shadow-md"
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
+      <View className="flex-row justify-between items-center">
+        <View className="flex-row items-center flex-1">
           <Avatar name={userName} size={44} />
-          <View style={styles.headerInfo}>
-            <Text style={styles.name}>{userName}</Text>
-            <Text style={styles.label}>{userLabel}</Text>
+          <View className="ml-3 flex-1">
+            <Text className="text-base font-bold text-textMain">{userName}</Text>
+            <Text className="text-xs text-textSecondary mt-0.5">{userLabel}</Text>
           </View>
         </View>
         <Badge
@@ -67,53 +67,53 @@ export function AppointmentCard({
         />
       </View>
 
-      <View style={styles.divider} />
+      <View className="h-[1px] bg-borderLight my-3" />
 
-      <View style={styles.details}>
-        <View style={styles.detailRow}>
+      <View className="flex-row flex-wrap gap-4">
+        <View className="flex-row items-center gap-1">
           <Ionicons name="calendar-outline" size={16} color={Colors.primary} />
-          <Text style={styles.detailText}>{formattedDate}</Text>
+          <Text className="text-sm text-textSecondary font-medium">{formattedDate}</Text>
         </View>
-        <View style={styles.detailRow}>
+        <View className="flex-row items-center gap-1">
           <Ionicons name="time-outline" size={16} color={Colors.primary} />
-          <Text style={styles.detailText}>
+          <Text className="text-sm text-textSecondary font-medium">
             {startTime} - {endTime}
           </Text>
         </View>
         {appointment.amount > 0 && (
-          <View style={styles.detailRow}>
+          <View className="flex-row items-center gap-1">
             <Ionicons name="cash-outline" size={16} color={Colors.success} />
-            <Text style={styles.detailText}>₹{appointment.amount}</Text>
+            <Text className="text-sm text-textSecondary font-medium">₹{appointment.amount}</Text>
           </View>
         )}
       </View>
 
       {appointment.notes && (
-        <View style={styles.notesContainer}>
-          <Text style={styles.notesLabel}>Notes:</Text>
-          <Text style={styles.notesText} numberOfLines={2}>
+        <View className="mt-3 bg-primaryFaded rounded-lg p-3">
+          <Text className="text-xs font-semibold text-textSecondary mb-1">Notes:</Text>
+          <Text className="text-sm text-textMain leading-tight" numberOfLines={2}>
             {appointment.notes}
           </Text>
         </View>
       )}
 
       {(canJoin || canEnd || (role === 'admin' && appointment.status === 'CONFIRMED')) && (
-        <View style={styles.actions}>
+        <View className="flex-row gap-3 mt-4">
           {canJoin && onJoinCall && (
-            <TouchableOpacity style={styles.joinButton} onPress={onJoinCall}>
+            <TouchableOpacity className="flex-row items-center justify-center gap-1 bg-primary px-6 py-3 rounded-xl flex-1" onPress={onJoinCall}>
               <Ionicons name="videocam" size={16} color={Colors.textInverse} />
-              <Text style={styles.joinText}>Join Call</Text>
+              <Text className="text-white text-sm font-semibold">Join Call</Text>
             </TouchableOpacity>
           )}
           {canEnd && onEndCall && (
-            <TouchableOpacity style={styles.endButton} onPress={onEndCall}>
+            <TouchableOpacity className="flex-row items-center justify-center gap-1 bg-danger px-6 py-3 rounded-xl flex-1" onPress={onEndCall}>
               <Ionicons name="call" size={16} color={Colors.textInverse} />
-              <Text style={styles.endText}>End Call</Text>
+              <Text className="text-white text-sm font-semibold">End Call</Text>
             </TouchableOpacity>
           )}
           {role === 'admin' && appointment.status === 'CONFIRMED' && onCancel && (
-            <TouchableOpacity style={styles.cancelButton} onPress={onCancel}>
-              <Text style={styles.cancelText}>Cancel</Text>
+            <TouchableOpacity className="flex-row items-center justify-center px-6 py-3 rounded-xl border-[1.5px] border-danger flex-1" onPress={onCancel}>
+              <Text className="text-danger text-sm font-semibold">Cancel</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -121,128 +121,3 @@ export function AppointmentCard({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: Colors.card,
-    borderRadius: Radii.lg,
-    padding: Spacing.xl,
-    marginBottom: Spacing.md,
-    borderWidth: 1,
-    borderColor: 'rgba(194, 198, 213, 0.3)',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  headerInfo: {
-    marginLeft: Spacing.md,
-    flex: 1,
-  },
-  name: {
-    fontSize: Fonts.sizes.md,
-    fontWeight: '700',
-    color: Colors.text,
-  },
-  label: {
-    fontSize: Fonts.sizes.xs,
-    color: Colors.textSecondary,
-    marginTop: 2,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.borderLight,
-    marginVertical: Spacing.md,
-  },
-  details: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.lg,
-  },
-  detailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  detailText: {
-    fontSize: Fonts.sizes.sm,
-    color: Colors.textSecondary,
-    fontWeight: '500',
-  },
-  notesContainer: {
-    marginTop: Spacing.md,
-    backgroundColor: Colors.primaryFaded,
-    borderRadius: Radii.sm,
-    padding: Spacing.md,
-  },
-  notesLabel: {
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-    marginBottom: Spacing.xs,
-  },
-  notesText: {
-    fontSize: Fonts.sizes.sm,
-    color: Colors.text,
-    lineHeight: Fonts.lineHeights.sm,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-    marginTop: Spacing.lg,
-  },
-  joinButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Colors.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.md,
-    flex: 1,
-  },
-  joinText: {
-    color: Colors.textInverse,
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '600',
-  },
-  endButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Colors.danger,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.md,
-    flex: 1,
-  },
-  endText: {
-    color: Colors.textInverse,
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '600',
-  },
-  cancelButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.md,
-    borderWidth: 1.5,
-    borderColor: Colors.danger,
-    flex: 1,
-  },
-  cancelText: {
-    color: Colors.danger,
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '600',
-  },
-});

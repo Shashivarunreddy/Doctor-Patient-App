@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   TouchableOpacity,
   Animated,
   Easing,
   Alert,
+  StyleSheet
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { patientService } from '@/services/patient';
 import { doctorService } from '@/services/doctor';
-import { Colors, Fonts, Spacing, Radii } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 
 type CallParams = {
   appointmentId: string;
@@ -164,7 +164,7 @@ export default function CallScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 bg-[#0a1628]">
       <LinearGradient
         colors={['#0a1628', '#0d2137', '#0a1628']}
         style={StyleSheet.absoluteFill}
@@ -172,93 +172,85 @@ export default function CallScreen() {
 
       {/* Top Bar */}
       <Animated.View
-        style={[
-          styles.topBar,
-          { paddingTop: insets.top + Spacing.sm, opacity: fadeIn },
-        ]}
+        className="flex-row justify-between items-center px-6 pb-4"
+        style={{ paddingTop: insets.top + 12, opacity: fadeIn }}
       >
-        <View style={styles.connectionStatus}>
+        <View className="flex-row items-center gap-2">
           <Animated.View
-            style={[
-              styles.connectionDot,
-              {
-                backgroundColor: isConnected ? '#10B981' : '#f59e0b',
-                opacity: isConnected ? dotAnim : 1,
-              },
-            ]}
+            className="w-2 h-2 rounded-full"
+            style={{
+              backgroundColor: isConnected ? '#10B981' : '#f59e0b',
+              opacity: isConnected ? dotAnim : 1,
+            }}
           />
-          <Text style={styles.connectionText}>
+          <Text className="text-white/70 text-sm font-medium">
             {isConnected ? 'Connected' : 'Connecting...'}
           </Text>
         </View>
 
         {isConnected && (
-          <View style={styles.timerContainer}>
+          <View className="flex-row items-center gap-1 bg-white/10 px-4 py-1.5 rounded-full">
             <Ionicons name="time-outline" size={14} color="rgba(255,255,255,0.6)" />
-            <Text style={styles.timerText}>{formatTime(elapsed)}</Text>
+            <Text className="text-white text-sm font-bold tabular-nums">{formatTime(elapsed)}</Text>
           </View>
         )}
       </Animated.View>
 
       {/* Main Content */}
       <Animated.View
-        style={[
-          styles.mainContent,
-          { opacity: fadeIn, transform: [{ translateY: slideUp }] },
-        ]}
+        className="flex-1 justify-center items-center px-6"
+        style={{ opacity: fadeIn, transform: [{ translateY: slideUp }] }}
       >
         {/* Remote User Avatar */}
         <Animated.View
-          style={[
-            styles.avatarOuter,
-            !isConnected && { transform: [{ scale: pulseAnim }] },
-          ]}
+          className="mb-8 relative"
+          style={!isConnected ? { transform: [{ scale: pulseAnim }] } : {}}
         >
           <LinearGradient
             colors={isConnected ? ['#0058bc', '#004494'] : ['#374151', '#1f2937']}
-            style={styles.avatarGradient}
+            className="w-[120px] h-[120px] rounded-full justify-center items-center"
           >
-            <Text style={styles.avatarText}>
+            <Text className="text-[40px] font-bold text-white">
               {getInitials(params.remoteName || 'U')}
             </Text>
           </LinearGradient>
           {isConnected && (
-            <View style={styles.avatarRing} />
+            <View className="absolute -top-1 -left-1 -right-1 -bottom-1 rounded-[64px] border-2 border-[#0058bc]/40" />
           )}
         </Animated.View>
 
         {/* Remote User Info */}
-        <Text style={styles.remoteName}>
+        <Text className="text-3xl font-bold text-white mb-2 text-center">
           {params.remoteRole === 'doctor' ? 'Dr. ' : ''}
           {params.remoteName || 'Unknown'}
         </Text>
-        <View style={styles.roleBadge}>
-          <Text style={styles.roleBadgeText}>
+        <View className="bg-[#0058bc]/25 px-6 py-1 rounded-full mb-6">
+          <Text className="text-[#adc6ff] text-xs font-semibold uppercase tracking-[1px]">
             {params.remoteRole === 'doctor' ? 'Doctor' : 'Patient'}
           </Text>
         </View>
 
         {/* Appointment Info */}
-        <View style={styles.appointmentInfo}>
-          <View style={styles.appointmentRow}>
+        <View className="flex-row items-center gap-2 mb-6">
+          <View className="flex-row items-center gap-1">
             <Ionicons name="calendar-outline" size={14} color="rgba(255,255,255,0.5)" />
-            <Text style={styles.appointmentText}>{params.appointmentDate}</Text>
+            <Text className="text-white/50 text-sm font-medium">{params.appointmentDate}</Text>
           </View>
-          <View style={styles.appointmentDot} />
-          <View style={styles.appointmentRow}>
+          <View className="w-[3px] h-[3px] rounded-[1.5px] bg-white/30" />
+          <View className="flex-row items-center gap-1">
             <Ionicons name="time-outline" size={14} color="rgba(255,255,255,0.5)" />
-            <Text style={styles.appointmentText}>{params.appointmentTime}</Text>
+            <Text className="text-white/50 text-sm font-medium">{params.appointmentTime}</Text>
           </View>
         </View>
 
         {/* Status Message */}
         {!isConnected && (
-          <Text style={styles.statusMessage}>
+          <Text className="text-white/40 text-sm font-normal">
             Setting up secure connection...
           </Text>
         )}
         {isConnected && elapsed < 5 && (
-          <Text style={styles.statusMessage}>
+          <Text className="text-white/40 text-sm font-normal">
             Call connected successfully
           </Text>
         )}
@@ -266,20 +258,18 @@ export default function CallScreen() {
 
       {/* Bottom Controls */}
       <Animated.View
-        style={[
-          styles.controlsContainer,
-          { paddingBottom: insets.bottom + Spacing.xl, opacity: fadeIn },
-        ]}
+        className="px-6 items-center"
+        style={{ paddingBottom: insets.bottom + 24, opacity: fadeIn }}
       >
         {/* Channel info (subtle) */}
-        <Text style={styles.channelInfo}>
+        <Text className="text-white/15 text-xs mb-8 tabular-nums">
           Channel: {params.channelName}
         </Text>
 
-        <View style={styles.controls}>
+        <View className="flex-row items-center justify-center gap-10">
           {/* Mute Button */}
           <TouchableOpacity
-            style={[styles.controlButton, isMuted && styles.controlButtonActive]}
+            className={`items-center gap-2 ${isMuted ? 'opacity-100' : ''}`}
             onPress={() => setIsMuted(!isMuted)}
             activeOpacity={0.7}
           >
@@ -288,30 +278,30 @@ export default function CallScreen() {
               size={24}
               color={isMuted ? Colors.danger : '#fff'}
             />
-            <Text style={[styles.controlLabel, isMuted && styles.controlLabelActive]}>
+            <Text className={`text-xs font-medium ${isMuted ? 'text-danger' : 'text-white/60'}`}>
               {isMuted ? 'Unmute' : 'Mute'}
             </Text>
           </TouchableOpacity>
 
           {/* End Call Button */}
           <TouchableOpacity
-            style={styles.endCallButton}
+            className="items-center gap-2"
             onPress={confirmEndCall}
             activeOpacity={0.7}
             disabled={isEnding}
           >
             <LinearGradient
               colors={['#ef4444', '#dc2626']}
-              style={styles.endCallGradient}
+              className="w-16 h-16 rounded-full justify-center items-center"
             >
-              <Ionicons name="call" size={28} color="#fff" style={styles.endCallIcon} />
+              <Ionicons name="call" size={28} color="#fff" style={{ transform: [{ rotate: '135deg' }] }} />
             </LinearGradient>
-            <Text style={styles.endCallLabel}>End</Text>
+            <Text className="text-white/60 text-xs font-medium">End</Text>
           </TouchableOpacity>
 
           {/* Speaker Button */}
           <TouchableOpacity
-            style={[styles.controlButton, !isSpeaker && styles.controlButtonActive]}
+            className={`items-center gap-2 ${!isSpeaker ? 'opacity-100' : ''}`}
             onPress={() => setIsSpeaker(!isSpeaker)}
             activeOpacity={0.7}
           >
@@ -320,7 +310,7 @@ export default function CallScreen() {
               size={24}
               color={!isSpeaker ? Colors.danger : '#fff'}
             />
-            <Text style={[styles.controlLabel, !isSpeaker && styles.controlLabelActive]}>
+            <Text className={`text-xs font-medium ${!isSpeaker ? 'text-danger' : 'text-white/60'}`}>
               {isSpeaker ? 'Speaker' : 'Muted'}
             </Text>
           </TouchableOpacity>
@@ -329,194 +319,3 @@ export default function CallScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0a1628',
-  },
-
-  // Top bar
-  topBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.xl,
-    paddingBottom: Spacing.md,
-  },
-  connectionStatus: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  connectionDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  connectionText: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '500',
-  },
-  timerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + 2,
-    borderRadius: Radii.full,
-  },
-  timerText: {
-    color: '#fff',
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '700',
-    fontVariant: ['tabular-nums'],
-  },
-
-  // Main content
-  mainContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.xl,
-  },
-
-  // Avatar
-  avatarOuter: {
-    marginBottom: Spacing.xl,
-    position: 'relative',
-  },
-  avatarGradient: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatarText: {
-    fontSize: 40,
-    fontWeight: '700',
-    color: '#fff',
-  },
-  avatarRing: {
-    position: 'absolute',
-    top: -4,
-    left: -4,
-    right: -4,
-    bottom: -4,
-    borderRadius: 64,
-    borderWidth: 2,
-    borderColor: 'rgba(0, 88, 188, 0.4)',
-  },
-
-  // Remote user info
-  remoteName: {
-    fontSize: Fonts.sizes.xxl,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: Spacing.sm,
-    textAlign: 'center',
-  },
-  roleBadge: {
-    backgroundColor: 'rgba(0, 88, 188, 0.25)',
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.xs,
-    borderRadius: Radii.full,
-    marginBottom: Spacing.lg,
-  },
-  roleBadgeText: {
-    color: '#adc6ff',
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-
-  // Appointment info
-  appointmentInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginBottom: Spacing.lg,
-  },
-  appointmentRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  appointmentText: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '500',
-  },
-  appointmentDot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-  },
-
-  // Status
-  statusMessage: {
-    color: 'rgba(255,255,255,0.4)',
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '400',
-  },
-
-  // Controls
-  controlsContainer: {
-    paddingHorizontal: Spacing.xl,
-    alignItems: 'center',
-  },
-  channelInfo: {
-    color: 'rgba(255,255,255,0.15)',
-    fontSize: Fonts.sizes.xs,
-    marginBottom: Spacing.xl,
-    fontVariant: ['tabular-nums'],
-  },
-  controls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.xxl + Spacing.md,
-  },
-
-  controlButton: {
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  controlButtonActive: {
-    opacity: 1,
-  },
-  controlLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '500',
-  },
-  controlLabelActive: {
-    color: Colors.danger,
-  },
-
-  // End call
-  endCallButton: {
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  endCallGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  endCallIcon: {
-    transform: [{ rotate: '135deg' }],
-  },
-  endCallLabel: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '500',
-  },
-});

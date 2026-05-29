@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { Colors, Fonts, Spacing } from '@/constants/theme';
+import { View, Text, ActivityIndicator } from 'react-native';
+import { Colors } from '@/constants/theme';
 
 interface LoadingScreenProps {
   message?: string;
@@ -8,9 +8,9 @@ interface LoadingScreenProps {
 
 export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
   return (
-    <View style={styles.container}>
+    <View className="flex-1 justify-center items-center bg-background">
       <ActivityIndicator size="large" color={Colors.primary} />
-      <Text style={styles.text}>{message}</Text>
+      <Text className="mt-4 text-sm text-textSecondary">{message}</Text>
     </View>
   );
 }
@@ -24,61 +24,15 @@ interface EmptyStateProps {
 
 export function EmptyState({ title, subtitle, action }: EmptyStateProps) {
   return (
-    <View style={styles.emptyContainer}>
-      <View style={styles.emptyIcon}>
-        <Text style={styles.emptyEmoji}>📋</Text>
+    <View className="flex-1 justify-center items-center px-12">
+      <View className="w-20 h-20 rounded-full bg-primaryFaded justify-center items-center mb-6">
+        <Text className="text-4xl">📋</Text>
       </View>
-      <Text style={styles.emptyTitle}>{title}</Text>
-      {subtitle && <Text style={styles.emptySubtitle}>{subtitle}</Text>}
-      {action && <View style={styles.emptyAction}>{action}</View>}
+      <Text className="text-base font-bold text-text text-center mb-2">{title}</Text>
+      {subtitle && <Text className="text-sm text-textSecondary text-center leading-5">{subtitle}</Text>}
+      {action && <View className="mt-6">{action}</View>}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.background,
-  },
-  text: {
-    marginTop: Spacing.lg,
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.xxxl,
-  },
-  emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: Colors.primaryFaded,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.xl,
-  },
-  emptyEmoji: {
-    fontSize: 36,
-  },
-  emptyTitle: {
-    fontSize: Fonts.sizes.lg,
-    fontWeight: '700',
-    color: Colors.text,
-    textAlign: 'center',
-    marginBottom: Spacing.sm,
-  },
-  emptySubtitle: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-    textAlign: 'center',
-    lineHeight: Fonts.lineHeights.md,
-  },
-  emptyAction: {
-    marginTop: Spacing.xl,
-  },
-});
+

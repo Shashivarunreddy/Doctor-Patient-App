@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { Colors, Fonts, Spacing, Radii } from '@/constants/theme';
+import { View, Text, ViewStyle } from 'react-native';
+import { Colors } from '@/constants/theme';
 
 type BadgeVariant = 'confirmed' | 'completed' | 'cancelled' | 'pending' | 'approved' | 'rejected' | 'inProgress' | 'scheduled' | 'paid' | 'refunded' | 'info';
 
@@ -27,8 +27,8 @@ interface BadgeProps {
 export function Badge({ label, variant, style }: BadgeProps) {
   const v = variantMap[variant] || variantMap.info;
   return (
-    <View style={[styles.badge, { backgroundColor: v.bg }, style]}>
-      <Text style={[styles.text, { color: v.text }]}>{label}</Text>
+    <View className="px-3 py-1 rounded-full self-start" style={[{ backgroundColor: v.bg }, style]}>
+      <Text className="text-xs font-bold uppercase tracking-widest" style={[{ color: v.text }]}>{label}</Text>
     </View>
   );
 }
@@ -49,17 +49,4 @@ export function getStatusBadgeVariant(status: string): BadgeVariant {
   return map[status] || 'info';
 }
 
-const styles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + 1,
-    borderRadius: Radii.full,
-    alignSelf: 'flex-start',
-  },
-  text: {
-    fontSize: Fonts.sizes.xs,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-});
+
