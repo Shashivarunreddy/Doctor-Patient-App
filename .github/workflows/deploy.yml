@@ -27,11 +27,31 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Set image SHA
+        id: sha
+        run: |
+          echo "IMAGE_SHA=${{ github.event.workflow_run.head_sha || github.sha }}" >> $GITHUB_OUTPUT
+
       - name: Deploy on EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             cd doctoroncall
-            docker compose pull
+
+            echo "Deploying SHA: ${{ steps.sha.outputs.IMAGE_SHA }}"
+
+            # Pull exact SHA tagged images
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${{ steps.sha.outputs.IMAGE_SHA }}
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${{ steps.sha.outputs.IMAGE_SHA }}
+
+            # Export SHA images as env vars
+            export BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${{ steps.sha.outputs.IMAGE_SHA }}
+            export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${{ steps.sha.outputs.IMAGE_SHA }}
+
+            # Deploy with SHA tagged images
             docker compose up -d --force-recreate
+
+            # Cleanup old images
             docker image prune -f
+
+            echo "Deployed successfully: ${{ steps.sha.outputs.IMAGE_SHA }}"
           EOF
