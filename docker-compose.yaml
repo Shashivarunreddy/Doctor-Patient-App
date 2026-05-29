@@ -20,10 +20,7 @@ services:
       retries: 5
 
   backend:
-    image: sriharshareddy6464/doc-backend:v1.0.1
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: sriharshareddy6464/doc-backend:latest
     container_name: oshadhi_backend
     restart: always
     env_file:
@@ -35,18 +32,12 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       PORT: 5000
-      FRONTEND_URL: http://localhost
+      FRONTEND_URL: ${FRONTEND_URL}
     command: sh -c "npx prisma migrate deploy && node dist/server.js"
-    ports:
-      - "5000:5000"
+    # Fix #27 — remove port exposure, backend only accessible via Nginx internally
 
   frontend:
-    image: sriharshareddy6464/doc-frontend:v1.0.1
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        VITE_API_URL: /api
+    image: sriharshareddy6464/doc-frontend:latest
     container_name: oshadhi_frontend
     restart: always
     depends_on:
