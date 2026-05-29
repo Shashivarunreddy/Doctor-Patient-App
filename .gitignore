@@ -1,3 +1,19 @@
+# Environment configuration files
 .env
-.env.local
-.env.production
+.env.*
+!.env.example
+
+# Local Certificates and Private Keys
+*.pem
+*.key
+docco360.pem
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Dependencies and Build Directories
+node_modules/
+dist/
+build/
+.cache/

@@ -3,16 +3,13 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy Prisma files and generate client
 COPY prisma ./prisma
 COPY prisma.config.ts ./
 RUN npx prisma generate
 
-# Copy source and compile TypeScript
 COPY tsconfig.json ./
 COPY src ./src
 RUN npx tsc
@@ -20,21 +17,29 @@ RUN npx tsc
 # Stage 2 — Production
 FROM node:22-alpine
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+
 WORKDIR /app
 
-# Copy package files and install production dependencies only
 COPY package*.json ./
 RUN npm install --omit=dev
 
-# Copy compiled output from builder
-COPY --from=builder /app/dist ./dist
-
-# Copy Prisma schema and config (needed for migrate deploy at runtime)
+# Copy Prisma files first
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 
+# Run prisma generate in production stage to create .prisma/client
+RUN npx prisma generate
+
+# Copy compiled output
+COPY --from=builder /app/dist ./dist
+
 # Copy generated Prisma client
-# COPY --from=builder /app/src/generated ./src/generated
+COPY --from=builder /app/src/generated ./src/generated
+
+RUN chown -R appuser:appgroup /app
+
+USER appuser
 
 EXPOSE 5000
 
