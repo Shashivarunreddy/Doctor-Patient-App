@@ -5,7 +5,13 @@ import "dotenv/config";
 
 const connectionString = `${process.env.DATABASE_URL}`;
 
-const pool = new Pool({ connectionString });
+const pool = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false  // required for RDS SSL
+  }
+});
+
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
