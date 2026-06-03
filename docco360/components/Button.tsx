@@ -2,7 +2,6 @@ import React from 'react';
 import {
   TouchableOpacity,
   Text,
-  StyleSheet,
   ActivityIndicator,
   ViewStyle,
   TextStyle,
@@ -57,13 +56,11 @@ export function Button({
           colors={isDisabled ? ['#94A3B8', '#94A3B8'] : [Colors.primary, Colors.primaryDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[
-            styles.base,
-            {
-              paddingVertical: currentSize.paddingVertical,
-              paddingHorizontal: currentSize.paddingHorizontal,
-            },
-          ]}
+          className="flex-row items-center justify-center rounded-xl overflow-hidden"
+          style={{
+            paddingVertical: currentSize.paddingVertical,
+            paddingHorizontal: currentSize.paddingHorizontal,
+          }}
         >
           {loading ? (
             <ActivityIndicator color={Colors.textInverse} size="small" />
@@ -71,8 +68,8 @@ export function Button({
             <>
               {icon}
               <Text
+                className="font-semibold text-white"
                 style={[
-                  styles.text,
                   { fontSize: currentSize.fontSize },
                   icon ? { marginLeft: Spacing.sm } : null,
                   textStyle,
@@ -101,8 +98,8 @@ export function Button({
       onPress={onPress}
       disabled={isDisabled}
       activeOpacity={0.7}
+      className={`flex-row items-center justify-center rounded-xl overflow-hidden ${fullWidth ? 'w-full' : ''}`}
       style={[
-        styles.base,
         {
           backgroundColor: isDisabled ? '#F1F5F9' : v.bg,
           borderWidth: variant === 'outline' ? 1.5 : 0,
@@ -110,7 +107,6 @@ export function Button({
           paddingVertical: currentSize.paddingVertical,
           paddingHorizontal: currentSize.paddingHorizontal,
         },
-        fullWidth && { width: '100%' },
         style,
       ]}
     >
@@ -120,8 +116,8 @@ export function Button({
         <>
           {icon}
           <Text
+            className="font-semibold"
             style={[
-              styles.text,
               {
                 fontSize: currentSize.fontSize,
                 color: isDisabled ? '#94A3B8' : v.textColor,
@@ -138,16 +134,4 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: Radii.md,
-    overflow: 'hidden',
-  },
-  text: {
-    fontWeight: '600',
-    color: Colors.textInverse,
-  },
-});
+

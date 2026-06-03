@@ -44,10 +44,21 @@ export default function PatientAppointmentDetailScreen() {
     setActionLoading(true);
     try {
       const callData = await patientService.joinCall(id!);
-      Alert.alert(
-        'Call Connected 📞',
-        `Channel: ${callData.channelName}\nRole: ${callData.role}\nExpires in: ${callData.expiresIn}s`,
-      );
+      router.push({
+        pathname: '/call',
+        params: {
+          appointmentId: id!,
+          channelName: callData.channelName,
+          token: callData.token,
+          appId: callData.appId,
+          uid: String(callData.uid),
+          role: callData.role,
+          remoteName: appointment?.doctor?.name || 'Doctor',
+          remoteRole: 'doctor',
+          appointmentDate: appointment?.timeSlot?.date || '',
+          appointmentTime: `${appointment?.timeSlot?.startTime || ''} - ${appointment?.timeSlot?.endTime || ''}`,
+        },
+      });
     } catch (error: any) {
       Alert.alert('Error', error.message);
     } finally {

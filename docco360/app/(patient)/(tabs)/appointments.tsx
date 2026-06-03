@@ -43,14 +43,24 @@ export default function PatientAppointmentsScreen() {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  const handleJoinCall = async (id: string) => {
+  const handleJoinCall = async (appointment: Appointment) => {
     try {
-      const callData = await patientService.joinCall(id);
-      Alert.alert(
-        'Call Started',
-        `Connected to channel: ${callData.channelName}\nRole: ${callData.role}\nToken received successfully.`,
-      );
-      fetchAppointments();
+      const callData = await patientService.joinCall(appointment.id);
+      router.push({
+        pathname: '/call',
+        params: {
+          appointmentId: appointment.id,
+          channelName: callData.channelName,
+          token: callData.token,
+          appId: callData.appId,
+          uid: String(callData.uid),
+          role: callData.role,
+          remoteName: appointment.doctor?.name || 'Doctor',
+          remoteRole: 'doctor',
+          appointmentDate: appointment.timeSlot?.date || '',
+          appointmentTime: `${appointment.timeSlot?.startTime || ''} - ${appointment.timeSlot?.endTime || ''}`,
+        },
+      });
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to join call');
     }
@@ -117,7 +127,7 @@ export default function PatientAppointmentsScreen() {
             appointment={item}
             role="patient"
             onPress={() => router.push(`/(patient)/appointment/${item.id}`)}
-            onJoinCall={() => handleJoinCall(item.id)}
+            onJoinCall={() => handleJoinCall(item)}
             onEndCall={() => handleEndCall(item.id)}
           />
         )}

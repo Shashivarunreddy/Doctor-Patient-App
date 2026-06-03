@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 
 interface StatCardProps {
   title: string;
@@ -21,52 +21,24 @@ export function StatCard({ title, value, icon, color, gradient }: StatCardProps)
         colors={gradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.card, Shadows.md]}
+        className="rounded-2xl p-4 flex-1 min-w-[140px] shadow-md"
       >
-        <View style={[styles.iconContainer, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
+        <View className="w-10 h-10 rounded-xl justify-center items-center mb-3 bg-white/20">
           <Ionicons name={icon} size={22} color={Colors.textInverse} />
         </View>
-        <Text style={[styles.value, { color: Colors.textInverse }]}>{value}</Text>
-        <Text style={[styles.title, { color: 'rgba(255,255,255,0.85)' }]}>{title}</Text>
+        <Text className="text-2xl font-extrabold text-white">{value}</Text>
+        <Text className="text-xs font-medium mt-1 text-white/85">{title}</Text>
       </LinearGradient>
     );
   }
 
   return (
-    <View style={[styles.card, Shadows.md, { backgroundColor: Colors.card }]}>
-      <View style={[styles.iconContainer, { backgroundColor: iconColor + '15' }]}>
+    <View className="rounded-2xl p-4 flex-1 min-w-[140px] shadow-md bg-card">
+      <View className="w-10 h-10 rounded-xl justify-center items-center mb-3" style={{ backgroundColor: iconColor + '15' }}>
         <Ionicons name={icon} size={22} color={iconColor} />
       </View>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.title}>{title}</Text>
+      <Text className="text-2xl font-extrabold text-textMain">{value}</Text>
+      <Text className="text-xs text-textSecondary font-medium mt-1">{title}</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: Radii.lg,
-    padding: Spacing.lg,
-    flex: 1,
-    minWidth: 140,
-  },
-  iconContainer: {
-    width: 42,
-    height: 42,
-    borderRadius: Radii.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  value: {
-    fontSize: Fonts.sizes.xxl,
-    fontWeight: '800',
-    color: Colors.text,
-  },
-  title: {
-    fontSize: Fonts.sizes.xs,
-    color: Colors.textSecondary,
-    fontWeight: '500',
-    marginTop: Spacing.xs,
-  },
-});

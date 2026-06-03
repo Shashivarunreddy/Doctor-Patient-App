@@ -2,19 +2,18 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import { Input } from '@/components/Input';
 import { Button } from '@/components/Button';
-import { Colors, Fonts, Spacing, Radii, Shadows } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 import { ApiError } from '@/services/api';
 
 type Role = 'PATIENT' | 'DOCTOR';
@@ -104,58 +103,57 @@ export default function RegisterScreen() {
   const strength = getPasswordStrength();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView className="flex-1 bg-background">
       {/* Mobile Top Header */}
-      <View style={styles.topHeader}>
-        <View style={styles.topHeaderLeft}>
-          <Ionicons name="leaf" size={24} color={Colors.primary} />
-          <Text style={styles.topHeaderTitle}>Docco360</Text>
+      <View className="flex-row justify-center items-center py-4 border-b border-transparent bg-background">
+        <View className="flex-row items-center gap-2">
+          <Text className="text-2xl font-bold text-primary">Docco360</Text>
         </View>
       </View>
 
       <KeyboardAvoidingView
-        style={styles.keyboardView}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerClassName="grow justify-center p-6"
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.contentWrapper}>
+          <View className="w-full max-w-[480px] self-center">
             {/* Header & Branding */}
-            <View style={styles.header}>
-              <Text style={styles.appName}>Create an account</Text>
-              <Text style={styles.tagline}>Please complete your profile to continue</Text>
+            <View className="items-center mb-8">
+              <Text className="text-2xl font-bold text-textMain mb-1">Create an account</Text>
+              <Text className="text-base text-textSecondary font-normal text-center">Please complete your profile to continue</Text>
             </View>
 
             {/* Role Selection Tabs */}
-            <View style={styles.roleTabsContainer}>
+            <View className="flex-row bg-borderLight rounded-md p-1 mb-8">
               <TouchableOpacity
-                style={[styles.roleTab, role === 'PATIENT' && styles.roleTabActive]}
+                className={`flex-1 py-4 rounded items-center ${role === 'PATIENT' ? 'bg-surface shadow-sm' : ''}`}
                 onPress={() => setRole('PATIENT')}
               >
-                <Text style={[styles.roleTabText, role === 'PATIENT' && styles.roleTabTextActive]}>Patient</Text>
+                <Text className={`text-sm font-semibold ${role === 'PATIENT' ? 'text-primary' : 'text-textSecondary'}`}>Patient</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.roleTab, role === 'DOCTOR' && styles.roleTabActive]}
+                className={`flex-1 py-4 rounded items-center ${role === 'DOCTOR' ? 'bg-surface shadow-sm' : ''}`}
                 onPress={() => setRole('DOCTOR')}
               >
-                <Text style={[styles.roleTabText, role === 'DOCTOR' && styles.roleTabTextActive]}>Doctor / Provider</Text>
+                <Text className={`text-sm font-semibold ${role === 'DOCTOR' ? 'text-primary' : 'text-textSecondary'}`}>Doctor</Text>
               </TouchableOpacity>
             </View>
 
             {/* Form */}
-            <View style={styles.form}>
+            <View className="mb-6">
               {errors.general && (
-                <View style={styles.errorBanner}>
+                <View className="flex-row items-center bg-dangerLight rounded-md p-4 mb-6 gap-2">
                   <Ionicons name="alert-circle" size={18} color={Colors.danger} />
-                  <Text style={styles.errorBannerText}>{errors.general}</Text>
+                  <Text className="text-sm text-danger flex-1 font-medium">{errors.general}</Text>
                 </View>
               )}
 
-              <View style={styles.row}>
-                <View style={styles.col}>
+              <View className="flex-row gap-4">
+                <View className="flex-1">
                   <Input
                     label="First Name"
                     placeholder="Jane"
@@ -165,7 +163,7 @@ export default function RegisterScreen() {
                     error={errors.firstName}
                   />
                 </View>
-                <View style={styles.col}>
+                <View className="flex-1">
                   <Input
                     label="Last Name"
                     placeholder="Doe"
@@ -199,7 +197,7 @@ export default function RegisterScreen() {
                 error={errors.email}
               />
 
-              <View style={styles.passwordContainer}>
+              <View className="mb-1">
                 <Input
                   label="Password"
                   placeholder="••••••••"
@@ -213,22 +211,20 @@ export default function RegisterScreen() {
                 />
                 {/* Strength Meter */}
                 {password.length > 0 && (
-                  <View style={styles.strengthContainer}>
-                    <View style={styles.strengthBarsRow}>
+                  <View className="mt-1 px-1">
+                    <View className="flex-row gap-1 h-1.5 mb-1">
                       {[1, 2, 3, 4].map((i) => (
                         <View
                           key={i}
-                          style={[
-                            styles.strengthBar,
-                            {
-                              backgroundColor:
-                                i <= strength.level ? strength.color : Colors.borderLight,
-                            },
-                          ]}
+                          className="flex-1 rounded-full"
+                          style={{
+                            backgroundColor:
+                              i <= strength.level ? strength.color : Colors.borderLight,
+                          }}
                         />
                       ))}
                     </View>
-                    <Text style={[styles.strengthLabel, { color: Colors.textTertiary }]}>
+                    <Text className="text-[10px] font-semibold text-right text-textTertiary">
                       {strength.label}
                     </Text>
                   </View>
@@ -248,15 +244,15 @@ export default function RegisterScreen() {
               )}
 
               <TouchableOpacity 
-                style={styles.termsContainer}
+                className="flex-row items-start gap-2 mt-4 mb-6 px-1"
                 activeOpacity={0.7}
                 onPress={() => setAgreed(!agreed)}
               >
-                <View style={[styles.checkbox, agreed && styles.checkboxActive, errors.agreed && { borderColor: Colors.danger }]}>
+                <View className={`w-[18px] h-[18px] rounded border-[1.5px] justify-center items-center mt-0.5 ${agreed ? 'bg-primary border-primary' : 'bg-surfaceAlt border-border'} ${errors.agreed ? 'border-danger' : ''}`}>
                   {agreed && <Ionicons name="checkmark" size={12} color="#fff" />}
                 </View>
-                <Text style={styles.termsText}>
-                  I agree to the <Text style={styles.termsLink}>Terms of Service</Text> and <Text style={styles.termsLink}>Privacy Policy</Text>.
+                <Text className="flex-1 text-sm text-textSecondary leading-5">
+                  I agree to the <Text className="text-primary font-medium">Terms of Service</Text> and <Text className="text-primary font-medium">Privacy Policy</Text>.
                 </Text>
               </TouchableOpacity>
 
@@ -266,36 +262,36 @@ export default function RegisterScreen() {
                 loading={loading}
                 fullWidth
                 size="lg"
-                style={styles.submitButton}
+                className="mt-1"
               />
             </View>
 
             {/* Divider */}
-            <View style={styles.dividerContainer}>
-              <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>Or register with</Text>
-              <View style={styles.dividerLine} />
+            <View className="flex-row items-center py-6">
+              <View className="flex-1 h-[1px] bg-borderLight" />
+              <Text className="mx-4 text-xs text-textTertiary">Or register with</Text>
+              <View className="flex-1 h-[1px] bg-borderLight" />
             </View>
 
             {/* Social Logins */}
-            <View style={styles.socialContainer}>
-              <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
+            <View className="flex-row gap-4 mb-8">
+              <TouchableOpacity className="flex-1 flex-row items-center justify-center gap-2 bg-surface py-4 rounded-lg border border-borderLight" activeOpacity={0.7}>
                 <Ionicons name="logo-google" size={20} color="#EA4335" />
-                <Text style={styles.socialButtonText}>Google</Text>
+                <Text className="text-sm font-medium text-textMain">Google</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
+              <TouchableOpacity className="flex-1 flex-row items-center justify-center gap-2 bg-surface py-4 rounded-lg border border-borderLight" activeOpacity={0.7}>
                 <Ionicons name="logo-apple" size={20} color="#000" />
-                <Text style={styles.socialButtonText}>Apple</Text>
+                <Text className="text-sm font-medium text-textMain">Apple</Text>
               </TouchableOpacity>
             </View>
 
             {/* Login Link */}
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>
+            <View className="flex-row justify-center items-center mb-8">
+              <Text className="text-base text-textSecondary">
                 Already have an account?{' '}
               </Text>
               <TouchableOpacity onPress={() => router.push('/(auth)/login')}>
-                <Text style={styles.footerLink}>Sign in</Text>
+                <Text className="text-base text-primary font-semibold underline">Sign in</Text>
               </TouchableOpacity>
             </View>
 
@@ -305,219 +301,3 @@ export default function RegisterScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  topHeader: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: 'transparent',
-    backgroundColor: Colors.background,
-  },
-  topHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-  },
-  topHeaderTitle: {
-    fontSize: Fonts.sizes.xl,
-    fontWeight: '700',
-    color: Colors.primary,
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: Spacing.xl,
-  },
-  contentWrapper: {
-    width: '100%',
-    maxWidth: 480,
-    alignSelf: 'center',
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: Spacing.xl,
-  },
-  appName: {
-    fontSize: Fonts.sizes.xxl,
-    fontWeight: '700',
-    color: Colors.text,
-    marginBottom: Spacing.xs,
-  },
-  tagline: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-    fontWeight: '400',
-    textAlign: 'center',
-  },
-  roleTabsContainer: {
-    flexDirection: 'row',
-    backgroundColor: Colors.borderLight,
-    borderRadius: Radii.md,
-    padding: 4,
-    marginBottom: Spacing.xl,
-  },
-  roleTab: {
-    flex: 1,
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.sm - 2,
-    alignItems: 'center',
-  },
-  roleTabActive: {
-    backgroundColor: Colors.surface,
-    ...Shadows.sm,
-  },
-  roleTabText: {
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '600',
-    color: Colors.textSecondary,
-  },
-  roleTabTextActive: {
-    color: Colors.primary,
-  },
-  form: {
-    marginBottom: Spacing.lg,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.dangerLight,
-    borderRadius: Radii.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  errorBannerText: {
-    fontSize: Fonts.sizes.sm,
-    color: Colors.danger,
-    flex: 1,
-    fontWeight: '500',
-  },
-  row: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  col: {
-    flex: 1,
-  },
-  passwordContainer: {
-    marginBottom: Spacing.xs,
-  },
-  strengthContainer: {
-    marginTop: 4,
-    paddingHorizontal: 4,
-  },
-  strengthBarsRow: {
-    flexDirection: 'row',
-    gap: 4,
-    height: 6,
-    marginBottom: 4,
-  },
-  strengthBar: {
-    flex: 1,
-    borderRadius: Radii.full,
-  },
-  strengthLabel: {
-    fontSize: 10,
-    fontWeight: '600',
-    textAlign: 'right',
-  },
-  termsContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.sm,
-    marginTop: Spacing.md,
-    marginBottom: Spacing.lg,
-    paddingHorizontal: 4,
-  },
-  checkbox: {
-    width: 18,
-    height: 18,
-    borderRadius: 4,
-    borderWidth: 1.5,
-    borderColor: Colors.border,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.surfaceAlt,
-    marginTop: 2,
-  },
-  checkboxActive: {
-    backgroundColor: Colors.primary,
-    borderColor: Colors.primary,
-  },
-  termsText: {
-    flex: 1,
-    fontSize: Fonts.sizes.sm,
-    color: Colors.textSecondary,
-    lineHeight: 20,
-  },
-  termsLink: {
-    color: Colors.primary,
-    fontWeight: '500',
-  },
-  submitButton: {
-    marginTop: Spacing.xs,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.lg,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: Colors.borderLight,
-  },
-  dividerText: {
-    marginHorizontal: Spacing.md,
-    fontSize: Fonts.sizes.xs,
-    color: Colors.textTertiary,
-  },
-  socialContainer: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-    marginBottom: Spacing.xl,
-  },
-  socialButton: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.sm,
-    backgroundColor: Colors.surface,
-    paddingVertical: Spacing.md,
-    borderRadius: Radii.lg,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-  },
-  socialButtonText: {
-    fontSize: Fonts.sizes.sm,
-    fontWeight: '500',
-    color: Colors.text,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.xl,
-  },
-  footerText: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.textSecondary,
-  },
-  footerLink: {
-    fontSize: Fonts.sizes.md,
-    color: Colors.primary,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-  },
-});

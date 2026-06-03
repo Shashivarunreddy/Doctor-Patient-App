@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { doctorService } from '@/services/doctor';
@@ -22,6 +23,7 @@ import type { Appointment } from '@/services/doctor';
 
 export default function DoctorDashboardScreen() {
   const { user } = useAuth();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -43,14 +45,24 @@ export default function DoctorDashboardScreen() {
     fetchAppointments();
   }, [fetchAppointments]);
 
-  const handleJoinCall = async (id: string) => {
+  const handleJoinCall = async (appointment: Appointment) => {
     try {
-      const callData = await doctorService.joinCall(id);
-      Alert.alert(
-        'Call Started',
-        `Connected to channel: ${callData.channelName}\nRole: ${callData.role}\nToken received successfully.`,
-      );
-      fetchAppointments();
+      const callData = await doctorService.joinCall(appointment.id);
+      router.push({
+        pathname: '/call',
+        params: {
+          appointmentId: appointment.id,
+          channelName: callData.channelName,
+          token: callData.token,
+          appId: callData.appId,
+          uid: String(callData.uid),
+          role: callData.role,
+          remoteName: appointment.patient?.name || 'Patient',
+          remoteRole: 'patient',
+          appointmentDate: appointment.timeSlot?.date || '',
+          appointmentTime: `${appointment.timeSlot?.startTime || ''} - ${appointment.timeSlot?.endTime || ''}`,
+        },
+      });
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Failed to join call');
     }
@@ -147,7 +159,7 @@ export default function DoctorDashboardScreen() {
           <AppointmentCard
             appointment={item}
             role="doctor"
-            onJoinCall={() => handleJoinCall(item.id)}
+            onJoinCall={() => handleJoinCall(item)}
             onEndCall={() => handleEndCall(item.id)}
           />
         )}
