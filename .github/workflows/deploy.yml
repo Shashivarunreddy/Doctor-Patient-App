@@ -9,11 +9,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  deploy-backend:
     if: >
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main')
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.name == 'Backend CI')
     runs-on: ubuntu-latest
 
     steps:
@@ -34,31 +35,76 @@ jobs:
         run: |
           scp docker-compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/doctoroncall/docker-compose.yaml
 
-      - name: Set image SHA
-        id: sha
+      - name: Deploy backend on EC2
         run: |
-          echo "IMAGE_SHA=${{ github.event.workflow_run.head_sha || github.sha }}" >> $GITHUB_OUTPUT
-
-      - name: Deploy on EC2
-        run: |
+          IMAGE_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
             cd doctoroncall
+            echo "Deploying backend SHA: ${IMAGE_SHA}"
 
-            echo "Deploying SHA: ${{ steps.sha.outputs.IMAGE_SHA }}"
+            # Try SHA tag first, fallback to latest
+            if docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${IMAGE_SHA}; then
+              export BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${IMAGE_SHA}
+              echo "Using SHA image: ${IMAGE_SHA}"
+            else
+              export BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:latest
+              echo "SHA not found, falling back to latest"
+              docker pull \$BACKEND_IMAGE
+            fi
 
-            # Pull exact SHA tagged images
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${{ steps.sha.outputs.IMAGE_SHA }}
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${{ steps.sha.outputs.IMAGE_SHA }}
+            # Only recreate backend container
+            docker compose up -d --force-recreate --no-deps backend
 
-            # Export SHA images as env vars
-            export BACKEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-backend:${{ steps.sha.outputs.IMAGE_SHA }}
-            export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${{ steps.sha.outputs.IMAGE_SHA }}
-
-            # Deploy with SHA tagged images
-            docker compose up -d --force-recreate
-
-            # Cleanup old images
             docker image prune -f
+            echo "Backend deployed: \$BACKEND_IMAGE"
+          EOF
 
-            echo "Deployed successfully: ${{ steps.sha.outputs.IMAGE_SHA }}"
+  deploy-frontend:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.name == 'Frontend CI')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy docker-compose to EC2
+        run: |
+          scp docker-compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/doctoroncall/docker-compose.yaml
+
+      - name: Deploy frontend on EC2
+        run: |
+          IMAGE_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
+            cd doctoroncall
+            echo "Deploying frontend SHA: ${IMAGE_SHA}"
+
+            # Try SHA tag first, fallback to latest
+            if docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${IMAGE_SHA}; then
+              export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${IMAGE_SHA}
+              echo "Using SHA image: ${IMAGE_SHA}"
+            else
+              export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:latest
+              echo "SHA not found, falling back to latest"
+              docker pull \$FRONTEND_IMAGE
+            fi
+
+            # Only recreate frontend container
+            docker compose up -d --force-recreate --no-deps frontend
+
+            docker image prune -f
+            echo "Frontend deployed: \$FRONTEND_IMAGE"
           EOF
