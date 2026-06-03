@@ -4,7 +4,6 @@ services:
     container_name: oshadhi_backend
     restart: always
     env_file:
-      - ./.env
       - ./backend/.env
     environment:
       DATABASE_URL: ${DATABASE_URL}
