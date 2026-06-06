@@ -8,7 +8,9 @@ services:
     environment:
       PORT: 5000
     command: sh -c "npx prisma migrate deploy && node dist/server.js"
-    # backend port not exposed — only accessible via Nginx internally
+    
+    ports:
+      - "5000:5000" 
 
   frontend:
     image: ${FRONTEND_IMAGE:-sriharshareddy6464/doc-frontend:latest}
