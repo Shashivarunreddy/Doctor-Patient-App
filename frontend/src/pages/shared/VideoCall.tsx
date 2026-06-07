@@ -31,6 +31,7 @@ const VideoCall = ({ role }: VideoCallProps) => {
   const localVideoTrackRef = useRef<ILocalVideoTrack | null>(null);
   const localAudioTrackRef = useRef<ILocalAudioTrack | null>(null);
   const screenTrackRef = useRef<any | null>(null);
+  const remoteUserUidRef = useRef<number | undefined>(undefined);
 
   const localVideoRef = useRef<HTMLDivElement>(null);
   const remoteVideoRef = useRef<HTMLDivElement>(null);
@@ -118,6 +119,7 @@ const VideoCall = ({ role }: VideoCallProps) => {
           await client.subscribe(remUser, mediaType);
           if (cancelled) return;
           if (mediaType === 'video') {
+            remoteUserUidRef.current = remUser.uid as number;
             setRemoteUser(remUser);
           }
           if (mediaType === 'audio') {
@@ -126,11 +128,17 @@ const VideoCall = ({ role }: VideoCallProps) => {
         });
 
         client.on('user-unpublished', (_remUser, mediaType) => {
-          if (mediaType === 'video' && !cancelled) setRemoteUser(null);
+          if (mediaType === 'video' && !cancelled) {
+            remoteUserUidRef.current = undefined;
+            setRemoteUser(null);
+          }
         });
 
         client.on('user-left', () => {
-          if (!cancelled) setRemoteUser(null);
+          if (!cancelled) {
+            remoteUserUidRef.current = undefined;
+            setRemoteUser(null);
+          }
         });
 
         // Network Quality Indicator Event
@@ -144,7 +152,10 @@ const VideoCall = ({ role }: VideoCallProps) => {
         client.enableAudioVolumeIndicator();
         client.on('volume-indicator', (volumes) => {
           if (cancelled) return;
-          const remoteVol = volumes.find((v) => v.uid === remoteUser?.uid);
+          const currentRemoteUid = remoteUserUidRef.current;
+          const remoteVol = currentRemoteUid != null
+            ? volumes.find((v) => v.uid === currentRemoteUid)
+            : undefined;
           if (remoteVol) {
             setPeerVolume(remoteVol.level);
           } else {
@@ -208,7 +219,7 @@ const VideoCall = ({ role }: VideoCallProps) => {
     if (remoteUser?.videoTrack && remoteVideoRef.current) {
       remoteUser.videoTrack.play(remoteVideoRef.current);
     }
-  }, [remoteUser]);
+  }, [remoteUser, localTrackReady]);
 
   const toggleMic = async () => {
     if (localAudioTrackRef.current) {
