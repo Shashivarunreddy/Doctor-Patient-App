@@ -46,12 +46,5 @@ export interface CallTokenResponse {
   uid: number;
   role: 'doctor' | 'patient';
   expiresIn: number;
-  appointment: {
-    id: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    doctor?: { id: string; name: string };
-    patient?: { id: string; name: string };
-  };
+  appointment: Appointment;
 }

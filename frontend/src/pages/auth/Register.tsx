@@ -27,8 +27,12 @@ const Register = () => {
     try {
       const res = await authService.register(formData);
       if (res.success) {
-        // Don't auto-login — send user to login so they authenticate explicitly
-        navigate('/login', { replace: true, state: { registered: true } });
+        if (res.data?.requiresApproval || res.requiresApproval) {
+          navigate('/pending-approval', { replace: true, state: { name: formData.name } });
+        } else {
+          // Don't auto-login — send user to login so they authenticate explicitly
+          navigate('/login', { replace: true, state: { registered: true } });
+        }
       }
     } catch (err: unknown) {
       const axiosErr = err as { response?: { data?: { errors?: Record<string, string>; message?: string } } };

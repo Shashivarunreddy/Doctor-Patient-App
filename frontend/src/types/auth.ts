@@ -12,6 +12,15 @@ export interface User {
   email: string;
   role: Role;
   createdAt?: string;
+  doctorProfile?: {
+    approvalStatus: 'PHASE1_PENDING' | 'PHASE1_APPROVED' | 'PHASE2_PENDING' | 'PHASE2_APPROVED' | 'PHASE2_REJECTED' | 'REJECTED';
+    canTakeAppointments: boolean;
+    phase2RejectionReason?: string | null;
+  } | null;
+  patientProfile?: {
+    id: string;
+    phone?: string | null;
+  } | null;
 }
 
 export interface AuthState {

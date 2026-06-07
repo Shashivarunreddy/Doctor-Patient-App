@@ -96,19 +96,22 @@ const PatientDashboard = () => {
         </Card>
 
         {/* Records Card */}
-        <Card className="rounded-3xl border-zinc-200 shadow-sm hover:shadow-xl transition-all group overflow-hidden">
+        <Card className="rounded-3xl border-zinc-200 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 transition-all group overflow-hidden relative">
+          <div className="absolute inset-x-0 top-0 h-1 bg-linear-to-r from-orange-400 to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
           <CardHeader>
-            <div className="bg-zinc-100 w-12 h-12 rounded-xl flex items-center justify-center text-zinc-600 mb-4">
+            <div className="bg-orange-50 w-12 h-12 rounded-xl flex items-center justify-center text-primary mb-4">
               <FileText className="h-6 w-6" />
             </div>
-            <CardTitle className="text-xl font-bold">Medical Records</CardTitle>
+            <CardTitle className="text-xl font-bold">Health Profile</CardTitle>
             <CardDescription className="text-zinc-500 text-sm leading-relaxed">
-              Securely access your prescriptions, notes, and lab reports sent by doctors.
+              Update your medical details, allergies list, emergency contacts, and history.
             </CardDescription>
           </CardHeader>
           <CardContent>
-             <Button variant="outline" className="w-full text-zinc-600 border-zinc-200 hover:bg-zinc-50 font-bold rounded-xl mt-2">
-               View Vault
+             <Button asChild className="w-full bg-primary hover:bg-orange-600 font-bold rounded-xl mt-2 group-hover:translate-x-1 transition-transform">
+               <Link to="/patient-dashboard/profile">
+                 Edit Health Profile <ArrowRight className="ml-2 h-4 w-4" />
+               </Link>
              </Button>
           </CardContent>
         </Card>
