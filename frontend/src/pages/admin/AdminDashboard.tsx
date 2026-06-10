@@ -34,7 +34,7 @@ import { RejectModal } from './components/RejectModal';
 import type { Tab } from './types';
 
 const AdminDashboard = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentTab = (searchParams.get('tab') as Tab) || 'overview';
