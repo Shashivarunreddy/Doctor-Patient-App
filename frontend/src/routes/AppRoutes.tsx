@@ -74,10 +74,11 @@ export const AppRoutes = () => {
             </Route>
           </Route>
 
-          {/* Admin routes */}
-          <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
-            <Route path="/admin-dashboard" element={<AdminDashboard />} />
-          </Route>
+        </Route>
+
+        {/* Admin routes (outside MainLayout to allow full custom Stitch side navigation) */}
+        <Route element={<ProtectedRoute allowedRoles={[Role.ADMIN]} />}>
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Route>
 
         {/* Video call routes — full screen, outside MainLayout */}

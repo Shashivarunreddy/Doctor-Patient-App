@@ -59,34 +59,72 @@ export const getStats = async () => {
   };
 };
 
-/** All doctors (including inactive and unapproved) */
-export const getAllDoctors = async () => {
-  return prisma.user.findMany({
-    where: { role: "DOCTOR" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      isActive: true,
-      createdAt: true,
-      doctorProfile: {
-        select: {
-          approvalStatus: true,
-          rejectionReason: true,
-          phase2RejectionReason: true,
-          specializations: true,
-          experience: true,
-          consultationFee: true,
-          qualifications: true,
-          licenseNumber: true,
-          canTakeAppointments: true,
-          phone: true,
+/** All doctors (including inactive and unapproved, with pagination, search, and status filter) */
+export const getAllDoctors = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  status?: string;
+}) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const search = params?.search ?? "";
+  const status = params?.status ?? "";
+
+  const where: any = { role: "DOCTOR" };
+
+  if (status) {
+    where.doctorProfile = { approvalStatus: status };
+  }
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  const [total, doctors] = await Promise.all([
+    prisma.user.count({ where }),
+    prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        isActive: true,
+        createdAt: true,
+        doctorProfile: {
+          select: {
+            approvalStatus: true,
+            rejectionReason: true,
+            phase2RejectionReason: true,
+            specializations: true,
+            experience: true,
+            consultationFee: true,
+            qualifications: true,
+            licenseNumber: true,
+            canTakeAppointments: true,
+            phone: true,
+          },
         },
+        _count: { select: { doctorAppointments: true } },
       },
-      _count: { select: { doctorAppointments: true } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
+
+  return {
+    data: doctors,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-    orderBy: { createdAt: "desc" },
-  });
+  };
 };
 
 // ─────────────── PHASE 1 ───────────────
@@ -240,35 +278,119 @@ export const activateDoctor = async (doctorId: string) => {
 
 // ─────────────── PATIENTS ───────────────
 
-/** All patients */
-export const getAllPatients = async () => {
-  return prisma.user.findMany({
-    where: { role: "PATIENT" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-      patientProfile: {
-        select: { phone: true, dateOfBirth: true, gender: true, bloodGroup: true },
+/** All patients (with pagination and search) */
+export const getAllPatients = async (params?: {
+  page?: number;
+  limit?: number;
+  search?: string;
+}) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const search = params?.search ?? "";
+
+  const where: any = { role: "PATIENT" };
+
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { email: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  const [total, patients] = await Promise.all([
+    prisma.user.count({ where }),
+    prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        patientProfile: {
+          select: { phone: true, dateOfBirth: true, gender: true, bloodGroup: true },
+        },
+        _count: { select: { patientAppointments: true } },
       },
-      _count: { select: { patientAppointments: true } },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
+
+  return {
+    data: patients,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-    orderBy: { createdAt: "desc" },
-  });
+  };
 };
 
-/** All appointments with full relations (admin view) */
-export const getAllAppointments = async () => {
-  return prisma.appointment.findMany({
-    include: {
-      timeSlot: true,
-      doctor: { select: { id: true, name: true, email: true } },
-      patient: { select: { id: true, name: true, email: true } },
+/** All appointments with full relations (admin view, with pagination, search, filters) */
+export const getAllAppointments = async (params?: {
+  page?: number;
+  limit?: number;
+  status?: string;
+  search?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+  const status = params?.status ?? "";
+  const search = params?.search ?? "";
+  const dateFrom = params?.dateFrom ?? "";
+  const dateTo = params?.dateTo ?? "";
+
+  const where: any = {};
+
+  if (status) {
+    where.status = status;
+  }
+
+  if (dateFrom || dateTo) {
+    where.timeSlot = {};
+    if (dateFrom) {
+      where.timeSlot.date = { gte: dateFrom };
+    }
+    if (dateTo) {
+      where.timeSlot.date = { ...where.timeSlot.date, lte: dateTo };
+    }
+  }
+
+  if (search) {
+    where.OR = [
+      { doctor: { name: { contains: search, mode: "insensitive" } } },
+      { patient: { name: { contains: search, mode: "insensitive" } } },
+    ];
+  }
+
+  const [total, appointments] = await Promise.all([
+    prisma.appointment.count({ where }),
+    prisma.appointment.findMany({
+      where,
+      include: {
+        timeSlot: true,
+        doctor: { select: { id: true, name: true, email: true } },
+        patient: { select: { id: true, name: true, email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+  ]);
+
+  return {
+    data: appointments,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
     },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  });
+  };
 };
 
 /** Cancel any appointment (admin override) */
@@ -281,4 +403,167 @@ export const cancelAppointment = async (appointmentId: string) => {
     prisma.appointment.update({ where: { id: appointmentId }, data: { status: "CANCELLED" } }),
     prisma.timeSlot.update({ where: { id: appt.timeSlotId }, data: { isBooked: false } }),
   ]);
+};
+
+/** Get analytics report for a specific period */
+export const getAnalytics = async (period: string) => {
+  const now = new Date();
+  const startDate = new Date();
+
+  if (period === "7d") {
+    startDate.setDate(now.getDate() - 7);
+  } else if (period === "90d") {
+    startDate.setDate(now.getDate() - 90);
+  } else if (period === "12m") {
+    startDate.setMonth(now.getMonth() - 12);
+  } else {
+    // default 30d
+    startDate.setDate(now.getDate() - 30);
+  }
+
+  // Fetch relevant tables in parallel
+  const [appointments, users, topDoctorsRes, specDistributionRes] = await Promise.all([
+    prisma.appointment.findMany({
+      where: { createdAt: { gte: startDate } },
+      select: { createdAt: true, status: true, amount: true, paymentStatus: true },
+    }),
+    prisma.user.findMany({
+      where: { role: { in: ["DOCTOR", "PATIENT"] }, createdAt: { gte: startDate } },
+      select: { createdAt: true, role: true },
+    }),
+    prisma.appointment.findMany({
+      where: { paymentStatus: "PAID", createdAt: { gte: startDate } },
+      select: {
+        amount: true,
+        doctor: {
+          select: {
+            id: true,
+            name: true,
+            doctorProfile: { select: { specializations: true } },
+          },
+        },
+      },
+    }),
+    prisma.doctorProfile.findMany({
+      select: { specializations: true },
+    }),
+  ]);
+
+  // Aggregate daily records in memory (DB independent, high performance)
+  const formatDayKey = (date: Date): string => date.toISOString().slice(0, 10);
+
+  const revenueMap: Record<string, number> = {};
+  const registrationsMap: Record<string, { doctors: number; patients: number }> = {};
+  const appointmentsMap: Record<string, { confirmed: number; completed: number; cancelled: number }> = {};
+
+  // Initialize all days in the range to ensure zero-filled graphs
+  const iterDate = new Date(startDate);
+  while (iterDate <= now) {
+    const key = formatDayKey(iterDate);
+    revenueMap[key] = 0;
+    registrationsMap[key] = { doctors: 0, patients: 0 };
+    appointmentsMap[key] = { confirmed: 0, completed: 0, cancelled: 0 };
+    iterDate.setDate(iterDate.getDate() + 1);
+  }
+
+  // Populate Revenue points
+  appointments.forEach((appt) => {
+    if (appt.paymentStatus === "PAID") {
+      const key = formatDayKey(appt.createdAt);
+      if (revenueMap[key] !== undefined) {
+        revenueMap[key] += appt.amount;
+      }
+    }
+  });
+
+  // Populate Registrations points
+  users.forEach((u) => {
+    const key = formatDayKey(u.createdAt);
+    if (registrationsMap[key] !== undefined) {
+      if (u.role === "DOCTOR") {
+        registrationsMap[key].doctors++;
+      } else {
+        registrationsMap[key].patients++;
+      }
+    }
+  });
+
+  // Populate Appointments points
+  appointments.forEach((appt) => {
+    const key = formatDayKey(appt.createdAt);
+    if (appointmentsMap[key] !== undefined) {
+      if (appt.status === "COMPLETED") {
+        appointmentsMap[key].completed++;
+      } else if (appt.status === "CANCELLED") {
+        appointmentsMap[key].cancelled++;
+      } else {
+        appointmentsMap[key].confirmed++;
+      }
+    }
+  });
+
+  // Format maps to sorted arrays
+  const revenueByDay = Object.entries(revenueMap).map(([date, amount]) => ({ date, amount }));
+  const registrationsByDay = Object.entries(registrationsMap).map(([date, counts]) => ({
+    date,
+    doctors: counts.doctors,
+    patients: counts.patients,
+  }));
+  const appointmentsByDay = Object.entries(appointmentsMap).map(([date, counts]) => ({
+    date,
+    confirmed: counts.confirmed,
+    completed: counts.completed,
+    cancelled: counts.cancelled,
+  }));
+
+  // Aggregate top doctors
+  const doctorsPerf: Record<string, { id: string; name: string; revenue: number; appointments: number; specializations: string[] }> = {};
+  topDoctorsRes.forEach((appt) => {
+    const docId = appt.doctor.id;
+    if (!doctorsPerf[docId]) {
+      doctorsPerf[docId] = {
+        id: docId,
+        name: appt.doctor.name,
+        revenue: 0,
+        appointments: 0,
+        specializations: appt.doctor.doctorProfile?.specializations ?? [],
+      };
+    }
+    doctorsPerf[docId].revenue += appt.amount;
+    doctorsPerf[docId].appointments++;
+  });
+  const topDoctors = Object.values(doctorsPerf)
+    .sort((a, b) => b.revenue - a.revenue)
+    .slice(0, 5);
+
+  // Aggregate specializations
+  const specPerf: Record<string, number> = {};
+  specDistributionRes.forEach((profile) => {
+    profile.specializations.forEach((spec) => {
+      specPerf[spec] = (specPerf[spec] ?? 0) + 1;
+    });
+  });
+  const specializationDistribution = Object.entries(specPerf)
+    .map(([specialization, count]) => ({ specialization, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // Summary Metrics
+  const completedApptsCount = appointments.filter((a) => a.status === "COMPLETED").length;
+  const activeApptsCount = appointments.filter((a) => a.status === "CONFIRMED").length;
+  const totalCount = completedApptsCount + activeApptsCount;
+  const completionRate = totalCount > 0 ? (completedApptsCount / totalCount) * 100 : 0;
+
+  const paidAppts = appointments.filter((a) => a.paymentStatus === "PAID");
+  const totalPaidRevenue = paidAppts.reduce((sum, a) => sum + a.amount, 0);
+  const avgRevenuePerAppointment = paidAppts.length > 0 ? totalPaidRevenue / paidAppts.length : 0;
+
+  return {
+    revenueByDay,
+    registrationsByDay,
+    appointmentsByDay,
+    topDoctors,
+    specializationDistribution,
+    completionRate,
+    avgRevenuePerAppointment,
+  };
 };

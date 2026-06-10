@@ -5,6 +5,7 @@ const router = Router();
 
 // Platform stats
 router.get("/stats", ctrl.getStats);
+router.get("/analytics", ctrl.getAnalytics);
 
 // Doctor management
 router.get("/doctors", ctrl.getAllDoctors);

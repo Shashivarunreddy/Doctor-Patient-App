@@ -15,7 +15,20 @@ const handle =
 
 export const getStats = handle(async () => adminService.getStats());
 
-export const getAllDoctors = handle(async () => adminService.getAllDoctors());
+export const getAllDoctors = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || "";
+    const status = (req.query.status as string) || "";
+
+    const result = await adminService.getAllDoctors({ page, limit, search, status });
+    res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
+  } catch (err: unknown) {
+    const e = err as { status?: number; message?: string };
+    res.status(e.status ?? 500).json({ success: false, message: e.message ?? "Internal server error" });
+  }
+};
 
 const requireId = (req: Request): string => {
   const id = req.params.id;
@@ -51,8 +64,42 @@ export const deactivateDoctor = handle(async (req) => adminService.deactivateDoc
 export const activateDoctor = handle(async (req) => adminService.activateDoctor(requireId(req)));
 
 // ── Patients ──
-export const getAllPatients = handle(async () => adminService.getAllPatients());
+export const getAllPatients = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || "";
+
+    const result = await adminService.getAllPatients({ page, limit, search });
+    res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
+  } catch (err: unknown) {
+    const e = err as { status?: number; message?: string };
+    res.status(e.status ?? 500).json({ success: false, message: e.message ?? "Internal server error" });
+  }
+};
 
 // ── Appointments ──
-export const getAllAppointments = handle(async () => adminService.getAllAppointments());
+export const getAllAppointments = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const status = (req.query.status as string) || "";
+    const search = (req.query.search as string) || "";
+    const dateFrom = (req.query.dateFrom as string) || "";
+    const dateTo = (req.query.dateTo as string) || "";
+
+    const result = await adminService.getAllAppointments({ page, limit, status, search, dateFrom, dateTo });
+    res.status(200).json({ success: true, data: result.data, pagination: result.pagination });
+  } catch (err: unknown) {
+    const e = err as { status?: number; message?: string };
+    res.status(e.status ?? 500).json({ success: false, message: e.message ?? "Internal server error" });
+  }
+};
+
 export const cancelAppointment = handle(async (req) => adminService.cancelAppointment(requireId(req)));
+
+// ── Analytics ──
+export const getAnalytics = handle(async (req) => {
+  const period = (req.query.period as string) || "30d";
+  return adminService.getAnalytics(period);
+});
