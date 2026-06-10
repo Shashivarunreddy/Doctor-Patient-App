@@ -58,12 +58,12 @@ export const Pagination = ({
   const endRange = Math.min(page * limit, total);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 border-t border-zinc-100 bg-white">
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 border-t border-[#e1e1e1] bg-white">
       {/* Description */}
-      <p className="text-sm text-zinc-500 font-medium">
-        Showing <span className="font-bold text-zinc-800">{startRange}</span> to{' '}
-        <span className="font-bold text-zinc-800">{endRange}</span> of{' '}
-        <span className="font-bold text-zinc-800">{total}</span> results
+      <p className="text-sm text-[#555555] font-medium">
+        Showing <span className="font-bold text-black">{startRange}</span> to{' '}
+        <span className="font-bold text-black">{endRange}</span> of{' '}
+        <span className="font-bold text-black">{total}</span> results
       </p>
 
       {/* Page Selector Buttons */}
@@ -73,7 +73,7 @@ export const Pagination = ({
           size="sm"
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          className="h-8 w-8 p-0 rounded-lg border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+          className="h-8 w-8 p-0 rounded-sm border-[#e1e1e1] text-black hover:bg-[#f0f0f0]"
           aria-label="Go to previous page"
         >
           <ChevronLeft size={16} />
@@ -84,7 +84,7 @@ export const Pagination = ({
             return (
               <span
                 key={`ellipses-${idx}`}
-                className="w-8 h-8 flex items-center justify-center text-zinc-400 text-sm font-semibold select-none"
+                className="w-8 h-8 flex items-center justify-center text-[#555555] text-sm font-semibold select-none"
               >
                 ...
               </span>
@@ -100,10 +100,10 @@ export const Pagination = ({
               variant={isSelected ? 'default' : 'outline'}
               size="sm"
               onClick={() => onPageChange(pageNum)}
-              className={`h-8 w-8 p-0 rounded-lg text-sm font-bold transition-all ${
+              className={`h-8 w-8 p-0 rounded-sm text-sm font-bold transition-all ${
                 isSelected
-                  ? 'bg-primary text-white hover:bg-primary/95 shadow-sm'
-                  : 'border-zinc-200 text-zinc-600 hover:bg-zinc-50'
+                  ? 'bg-black text-white hover:bg-black/90 shadow-sm'
+                  : 'border-[#e1e1e1] text-black hover:bg-[#f0f0f0]'
               }`}
               aria-label={`Go to page ${pageNum}`}
               aria-current={isSelected ? 'page' : undefined}
@@ -118,7 +118,7 @@ export const Pagination = ({
           size="sm"
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          className="h-8 w-8 p-0 rounded-lg border-zinc-200 text-zinc-600 hover:bg-zinc-50"
+          className="h-8 w-8 p-0 rounded-sm border-[#e1e1e1] text-black hover:bg-[#f0f0f0]"
           aria-label="Go to next page"
         >
           <ChevronRight size={16} />

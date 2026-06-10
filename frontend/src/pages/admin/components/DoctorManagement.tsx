@@ -103,7 +103,7 @@ export const DoctorManagement = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-serif text-3xl text-zinc-950 font-bold tracking-tight">All Doctors Directory</h2>
+          <h2 className="text-lg font-extrabold text-zinc-900">All Doctors Directory</h2>
           <p className="text-zinc-500 text-xs mt-1 font-medium">
             Manage, approve, and review doctor profiles across the platform.
           </p>
@@ -137,7 +137,7 @@ export const DoctorManagement = ({
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-20 w-full bg-zinc-50 border border-zinc-150 animate-pulse rounded"
+              className="h-20 w-full bg-[#fafafa] border border-[#e1e1e1] animate-pulse rounded-sm"
             />
           ))}
         </div>
@@ -149,31 +149,31 @@ export const DoctorManagement = ({
         />
       ) : (
         <div className="space-y-4">
-          <div className="bg-white border border-[#d8c3ad] rounded-lg overflow-hidden flex flex-col shadow-sm">
+          <div className="bg-white border border-[#e1e1e1] rounded-sm overflow-hidden flex flex-col shadow-sm">
             <div className="overflow-x-auto">
               <Table className="w-full text-left border-collapse">
-                <TableHeader className="bg-zinc-50/70 border-b border-[#d8c3ad]">
+                <TableHeader className="bg-[#fafafa] border-b border-[#e1e1e1]">
                   <TableRow>
                     <TableHead className="w-8 pl-4" />
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider">
                       Doctor
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider">
                       Specialization
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Exp.
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Fee
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Appts
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider">
                       Status
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right pr-6">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right pr-6">
                       Actions
                     </TableHead>
                   </TableRow>
@@ -204,8 +204,8 @@ export const DoctorManagement = ({
                           {/* Profile Avatar and Name */}
                           <TableCell className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full overflow-hidden border border-[#d8c3ad]/70 bg-zinc-50 flex items-center justify-center shrink-0">
-                                <span className="font-serif text-sm font-bold text-zinc-600">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border border-[#e1e1e1] bg-[#fafafa] flex items-center justify-center shrink-0">
+                                <span className="font-serif text-sm font-bold text-[#555555]">
                                   {doc.name.slice(0, 2).toUpperCase()}
                                 </span>
                               </div>
@@ -250,7 +250,7 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onApprovePhase1(doc.id)}
                                     disabled={actionLoading !== null}
-                                    className="px-2.5 py-1 bg-[#f59e0b] text-[#613b00] rounded text-[11px] font-bold hover:opacity-90 transition-opacity flex items-center gap-1 cursor-pointer"
+                                    className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-bold hover:bg-[#f0f0f0] transition-opacity flex items-center gap-1 cursor-pointer"
                                   >
                                     <Check size={12} strokeWidth={3} />
                                     Approve
@@ -258,7 +258,7 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onReject(doc.id, doc.name, 1)}
                                     disabled={actionLoading !== null}
-                                    className="px-2.5 py-1 bg-white border border-[#d8c3ad] text-zinc-700 rounded text-[11px] font-semibold hover:border-primary hover:bg-zinc-50 transition-all cursor-pointer"
+                                    className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-semibold hover:bg-[#f0f0f0] transition-all cursor-pointer"
                                   >
                                     Reject
                                   </button>
@@ -271,7 +271,7 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onApprovePhase2(doc.id)}
                                     disabled={actionLoading !== null}
-                                    className="px-2.5 py-1 bg-[#f59e0b] text-[#613b00] rounded text-[11px] font-bold hover:opacity-90 transition-opacity flex items-center gap-1 cursor-pointer"
+                                    className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-bold hover:bg-[#f0f0f0] transition-opacity flex items-center gap-1 cursor-pointer"
                                   >
                                     <Check size={12} strokeWidth={3} />
                                     Verify
@@ -279,7 +279,7 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onReject(doc.id, doc.name, 2)}
                                     disabled={actionLoading !== null}
-                                    className="px-2.5 py-1 bg-white border border-[#d8c3ad] text-zinc-700 rounded text-[11px] font-semibold hover:border-primary hover:bg-zinc-50 transition-all cursor-pointer"
+                                    className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-semibold hover:bg-[#f0f0f0] transition-all cursor-pointer"
                                   >
                                     Reject
                                   </button>
@@ -293,10 +293,10 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onToggleAppointments(doc.id, !!profile?.canTakeAppointments)}
                                     disabled={actionLoading !== null}
-                                    className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center ${
+                                    className={`p-1.5 rounded-sm border transition-all cursor-pointer flex items-center justify-center ${
                                       profile?.canTakeAppointments
-                                        ? 'border-orange-200 text-orange-600 bg-orange-50 hover:bg-orange-100/70'
-                                        : 'border-zinc-200 text-zinc-400 hover:text-zinc-600 bg-zinc-50'
+                                        ? 'border-[#e1e1e1] text-black bg-white hover:bg-[#f0f0f0]'
+                                        : 'border-[#e1e1e1] text-[#555555] bg-[#fafafa] hover:bg-[#f0f0f0]'
                                     }`}
                                     title={profile?.canTakeAppointments ? 'Disable Booking Slots' : 'Enable Booking Slots'}
                                   >
@@ -307,10 +307,10 @@ export const DoctorManagement = ({
                                   <button
                                     onClick={() => onToggleDoctor(doc.id, doc.isActive)}
                                     disabled={actionLoading !== null}
-                                    className={`p-1.5 rounded-lg border transition-all cursor-pointer flex items-center justify-center ${
+                                    className={`p-1.5 rounded-sm border transition-all cursor-pointer flex items-center justify-center ${
                                       doc.isActive
-                                        ? 'border-rose-200 text-rose-600 bg-rose-50 hover:bg-rose-100'
-                                        : 'border-green-200 text-green-600 bg-green-50 hover:bg-green-100'
+                                        ? 'border-[#e1e1e1] text-black bg-white hover:bg-[#f0f0f0]'
+                                        : 'border-[#e1e1e1] text-black bg-white hover:bg-[#f0f0f0]'
                                     }`}
                                     title={doc.isActive ? 'Ban Account' : 'Activate Account'}
                                   >

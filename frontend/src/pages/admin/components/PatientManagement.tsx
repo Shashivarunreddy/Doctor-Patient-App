@@ -39,7 +39,7 @@ export const PatientManagement = ({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center gap-3 px-1">
-        <div className="p-2 bg-blue-50 rounded-xl border border-blue-100 text-blue-600">
+        <div className="p-2 bg-[#fafafa] rounded-sm border border-[#e1e1e1] text-black">
           <Users size={20} />
         </div>
         <div>
@@ -66,7 +66,7 @@ export const PatientManagement = ({
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-20 w-full bg-zinc-50 border border-zinc-150 animate-pulse rounded-2xl"
+              className="h-20 w-full bg-[#fafafa] border border-[#e1e1e1] animate-pulse rounded-sm"
             />
           ))}
         </div>
@@ -79,23 +79,23 @@ export const PatientManagement = ({
       ) : (
         <div className="space-y-4">
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="hidden md:block bg-white border border-[#e1e1e1] rounded-sm overflow-hidden shadow-sm">
             <Table>
-              <TableHeader className="bg-zinc-50/70">
+              <TableHeader className="bg-[#fafafa] border-b border-[#e1e1e1]">
                 <TableRow>
-                  <TableHead className="pl-6 font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="pl-6 font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Patient Info
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Contact Phone
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Bio Data
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Appointments
                   </TableHead>
-                  <TableHead className="pr-6 text-right font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="pr-6 text-right font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Registered On
                   </TableHead>
                 </TableRow>
@@ -122,13 +122,13 @@ export const PatientManagement = ({
                     <TableCell className="py-4">
                       <div className="flex flex-wrap gap-1.5">
                         {pat.patientProfile?.gender && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-zinc-100 text-zinc-600 border border-zinc-200">
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-[#fafafa] text-black border border-[#e1e1e1]">
                             {pat.patientProfile.gender}
                           </span>
                         )}
                         {pat.patientProfile?.bloodGroup && (
-                          <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-100 flex items-center gap-1">
-                            <Heart size={10} className="fill-rose-500 text-rose-500" />
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded-sm bg-[#fafafa] text-black border border-[#e1e1e1] flex items-center gap-1">
+                            <Heart size={10} className="fill-black text-black" />
                             {pat.patientProfile.bloodGroup}
                           </span>
                         )}
@@ -161,7 +161,7 @@ export const PatientManagement = ({
             {patients.map((pat) => (
               <div
                 key={pat.id}
-                className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm space-y-3"
+                className="bg-white rounded-sm border border-[#e1e1e1] p-4 shadow-sm space-y-3"
               >
                 <div>
                   <h4 className="font-extrabold text-zinc-900">{pat.name}</h4>
@@ -170,19 +170,19 @@ export const PatientManagement = ({
 
                 <div className="flex flex-wrap gap-2 text-xs font-semibold">
                   {pat.patientProfile?.phone && (
-                    <span className="flex items-center gap-1 text-zinc-600 bg-zinc-50 px-2 py-0.5 rounded border border-zinc-150">
+                    <span className="flex items-center gap-1 text-black bg-[#fafafa] px-2 py-0.5 rounded-sm border border-[#e1e1e1]">
                       <Phone size={10} />
                       {pat.patientProfile.phone}
                     </span>
                   )}
                   {pat.patientProfile?.gender && (
-                    <span className="text-zinc-600 bg-zinc-50 px-2 py-0.5 rounded border border-zinc-150">
+                    <span className="text-black bg-[#fafafa] px-2 py-0.5 rounded-sm border border-[#e1e1e1]">
                       {pat.patientProfile.gender}
                     </span>
                   )}
                   {pat.patientProfile?.bloodGroup && (
-                    <span className="text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100 flex items-center gap-1">
-                      <Heart size={10} className="fill-rose-500 text-rose-500" />
+                    <span className="text-black bg-[#fafafa] px-2 py-0.5 rounded-sm border border-[#e1e1e1] flex items-center gap-1">
+                      <Heart size={10} className="fill-black text-black" />
                       {pat.patientProfile.bloodGroup}
                     </span>
                   )}

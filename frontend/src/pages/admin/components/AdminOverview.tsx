@@ -1,17 +1,14 @@
 import {
   Users,
   UserCheck,
-  IndianRupee,
   CalendarDays,
-  CheckCircle,
-  XCircle,
   ShieldCheck,
-  FileText,
-  ToggleRight,
-  AlertCircle,
+  AlertTriangle,
+  TrendingUp,
+  Server,
+  BellRing,
+  ChevronDown
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { StatsCard } from './StatsCard';
 import type { Stats, Tab } from '../types';
 
 interface AdminOverviewProps {
@@ -22,201 +19,264 @@ interface AdminOverviewProps {
 export const AdminOverview = ({ stats, onTabChange }: AdminOverviewProps) => {
   if (!stats) return null;
 
-  // Render stats pipeline buttons
-  const showReviewButton = stats.pendingApprovals > 0;
-  const reviewTargetTab: Tab = stats.phase1Pending > 0 ? 'phase1' : 'phase2';
-
   return (
-    <div className="space-y-6">
-      {/* Stats Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard
-          label="Active Doctors"
-          value={stats.activeDoctors}
-          icon={<UserCheck size={20} />}
-          colorClass="text-green-600 bg-green-50/70"
-          trend={{ direction: 'up', value: 8, label: 'vs last week' }}
+    <div className="flex flex-col h-full w-full">
+      {/* Statistic Cards Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* Card 1 */}
+        <div 
           onClick={() => onTabChange('doctors')}
-        />
-        <StatsCard
-          label="Phase 1 Pending"
-          value={stats.phase1Pending}
-          icon={<ShieldCheck size={20} />}
-          colorClass="text-amber-600 bg-amber-50/70"
-          alert={stats.phase1Pending > 0}
-          trend={stats.phase1Pending > 0 ? { direction: 'up', value: stats.phase1Pending, label: 'requires action' } : undefined}
-          onClick={() => onTabChange('phase1')}
-        />
-        <StatsCard
-          label="Phase 2 Pending"
-          value={stats.phase2Pending}
-          icon={<FileText size={20} />}
-          colorClass="text-orange-600 bg-orange-50/70"
-          alert={stats.phase2Pending > 0}
-          trend={stats.phase2Pending > 0 ? { direction: 'up', value: stats.phase2Pending, label: 'requires review' } : undefined}
-          onClick={() => onTabChange('phase2')}
-        />
-        <StatsCard
-          label="Total Patients"
-          value={stats.totalPatients}
-          icon={<Users size={20} />}
-          colorClass="text-blue-600 bg-blue-50/70"
-          trend={{ direction: 'up', value: 12, label: 'vs last month' }}
+          className="bg-white rounded-sm border border-[#e1e1e1] p-4 flex flex-col hover:bg-[#fafafa] transition-colors group cursor-pointer relative overflow-hidden"
+        >
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">Total Doctors</span>
+            <div className="w-6 h-6 flex items-center justify-center text-black">
+              <UserCheck size={18} />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mt-auto">
+            <span className="text-2xl text-black font-bold">{stats.activeDoctors.toLocaleString()}</span>
+            <span className="text-[13px] text-[#555555] flex items-center bg-[#f0f0f0] px-1.5 py-0.5 rounded-sm">
+              <TrendingUp size={12} className="mr-1" />+12%
+            </span>
+          </div>
+          <p className="text-[13px] text-[#777777] mt-1">vs last month</p>
+        </div>
+
+        {/* Card 2 */}
+        <div 
           onClick={() => onTabChange('patients')}
-        />
-        <StatsCard
-          label="Revenue (INR)"
-          value={`₹${stats.totalRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`}
-          icon={<IndianRupee size={20} />}
-          colorClass="text-amber-600 bg-orange-50/70"
-          trend={{ direction: 'up', value: 15, label: 'vs last week' }}
-          onClick={() => onTabChange('analytics')}
-        />
-        <StatsCard
-          label="Confirmed Appts"
-          value={stats.confirmedAppointments}
-          icon={<CalendarDays size={20} />}
-          colorClass="text-blue-600 bg-blue-50/70"
-          trend={{ direction: 'down', value: 2, label: 'vs last week' }}
-          onClick={() => onTabChange('appointments')}
-        />
-        <StatsCard
-          label="Completed Appts"
-          value={stats.completedAppointments}
-          icon={<CheckCircle size={20} />}
-          colorClass="text-green-600 bg-green-50/70"
-          trend={{ direction: 'up', value: 18, label: 'vs last week' }}
-          onClick={() => onTabChange('appointments')}
-        />
-        <StatsCard
-          label="Cancelled Appts"
-          value={stats.cancelledAppointments}
-          icon={<XCircle size={20} />}
-          colorClass="text-rose-600 bg-rose-50/70"
-          alert={stats.cancelledAppointments > 10}
-          trend={{ direction: 'down', value: 5, label: 'vs last week' }}
-          onClick={() => onTabChange('appointments')}
-        />
-      </div>
-
-      {/* Pipeline & Appointment overview */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Doctor Verification Pipeline Panel */}
-        <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm flex flex-col justify-between space-y-5">
-          <div>
-            <h3 className="font-extrabold text-zinc-900 text-lg">Doctor Verification Pipeline</h3>
-            <p className="text-zinc-500 text-xs mt-1">
-              Active tracking of registrations, credential check, and active practitioners.
-            </p>
+          className="bg-white rounded-sm border border-[#e1e1e1] p-4 flex flex-col hover:bg-[#fafafa] transition-colors group cursor-pointer relative overflow-hidden"
+        >
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">Total Patients</span>
+            <div className="w-6 h-6 flex items-center justify-center text-black">
+              <Users size={18} />
+            </div>
           </div>
-          <div className="space-y-2">
-            {[
-              {
-                label: 'Phase 1 — Registration Review',
-                value: stats.phase1Pending,
-                color: stats.phase1Pending > 0 ? 'text-amber-600 bg-amber-50 border-amber-100' : 'text-zinc-400 hover:bg-zinc-50',
-                tab: 'phase1' as Tab,
-              },
-              {
-                label: 'Phase 2 — Credential Verification',
-                value: stats.phase2Pending,
-                color: stats.phase2Pending > 0 ? 'text-orange-600 bg-orange-50 border-orange-100' : 'text-zinc-400 hover:bg-zinc-50',
-                tab: 'phase2' as Tab,
-              },
-              {
-                label: 'Phase 3 — Active & Accepting Bookings',
-                value: stats.activeDoctors,
-                color: 'text-green-600 bg-green-50 border-green-100',
-                tab: 'doctors' as Tab,
-              },
-            ].map((row) => (
-              <button
-                key={row.label}
-                onClick={() => onTabChange(row.tab)}
-                className={`w-full flex items-center justify-between text-sm font-bold p-3 rounded-xl border border-transparent transition-all text-left ${row.color}`}
-              >
-                <span className="text-zinc-700">{row.label}</span>
-                <span className="text-base font-extrabold">{row.value}</span>
-              </button>
-            ))}
+          <div className="flex items-baseline gap-2 mt-auto">
+            <span className="text-2xl text-black font-bold">{stats.totalPatients.toLocaleString()}</span>
+            <span className="text-[13px] text-[#555555] flex items-center bg-[#f0f0f0] px-1.5 py-0.5 rounded-sm">
+              <TrendingUp size={12} className="mr-1" />+5.4%
+            </span>
           </div>
-
-          {showReviewButton && (
-            <Button
-              className="w-full bg-amber-500 hover:bg-amber-600 text-white font-extrabold rounded-xl h-11 transition-colors"
-              onClick={() => onTabChange(reviewTargetTab)}
-            >
-              <AlertCircle size={16} className="mr-2" />
-              Review {stats.pendingApprovals} Pending Approval{stats.pendingApprovals > 1 ? 's' : ''}
-            </Button>
-          )}
+          <p className="text-[13px] text-[#777777] mt-1">vs last month</p>
         </div>
 
-        {/* Appointment Overview Panel */}
-        <div className="bg-white rounded-2xl border border-zinc-200 p-6 shadow-sm flex flex-col justify-between space-y-4">
-          <div>
-            <h3 className="font-extrabold text-zinc-900 text-lg">Appointment Overview</h3>
-            <p className="text-zinc-500 text-xs mt-1">
-              Summarized status of all scheduled and completed clinical sessions.
-            </p>
+        {/* Card 3 */}
+        <div 
+          onClick={() => onTabChange(stats.phase1Pending > 0 ? 'phase1' : 'phase2')}
+          className="bg-white rounded-sm border border-[#e1e1e1] p-4 flex flex-col hover:bg-[#fafafa] transition-colors group cursor-pointer relative overflow-hidden"
+        >
+          <div className="flex justify-between items-start mb-2 relative z-10">
+            <span className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">Pending Approvals</span>
+            <div className="w-6 h-6 flex items-center justify-center text-black">
+              <AlertTriangle size={18} />
+            </div>
           </div>
-          <div className="space-y-3">
-            {[
-              { label: 'Confirmed', value: stats.confirmedAppointments, color: 'text-blue-600' },
-              { label: 'Completed', value: stats.completedAppointments, color: 'text-green-600' },
-              { label: 'Cancelled', value: stats.cancelledAppointments, color: 'text-red-600' },
-            ].map((row) => (
-              <div key={row.label} className="flex justify-between items-center text-sm font-bold">
-                <span className="text-zinc-500">{row.label}</span>
-                <span className={row.color}>{row.value}</span>
-              </div>
-            ))}
-            <div className="border-t border-zinc-100 pt-3 flex justify-between items-center text-sm font-extrabold">
-              <span className="text-zinc-800">Total Revenue Generated</span>
-              <span className="text-primary text-base">
-                ₹{stats.totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          <div className="flex items-baseline gap-2 mt-auto relative z-10">
+            <span className="text-2xl text-black font-bold">{stats.pendingApprovals}</span>
+            {stats.pendingApprovals > 0 && (
+              <span className="text-[13px] text-black border border-black flex items-center px-1.5 py-0.5 rounded-sm font-medium">
+                Action Required
               </span>
+            )}
+          </div>
+          <p className="text-[13px] text-[#777777] mt-1 relative z-10">Across Phase 1 & Phase 2</p>
+        </div>
+
+        {/* Card 4 */}
+        <div 
+          onClick={() => onTabChange('appointments')}
+          className="bg-white rounded-sm border border-[#e1e1e1] p-4 flex flex-col hover:bg-[#fafafa] transition-colors group cursor-pointer relative overflow-hidden"
+        >
+          <div className="flex justify-between items-start mb-2">
+            <span className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">Appointments</span>
+            <div className="w-6 h-6 flex items-center justify-center text-black">
+              <CalendarDays size={18} />
             </div>
           </div>
+          <div className="flex items-baseline gap-2 mt-auto">
+            <span className="text-2xl text-black font-bold">{stats.confirmedAppointments.toLocaleString()}</span>
+            <span className="text-[13px] text-[#555555] bg-[#f0f0f0] px-1.5 py-0.5 rounded-sm">
+              Confirmed
+            </span>
+          </div>
+          <p className="text-[13px] text-[#777777] mt-1">Across all active clinics</p>
         </div>
       </div>
 
-      {/* 3-Phase Explainer Banner */}
-      <div className="bg-gradient-to-br from-zinc-50 to-orange-50/30 rounded-2xl border border-zinc-200 p-6 shadow-sm">
-        <h3 className="font-extrabold text-zinc-900 text-lg mb-4">Telemedicine Verification Cycle</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            {
-              phase: 'Phase 1',
-              title: 'Account Registration',
-              desc: 'Review basic contact details, email verification, and name alignment.',
-              icon: <ShieldCheck size={20} />,
-              color: 'bg-amber-50/70 text-amber-700 border-amber-100',
-            },
-            {
-              phase: 'Phase 2',
-              title: 'License & Degrees',
-              desc: 'Examine government license IDs, degrees, and professional certifications.',
-              icon: <FileText size={20} />,
-              color: 'bg-orange-50/70 text-orange-700 border-orange-100',
-            },
-            {
-              phase: 'Phase 3',
-              title: 'Activate Bookings',
-              desc: 'Grant calendar permissions. Once activated, patients can book video appointments.',
-              icon: <ToggleRight size={20} />,
-              color: 'bg-emerald-50/70 text-emerald-700 border-emerald-100',
-            },
-          ].map((item) => (
-            <div key={item.phase} className={`rounded-xl border p-4 space-y-2 bg-white ${item.color}`}>
-              <div className="flex items-center gap-2 font-extrabold text-xs uppercase tracking-wide">
-                {item.icon}
-                {item.phase}
+      {/* Main Body: 2 Column Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 pb-8">
+        {/* Main Queue Table (8 cols) */}
+        <div className="lg:col-span-8 bg-white rounded-sm border border-[#e1e1e1] overflow-hidden flex flex-col">
+          <div className="px-4 py-3 border-b border-[#e1e1e1] flex justify-between items-center bg-white">
+            <h3 className="text-base text-black font-semibold flex items-center gap-2">
+              <ShieldCheck size={18} className="text-black" />
+              Doctor Verification Queue
+            </h3>
+            <button 
+              onClick={() => onTabChange('phase1')}
+              className="text-[13px] text-[#555555] hover:text-black hover:underline"
+            >
+              View All Queue
+            </button>
+          </div>
+          <div className="overflow-x-auto flex-1">
+            <table className="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr className="bg-[#fafafa] text-[#555555] text-[11px] font-semibold uppercase tracking-wider border-b border-[#e1e1e1]">
+                  <th className="px-4 py-3">Practitioner</th>
+                  <th className="px-4 py-3">Specialty</th>
+                  <th className="px-4 py-3">Submitted</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-[13px] divide-y divide-[#e1e1e1]">
+                <tr className="hover:bg-[#fcfcfc] transition-colors group">
+                  <td className="px-4 py-3 flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-sm border border-[#e1e1e1] bg-[#f5f5f5] flex-shrink-0 flex items-center justify-center text-black text-xs font-medium">AS</div>
+                    <div>
+                      <div className="font-medium text-black">Dr. Aisha Sharma</div>
+                      <div className="font-mono text-[#777777] text-[11px]">ID: DOC-8821</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[#555555]">Cardiology</td>
+                  <td className="px-4 py-3 font-mono text-[#555555]">2h ago</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center px-2 py-0.5 border border-[#e1e1e1] rounded-sm text-[11px] font-medium bg-[#f5f5f5] text-black">Reviewing</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="text-[13px] px-3 py-1 border border-[#e1e1e1] rounded-sm hover:bg-[#f0f0f0] transition-colors text-black font-medium cursor-pointer">Review</button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-[#fcfcfc] transition-colors group">
+                  <td className="px-4 py-3 flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-sm border border-[#e1e1e1] bg-[#f5f5f5] flex-shrink-0 flex items-center justify-center text-black text-xs font-medium">MR</div>
+                    <div>
+                      <div className="font-medium text-black">Dr. Marcus Reynolds</div>
+                      <div className="font-mono text-[#777777] text-[11px]">ID: DOC-8822</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[#555555]">Neurology</td>
+                  <td className="px-4 py-3 font-mono text-[#555555]">4h ago</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center px-2 py-0.5 border border-black rounded-sm text-[11px] font-medium bg-white text-black">Missing Docs</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="text-[13px] px-3 py-1 border border-[#e1e1e1] rounded-sm hover:bg-[#f0f0f0] transition-colors text-black font-medium cursor-pointer">Review</button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-[#fcfcfc] transition-colors group">
+                  <td className="px-4 py-3 flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-sm border border-[#e1e1e1] flex-shrink-0 overflow-hidden">
+                      <img alt="Doctor" className="w-full h-full object-cover grayscale" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8YNXKYb9wir6i5AmwsMtpLLDix5rTKIVVYbxdX-3BcUgySGOMkKJGo1cgMDTmzBoL9peJiCVl7e1ZSyVq5ole0U3VK8Rxo_ObK8C2HnfqzTPbcPFQ2_N9gEg5SoiMd3C58Wy2oY1L3a6p9f9AGl-bZEDgGrf3G8T05C13xeeoIOgl2RBavGXqj1-gdRsbJK1ZL80ZJ2T5_FXgarBOO8bPg5TMUjQpR_EeoKof7k0tkIBrORw5OjWO7sMQg3ysYSDvsFuoQK_ivXc" />
+                    </div>
+                    <div>
+                      <div className="font-medium text-black">Dr. Elena Rostova</div>
+                      <div className="font-mono text-[#777777] text-[11px]">ID: DOC-8819</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[#555555]">Pediatrics</td>
+                  <td className="px-4 py-3 font-mono text-[#555555]">1d ago</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center px-2 py-0.5 border border-[#e1e1e1] rounded-sm text-[11px] font-medium bg-[#f5f5f5] text-black">Pending Phase 1</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="text-[13px] px-3 py-1 border border-[#e1e1e1] rounded-sm hover:bg-[#f0f0f0] transition-colors text-black font-medium cursor-pointer">Review</button>
+                  </td>
+                </tr>
+                <tr className="hover:bg-[#fcfcfc] transition-colors group">
+                  <td className="px-4 py-3 flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-sm border border-[#e1e1e1] bg-[#f5f5f5] flex-shrink-0 flex items-center justify-center text-black text-xs font-medium">JL</div>
+                    <div>
+                      <div className="font-medium text-black">Dr. James Lin</div>
+                      <div className="font-mono text-[#777777] text-[11px]">ID: DOC-8815</div>
+                    </div>
+                  </td>
+                  <td className="px-4 py-3 text-[#555555]">Orthopedics</td>
+                  <td className="px-4 py-3 font-mono text-[#555555]">1d ago</td>
+                  <td className="px-4 py-3">
+                    <span className="inline-flex items-center px-2 py-0.5 border border-[#e1e1e1] rounded-sm text-[11px] font-medium bg-[#f5f5f5] text-black">Pending Phase 1</span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <button className="text-[13px] px-3 py-1 border border-[#e1e1e1] rounded-sm hover:bg-[#f0f0f0] transition-colors text-black font-medium cursor-pointer">Review</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div className="p-2 border-t border-[#e1e1e1] bg-white flex justify-center">
+            <button 
+              onClick={() => onTabChange('phase1')}
+              className="text-[#555555] text-[13px] hover:text-black hover:underline flex items-center gap-1 font-medium"
+            >
+              Load More <ChevronDown size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Sidebar Alert/System Status (4 cols) */}
+        <div className="lg:col-span-4 flex flex-col gap-6">
+          {/* System Status Card */}
+          <div className="bg-white rounded-sm border border-[#e1e1e1] p-4">
+            <h3 className="text-base text-black font-semibold mb-3 flex items-center gap-2 border-b border-[#e1e1e1] pb-2">
+              <Server size={18} className="text-black" />
+              System Status
+            </h3>
+            <div className="space-y-4 mt-4">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded bg-black"></div>
+                  <span className="text-[13px] text-black font-medium">API Gateway</span>
+                </div>
+                <span className="font-mono text-[#555555] text-xs">99.9% Uptime</span>
               </div>
-              <p className="font-extrabold text-zinc-900 text-sm">{item.title}</p>
-              <p className="text-zinc-500 text-xs font-semibold leading-relaxed">{item.desc}</p>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded bg-black"></div>
+                  <span className="text-[13px] text-black font-medium">Database (Primary)</span>
+                </div>
+                <span className="font-mono text-[#555555] text-xs">12ms Latency</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded border border-black bg-white"></div>
+                  <span className="text-[13px] text-black font-medium">Video Consult Server</span>
+                </div>
+                <span className="font-mono text-black text-xs font-semibold">High Load (85%)</span>
+              </div>
             </div>
-          ))}
+          </div>
+
+          {/* Recent Alerts/Log */}
+          <div className="bg-white rounded-sm border border-[#e1e1e1] p-4 flex-1">
+            <h3 className="text-base text-black font-semibold mb-3 flex items-center gap-2 border-b border-[#e1e1e1] pb-2">
+              <BellRing size={18} className="text-black" />
+              Recent Alerts
+            </h3>
+            <div className="relative pl-4 mt-4 border-l border-[#e1e1e1] space-y-6">
+              {/* Alert Item */}
+              <div className="relative">
+                <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded bg-black ring-4 ring-white border border-white"></div>
+                <p className="text-[13px] text-black leading-snug">Failed payment sync reported by Clinic Gateway A.</p>
+                <span className="font-mono text-[10px] text-[#777777] mt-1 block">10:42 AM</span>
+              </div>
+              {/* Alert Item */}
+              <div className="relative">
+                <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded bg-white border border-black ring-4 ring-white"></div>
+                <p className="text-[13px] text-black leading-snug">New Phase 2 verification batch ready for manual review.</p>
+                <span className="font-mono text-[10px] text-[#777777] mt-1 block">09:15 AM</span>
+              </div>
+              {/* Alert Item */}
+              <div className="relative">
+                <div className="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded bg-[#e1e1e1] ring-4 ring-white"></div>
+                <p className="text-[13px] text-[#555555] leading-snug">System backup completed successfully.</p>
+                <span className="font-mono text-[10px] text-[#777777] mt-1 block">02:00 AM</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

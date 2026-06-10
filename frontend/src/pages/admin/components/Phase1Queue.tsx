@@ -56,12 +56,12 @@ export const Phase1Queue = ({
     <div className="space-y-4">
       {/* Header Info */}
       <div className="flex items-center gap-3 px-1">
-        <div className="p-2 bg-amber-50 rounded-lg border border-amber-100 text-[#855300]">
+        <div className="p-2 bg-[#fafafa] rounded-sm border border-[#e1e1e1] text-black">
           <ShieldCheck size={20} />
         </div>
         <div>
-          <h2 className="font-serif text-2xl text-zinc-950 font-bold tracking-tight">Phase 1 — Registration Review</h2>
-          <p className="text-zinc-500 text-xs font-semibold">
+          <h2 className="text-lg font-extrabold text-zinc-900">Phase 1 — Registration Review</h2>
+          <p className="text-[#555555] text-xs font-semibold">
             Newly registered doctors awaiting basic identity and account checks.
           </p>
         </div>
@@ -83,7 +83,7 @@ export const Phase1Queue = ({
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="h-20 w-full bg-zinc-50 border border-zinc-150 animate-pulse rounded"
+              className="h-20 w-full bg-[#fafafa] border border-[#e1e1e1] animate-pulse rounded-sm"
             />
           ))}
         </div>
@@ -95,25 +95,25 @@ export const Phase1Queue = ({
         />
       ) : (
         <div className="space-y-4">
-          <div className="bg-white border border-[#d8c3ad] rounded-lg overflow-hidden flex flex-col shadow-sm">
+          <div className="bg-white border border-[#e1e1e1] rounded-sm overflow-hidden flex flex-col shadow-sm">
             <div className="overflow-x-auto">
               <Table className="w-full text-left border-collapse">
-                <TableHeader className="bg-zinc-50/70 border-b border-[#d8c3ad]">
+                <TableHeader className="bg-[#fafafa] border-b border-[#e1e1e1]">
                   <TableRow>
                     <TableHead className="w-8 pl-4" />
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider">
                       Doctor Info
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Experience
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Fee (INR)
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right">
                       Registered
                     </TableHead>
-                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-zinc-500 uppercase tracking-wider text-right pr-6">
+                    <TableHead className="py-3 px-4 text-[10px] font-extrabold text-[#555555] uppercase tracking-wider text-right pr-6">
                       Actions
                     </TableHead>
                   </TableRow>
@@ -140,8 +140,8 @@ export const Phase1Queue = ({
                           {/* Profile details */}
                           <TableCell className="py-4 px-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-full overflow-hidden border border-[#d8c3ad]/70 bg-zinc-50 flex items-center justify-center shrink-0">
-                                <span className="font-serif text-sm font-bold text-zinc-600">
+                              <div className="w-10 h-10 rounded-full overflow-hidden border border-[#e1e1e1] bg-[#fafafa] flex items-center justify-center shrink-0">
+                                <span className="font-serif text-sm font-bold text-[#555555]">
                                   {doc.name.slice(0, 2).toUpperCase()}
                                 </span>
                               </div>
@@ -173,7 +173,7 @@ export const Phase1Queue = ({
                               <button
                                 onClick={() => onApprove(doc.id)}
                                 disabled={actionLoading !== null}
-                                className="px-2.5 py-1 bg-[#f59e0b] text-[#613b00] rounded text-[11px] font-bold hover:opacity-90 transition-opacity flex items-center gap-1 cursor-pointer"
+                                className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-bold hover:bg-[#f0f0f0] transition-opacity flex items-center gap-1 cursor-pointer"
                               >
                                 <Check size={12} strokeWidth={3} />
                                 Approve
@@ -181,7 +181,7 @@ export const Phase1Queue = ({
                               <button
                                 onClick={() => onReject(doc.id, doc.name, 1)}
                                 disabled={actionLoading !== null}
-                                className="px-2.5 py-1 bg-white border border-[#d8c3ad] text-zinc-700 rounded text-[11px] font-semibold hover:border-[#855300] hover:bg-zinc-50 transition-all cursor-pointer"
+                                className="px-2.5 py-1 bg-white border border-[#e1e1e1] text-black rounded-sm text-[11px] font-semibold hover:bg-[#f0f0f0] transition-all cursor-pointer"
                               >
                                 Reject
                               </button>

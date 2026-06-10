@@ -42,12 +42,12 @@ export const Phase2Queue = ({
     <div className="space-y-4">
       {/* Header Info */}
       <div className="flex items-center gap-3 px-1">
-        <div className="p-2 bg-orange-50 rounded-xl border border-orange-100 text-orange-600">
+        <div className="p-2 bg-[#fafafa] rounded-sm border border-[#e1e1e1] text-black">
           <FileText size={20} />
         </div>
         <div>
           <h2 className="text-lg font-extrabold text-zinc-900">Phase 2 — Credential Verification</h2>
-          <p className="text-zinc-500 text-xs font-semibold">
+          <p className="text-[#555555] text-xs font-semibold">
             Doctors who have uploaded qualifications, licenses, and professional records for audit.
           </p>
         </div>
@@ -69,7 +69,7 @@ export const Phase2Queue = ({
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="h-28 w-full bg-zinc-50 border border-zinc-150 animate-pulse rounded-2xl"
+              className="h-28 w-full bg-[#fafafa] border border-[#e1e1e1] animate-pulse rounded-sm"
             />
           ))}
         </div>

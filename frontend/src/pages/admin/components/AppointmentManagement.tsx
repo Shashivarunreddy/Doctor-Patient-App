@@ -82,7 +82,7 @@ export const AppointmentManagement = ({
     };
     return (
       <span
-        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border tracking-wide uppercase ${cfg.bg} ${cfg.text}`}
+        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border border-[#e1e1e1] bg-[#fafafa] text-black tracking-wide uppercase`}
       >
         {cfg.label || label}
       </span>
@@ -93,7 +93,7 @@ export const AppointmentManagement = ({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center gap-3 px-1">
-        <div className="p-2 bg-blue-50 rounded-xl border border-blue-100 text-blue-600">
+        <div className="p-2 bg-[#fafafa] rounded-sm border border-[#e1e1e1] text-black">
           <CalendarDays size={20} />
         </div>
         <div>
@@ -162,7 +162,7 @@ export const AppointmentManagement = ({
           {[...Array(4)].map((_, i) => (
             <div
               key={i}
-              className="h-20 w-full bg-zinc-50 border border-zinc-150 animate-pulse rounded-2xl"
+              className="h-20 w-full bg-[#fafafa] border border-[#e1e1e1] animate-pulse rounded-sm"
             />
           ))}
         </div>
@@ -175,23 +175,23 @@ export const AppointmentManagement = ({
       ) : (
         <div className="space-y-4">
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="hidden md:block bg-white border border-[#e1e1e1] rounded-sm overflow-hidden shadow-sm">
             <Table>
-              <TableHeader className="bg-zinc-50/70">
+              <TableHeader className="bg-[#fafafa] border-b border-[#e1e1e1]">
                 <TableRow>
-                  <TableHead className="pl-6 font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="pl-6 font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Details (Doctor → Patient)
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Date & Time Slot
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Status
                   </TableHead>
-                  <TableHead className="font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Finance (Payment)
                   </TableHead>
-                  <TableHead className="pr-6 text-right font-extrabold text-zinc-700 text-xs uppercase tracking-wider h-11">
+                  <TableHead className="pr-6 text-right font-extrabold text-[#555555] text-xs uppercase tracking-wider h-11">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -236,7 +236,7 @@ export const AppointmentManagement = ({
                           variant="outline"
                           onClick={() => handleOpenCancel(appt)}
                           disabled={actionLoading === `cancel-appt-${appt.id}`}
-                          className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9"
+                          className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9"
                         >
                           {actionLoading === `cancel-appt-${appt.id}` ? (
                             <>
@@ -263,7 +263,7 @@ export const AppointmentManagement = ({
             {appointments.map((appt) => (
               <div
                 key={appt.id}
-                className="bg-white rounded-2xl border border-zinc-200 p-4 shadow-sm space-y-3"
+                className="bg-white rounded-sm border border-[#e1e1e1] p-4 shadow-sm space-y-3"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -297,7 +297,7 @@ export const AppointmentManagement = ({
                       variant="outline"
                       onClick={() => handleOpenCancel(appt)}
                       disabled={actionLoading === `cancel-appt-${appt.id}`}
-                      className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-8 text-xs"
+                      className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-8 text-xs"
                     >
                       Cancel
                     </Button>

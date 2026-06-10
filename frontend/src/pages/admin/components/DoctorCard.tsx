@@ -71,7 +71,7 @@ export const DoctorCard = ({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-5 sm:p-6 transition-all hover:shadow-md">
+    <div className="bg-white rounded-sm border border-[#e1e1e1] shadow-sm p-5 sm:p-6 transition-all hover:shadow-md">
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
         {/* Info Column */}
         <div className="flex-1 min-w-0">
@@ -131,7 +131,7 @@ export const DoctorCard = ({
             <>
               <Button
                 size="sm"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold h-9 shadow-sm"
+                className="bg-black hover:bg-[#333] text-white rounded-sm font-bold h-9 shadow-sm"
                 disabled={actionLoading !== null}
                 onClick={() => onApprovePhase1?.(doctor.id)}
               >
@@ -144,7 +144,7 @@ export const DoctorCard = ({
               <Button
                 size="sm"
                 variant="outline"
-                className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9"
+                className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9"
                 disabled={actionLoading !== null}
                 onClick={() => onReject?.(doctor.id, doctor.name, 1)}
               >
@@ -159,7 +159,7 @@ export const DoctorCard = ({
             <>
               <Button
                 size="sm"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold h-9 shadow-sm"
+                className="bg-black hover:bg-[#333] text-white rounded-sm font-bold h-9 shadow-sm"
                 disabled={actionLoading !== null}
                 onClick={() => onApprovePhase2?.(doctor.id)}
               >
@@ -172,7 +172,7 @@ export const DoctorCard = ({
               <Button
                 size="sm"
                 variant="outline"
-                className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9"
+                className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9"
                 disabled={actionLoading !== null}
                 onClick={() => onReject?.(doctor.id, doctor.name, 2)}
               >
@@ -189,7 +189,7 @@ export const DoctorCard = ({
                 <>
                   <Button
                     size="sm"
-                    className="bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold h-9 shadow-sm"
+                    className="bg-black hover:bg-[#333] text-white rounded-sm font-bold h-9 shadow-sm"
                     disabled={actionLoading !== null}
                     onClick={() => onApprovePhase1?.(doctor.id)}
                   >
@@ -202,7 +202,7 @@ export const DoctorCard = ({
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9"
+                    className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9"
                     disabled={actionLoading !== null}
                     onClick={() => onReject?.(doctor.id, doctor.name, 1)}
                   >
@@ -216,7 +216,7 @@ export const DoctorCard = ({
                 <>
                   <Button
                     size="sm"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold h-9 shadow-sm"
+                    className="bg-black hover:bg-[#333] text-white rounded-sm font-bold h-9 shadow-sm"
                     disabled={actionLoading !== null}
                     onClick={() => onApprovePhase2?.(doctor.id)}
                   >
@@ -229,7 +229,7 @@ export const DoctorCard = ({
                   <Button
                     size="sm"
                     variant="outline"
-                    className="border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9"
+                    className="border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9"
                     disabled={actionLoading !== null}
                     onClick={() => onReject?.(doctor.id, doctor.name, 2)}
                   >
@@ -241,15 +241,15 @@ export const DoctorCard = ({
 
               {/* Phase 3 Booking Activation */}
               {status === 'PHASE2_APPROVED' && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className={
-                    profile?.canTakeAppointments
-                      ? 'border-orange-300 text-orange-600 hover:bg-orange-50 rounded-xl font-bold h-9'
-                      : 'border-green-300 text-green-600 hover:bg-green-50 rounded-xl font-bold h-9'
-                  }
-                  disabled={actionLoading !== null}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={
+                      profile?.canTakeAppointments
+                        ? 'border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9'
+                        : 'border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9'
+                    }
+                    disabled={actionLoading !== null}
                   onClick={() =>
                     onToggleAppointments?.(doctor.id, !!profile?.canTakeAppointments)
                   }
@@ -264,15 +264,15 @@ export const DoctorCard = ({
 
               {/* Ban / Activate doctor account */}
               {status === 'PHASE2_APPROVED' && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className={
-                    doctor.isActive
-                      ? 'border-red-300 text-red-600 hover:bg-red-50 rounded-xl font-bold h-9'
-                      : 'border-green-300 text-green-600 hover:bg-green-50 rounded-xl font-bold h-9'
-                  }
-                  disabled={actionLoading !== null}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className={
+                      doctor.isActive
+                        ? 'border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9'
+                        : 'border-[#e1e1e1] text-black hover:bg-[#f0f0f0] rounded-sm font-bold h-9'
+                    }
+                    disabled={actionLoading !== null}
                   onClick={() => onToggleDoctor?.(doctor.id, doctor.isActive)}
                 >
                   {getActionButtonContent(
@@ -290,7 +290,7 @@ export const DoctorCard = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="p-2 h-9 w-9 rounded-xl hover:bg-zinc-100 text-zinc-400 hover:text-zinc-600"
+            className="p-2 h-9 w-9 rounded-sm hover:bg-[#f0f0f0] text-[#555555] hover:text-black"
             aria-label="Expand doctor details"
             aria-expanded={isExpanded}
           >
@@ -350,21 +350,21 @@ export const DoctorCard = ({
 
           {/* Rejection reasons */}
           {profile.rejectionReason && (
-            <div className="bg-rose-50/60 border border-rose-100 rounded-2xl p-4 flex gap-3 items-start">
-              <AlertCircle size={16} className="text-rose-500 shrink-0 mt-0.5" />
+            <div className="bg-[#fafafa] border border-[#e1e1e1] rounded-sm p-4 flex gap-3 items-start">
+              <AlertCircle size={16} className="text-black shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-bold text-rose-700">Phase 1 Rejection Reason</p>
-                <p className="text-sm text-rose-600 font-medium mt-1">{profile.rejectionReason}</p>
+                <p className="text-xs font-bold text-black">Phase 1 Rejection Reason</p>
+                <p className="text-sm text-[#555555] font-medium mt-1">{profile.rejectionReason}</p>
               </div>
             </div>
           )}
 
           {profile.phase2RejectionReason && (
-            <div className="bg-rose-50/60 border border-rose-100 rounded-2xl p-4 flex gap-3 items-start">
-              <AlertCircle size={16} className="text-rose-500 shrink-0 mt-0.5" />
+            <div className="bg-[#fafafa] border border-[#e1e1e1] rounded-sm p-4 flex gap-3 items-start">
+              <AlertCircle size={16} className="text-black shrink-0 mt-0.5" />
               <div>
-                <p className="text-xs font-bold text-rose-700">Phase 2 Rejection Reason</p>
-                <p className="text-sm text-rose-600 font-medium mt-1">
+                <p className="text-xs font-bold text-black">Phase 2 Rejection Reason</p>
+                <p className="text-sm text-[#555555] font-medium mt-1">
                   {profile.phase2RejectionReason}
                 </p>
               </div>

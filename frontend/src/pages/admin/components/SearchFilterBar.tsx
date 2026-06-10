@@ -53,13 +53,13 @@ export const SearchFilterBar = ({
       : null;
 
   return (
-    <div className="bg-white rounded-xl border border-zinc-200 p-3 sm:p-4">
+    <div className="bg-white rounded-sm border border-[#e1e1e1] p-3 sm:p-4">
       <div className="flex flex-col sm:flex-row gap-3">
         {/* Search Input */}
         <div className="relative flex-1 min-w-0">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555] pointer-events-none"
           />
           <Input
             value={searchValue}
@@ -100,14 +100,14 @@ export const SearchFilterBar = ({
               size="sm"
               onClick={onRefresh}
               disabled={isRefreshing}
-              className="h-9 gap-1.5"
+              className="h-9 gap-1.5 rounded-sm border-[#e1e1e1] hover:bg-[#f0f0f0] text-black"
               aria-label="Refresh data"
             >
               <RefreshCw size={14} className={isRefreshing ? 'animate-spin' : ''} />
               <span className="hidden sm:inline">Refresh</span>
             </Button>
             {timeLabel && (
-              <span className="text-[10px] font-medium text-zinc-400 whitespace-nowrap hidden sm:block">
+              <span className="text-[10px] font-medium text-[#555555] whitespace-nowrap hidden sm:block">
                 Updated {timeLabel}
               </span>
             )}

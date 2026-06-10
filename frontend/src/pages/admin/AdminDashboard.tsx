@@ -137,25 +137,27 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f7f9fb] flex text-zinc-900 font-sans antialiased selection:bg-orange-200">
+    <div className="bg-white text-black antialiased min-h-screen flex selection:bg-zinc-200">
       <Toaster position="top-right" richColors closeButton />
 
       {/* ── SideNavBar ── */}
       {/* Desktop Sidebar (visible on lg and up) */}
-      <nav className="w-[280px] h-screen fixed left-0 top-0 bg-[#2d3133] border-r border-[#d8c3ad]/30 flex flex-col py-6 z-50 hidden lg:flex select-none">
-        <div className="px-6 mb-8">
-          <h1 className="font-serif text-2xl text-white font-bold tracking-tight">Docco360</h1>
-          <p className="text-[10px] text-[#bec6e0] font-extrabold mt-1 uppercase tracking-wider">
-            Medical Administration
-          </p>
-        </div>
-
-        <div className="px-6 mb-8">
+      <nav aria-label="Sidebar" className="hidden lg:flex flex-col h-screen py-6 bg-[#f7f7f5] border-r border-[#e1e1e1] w-[260px] fixed left-0 top-0 z-50">
+        <div className="px-4 mb-8 flex flex-col gap-2">
+          <div className="flex items-center gap-2 px-2">
+            <div className="w-8 h-8 rounded border border-[#e1e1e1] bg-white flex items-center justify-center">
+              <ShieldCheck className="text-black" size={16} />
+            </div>
+            <div>
+              <h1 className="text-xl text-black font-semibold tracking-tight leading-tight">Docco360</h1>
+              <p className="text-xs text-[#555555]">Clinical Admin</p>
+            </div>
+          </div>
           <button
             onClick={() => handleTabChange('appointments')}
-            className="w-full bg-[#f59e0b] text-[#613b00] hover:opacity-90 font-bold text-xs py-2.5 px-4 rounded flex items-center justify-center gap-2 shadow-sm transition-all duration-150 cursor-pointer uppercase tracking-wider"
+            className="mt-4 mx-2 bg-white border border-[#e1e1e1] text-black font-medium text-sm py-2 rounded hover:bg-[#efefef] transition-colors flex items-center justify-center gap-2"
           >
-            <Plus size={16} strokeWidth={3} />
+            <Plus size={18} />
             New Appointment
           </button>
         </div>
@@ -167,16 +169,16 @@ const AdminDashboard = () => {
               <li key={item.id}>
                 <button
                   onClick={() => handleTabChange(item.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-bold transition-all relative cursor-pointer ${
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors relative cursor-pointer ${
                     isActive
-                      ? 'border-l-4 border-[#855300] bg-[#855300]/10 text-[#ffddb8] font-extrabold scale-95 duration-150'
-                      : 'text-[#bec6e0] hover:text-white hover:bg-white/5'
+                      ? 'text-black bg-[#efefef] font-medium'
+                      : 'text-[#555555] hover:bg-[#efefef]'
                   }`}
                 >
                   {item.icon}
                   <span>{item.label}</span>
                   {item.badge !== undefined && item.badge > 0 && (
-                    <span className="absolute right-4 bg-[#ba1a1a] text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full animate-pulse">
+                    <span className="absolute right-2 bg-black text-white text-[10px] font-bold px-1.5 py-0.5 rounded-sm">
                       {item.badge}
                     </span>
                   )}
@@ -187,10 +189,10 @@ const AdminDashboard = () => {
         </ul>
 
         {/* Sidebar Footer / LogOut */}
-        <div className="px-3 mt-auto pt-4 border-t border-[#bec6e0]/10">
+        <div className="px-4 mt-auto pt-4 border-t border-[#e1e1e1] mb-4">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-bold text-[#bec6e0] hover:text-rose-450 hover:bg-rose-500/5 transition-all cursor-pointer"
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-[#555555] hover:bg-[#efefef] transition-colors cursor-pointer"
           >
             <LogOut size={18} />
             <span>Logout</span>
@@ -208,31 +210,31 @@ const AdminDashboard = () => {
 
       {/* Mobile Sidebar Drawer */}
       <nav
-        className={`w-[280px] h-screen fixed left-0 top-0 bg-[#2d3133] border-r border-[#d8c3ad]/30 flex flex-col py-6 z-50 transform transition-transform duration-300 lg:hidden ${
+        className={`w-[260px] h-screen fixed left-0 top-0 bg-[#f7f7f5] border-r border-[#e1e1e1] flex flex-col py-6 z-50 transform transition-transform duration-300 lg:hidden ${
           mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="px-6 mb-8 flex justify-between items-center">
-          <div>
-            <h1 className="font-serif text-2xl text-white font-bold tracking-tight">Docco360</h1>
-            <p className="text-[10px] text-[#bec6e0] font-extrabold mt-1 uppercase tracking-wider">
-              Medical Administration
-            </p>
-          </div>
+        <div className="px-4 mb-8 flex flex-col gap-2 relative">
           <button
             onClick={() => setMobileSidebarOpen(false)}
-            className="text-[#bec6e0] hover:text-white p-1 rounded-lg hover:bg-white/5 cursor-pointer"
+            className="absolute right-4 top-0 text-[#555555] hover:text-black p-1 rounded-lg hover:bg-[#efefef] cursor-pointer"
           >
             <X size={20} />
           </button>
-        </div>
-
-        <div className="px-6 mb-8">
+          <div className="flex items-center gap-2 px-2">
+            <div className="w-8 h-8 rounded border border-[#e1e1e1] bg-white flex items-center justify-center">
+              <ShieldCheck className="text-black" size={16} />
+            </div>
+            <div>
+              <h1 className="text-xl text-black font-semibold tracking-tight leading-tight">Docco360</h1>
+              <p className="text-xs text-[#555555]">Clinical Admin</p>
+            </div>
+          </div>
           <button
             onClick={() => handleTabChange('appointments')}
-            className="w-full bg-[#f59e0b] text-[#613b00] hover:opacity-90 font-bold text-xs py-2.5 px-4 rounded flex items-center justify-center gap-2 shadow-sm transition-all duration-150 cursor-pointer uppercase tracking-wider"
+            className="mt-4 mx-2 bg-white border border-[#e1e1e1] text-black font-medium text-sm py-2 rounded hover:bg-[#efefef] transition-colors flex items-center justify-center gap-2"
           >
-            <Plus size={16} strokeWidth={3} />
+            <Plus size={18} />
             New Appointment
           </button>
         </div>
@@ -263,10 +265,10 @@ const AdminDashboard = () => {
           })}
         </ul>
 
-        <div className="px-3 mt-auto pt-4 border-t border-[#bec6e0]/10">
+        <div className="px-4 mt-auto pt-4 border-t border-[#e1e1e1] mb-4">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded text-sm font-bold text-[#bec6e0] hover:text-rose-450 hover:bg-rose-500/5 transition-all cursor-pointer"
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-[#555555] hover:bg-[#efefef] transition-colors cursor-pointer"
           >
             <LogOut size={18} />
             <span>Logout</span>
@@ -275,63 +277,56 @@ const AdminDashboard = () => {
       </nav>
 
       {/* ── Main Content Area ── */}
-      <div className="flex-1 lg:ml-[280px] flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-[260px] flex flex-col min-w-0 bg-white">
         {/* ── TopNavBar ── */}
-        <header className="h-16 w-full sticky top-0 z-40 bg-[#f7f9fb] border-b border-[#d8c3ad]/40 flex items-center justify-between px-6 sm:px-8">
+        <header className="sticky top-0 w-full flex justify-between items-center px-6 py-4 h-[64px] bg-white z-40 border-b border-[#e1e1e1]">
           {/* Mobile hamburger menu toggle */}
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="lg:hidden p-2 -ml-2 rounded-lg text-zinc-650 hover:bg-zinc-100 mr-2 cursor-pointer"
+            className="lg:hidden text-black hover:bg-[#efefef] p-1 rounded transition-colors mr-2 cursor-pointer"
           >
             <Menu size={20} />
           </button>
 
-          {/* Search bar mock matching Stitch */}
-          <div className="flex-1 max-w-md hidden sm:flex items-center focus-within:ring-2 focus-within:ring-[#855300]/10 transition-all duration-300 rounded bg-white border border-[#d8c3ad] overflow-hidden px-3">
-            <Search size={16} className="text-zinc-400" />
+          {/* Search bar */}
+          <div className="hidden md:flex items-center rounded border border-[#e1e1e1] px-2 py-1 hover:border-[#cccccc] transition-colors bg-white">
+            <Search size={18} className="text-[#555555]" />
             <input
               type="text"
-              placeholder="Search doctors, specialties, patients..."
+              placeholder="Search patients, doctors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full border-none bg-transparent focus:ring-0 text-xs py-2 px-3 text-zinc-800 placeholder-zinc-450 focus:outline-none"
+              className="bg-transparent border-none focus:ring-0 text-sm text-black w-[240px] px-2 outline-none placeholder:text-[#999999]"
             />
           </div>
 
           <div className="flex items-center gap-4 ml-auto">
-            <button className="p-2 rounded-full text-zinc-500 hover:bg-zinc-150 transition-all relative cursor-pointer">
-              <Bell size={18} />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#ba1a1a] rounded-full" />
+            <button className="text-black hover:bg-[#efefef] p-1.5 rounded transition-colors relative cursor-pointer">
+              <Bell size={20} />
+              <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-black rounded-full" />
             </button>
-            <button className="p-2 rounded-full text-zinc-500 hover:bg-zinc-150 transition-all cursor-pointer">
-              <Settings size={18} />
+            <button className="text-black hover:bg-[#efefef] p-1.5 rounded transition-colors cursor-pointer hidden sm:block">
+              <Settings size={20} />
             </button>
 
-            <div className="flex items-center gap-2 pl-4 border-l border-[#d8c3ad]/40">
-              <div className="w-8 h-8 rounded-full bg-zinc-200 overflow-hidden border border-[#d8c3ad]">
-                <img
-                  alt="Admin Profile"
-                  className="w-full h-full object-cover"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbcuTsASwscZwNFD0t1aaCsRnG-aEEKFgzUjt0cylaHgUB9T6sGaPJOV7xEZYWrxONIeaLdSJ0j3mM2p9j-d2Pz0jFlVSc8vLje6KdbaLPIX2CG-r7ggy7-Ozi9VE2gosJnfOkEvSTHA2CRamntPNjy6PwV3i7by8eZ2cPdw35Lf72IEzCxv326F3twPuRWeR3tMxGIC1cXLT7GQqkeVbMtaYQqNBD6nS6Da44X_WNSEnMCS-gjqYguQsNl92ra-N27T34p2rfK-o"
-                />
-              </div>
-              <span className="text-xs font-bold text-zinc-800 hidden md:block">
-                {user?.name || 'Admin Name'}
-              </span>
+            <div className="w-8 h-8 rounded border border-[#e1e1e1] overflow-hidden cursor-pointer ml-2">
+              <img
+                alt="Admin Profile"
+                className="w-full h-full object-cover grayscale"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDI2wfBrMTA_oXZedgjd2Otw4GA9sRiCFCU7nlIsGgpWFz4hVfedGnOO4rrb2nmBxsAtjh3QrTB43yhnLT5XGOseE7C4JU0uUheyS11Zs9ptwOschOET0zyCoxigjwU5qDzeYZFD_Rmd5DqFzTsg1lGruufuUHQfftC3MfSu7a0KqUPvAUpsVrNMXmEtiAfI3cSOTAXbTr8aZ444z57VMO6qtrvZvFHF-KbT6VNKFZBKvdqxDMW8mOoIe7-MAAzhWrSshvivrs8Yik"
+              />
             </div>
           </div>
         </header>
 
         {/* ── Page Content ── */}
-        <main className="flex-1 p-6 sm:p-8 overflow-y-auto">
+        <main className="flex-1 p-6 lg:p-8 overflow-x-hidden">
           {/* Tab Contents */}
           {currentTab === 'overview' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center mb-1">
-                <div>
-                  <h2 className="font-serif text-3xl text-zinc-950 font-bold tracking-tight">Overview</h2>
-                  <p className="text-zinc-500 text-xs mt-1 font-medium">Platform status, metrics, and verification queues</p>
-                </div>
+              <div className="mb-6">
+                <h2 className="text-2xl sm:text-[32px] text-black font-semibold leading-tight tracking-tight">Overview</h2>
+                <p className="text-sm text-[#555555] mt-1">Platform status, metrics, and verification queues</p>
               </div>
               {statsLoading && !stats ? (
                 <div className="flex justify-center py-16">
