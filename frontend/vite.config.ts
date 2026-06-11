@@ -14,4 +14,22 @@ export default defineConfig({
   optimizeDeps: {
     include: ['axios'],
   },
+  build: {
+    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('agora-rtc-sdk-ng')) {
+              return 'agora';
+            }
+            if (id.includes('lucide-react')) {
+              return 'icons';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
+  }
 })
