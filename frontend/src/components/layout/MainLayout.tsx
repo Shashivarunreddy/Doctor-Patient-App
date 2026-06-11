@@ -1,14 +1,27 @@
 import { useState } from 'react';
 import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth';
-import { LogOut, User as UserIcon, Activity, Menu, X } from 'lucide-react';
+import {
+  LogOut,
+  User as UserIcon,
+  Activity,
+  Menu,
+  X,
+  Search,
+  CalendarDays,
+  Users,
+  CalendarClock,
+  Settings,
+  FileText,
+  LayoutDashboard,
+} from 'lucide-react';
 import { Role } from '../../types/auth';
 
 export const MainLayout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -17,25 +30,25 @@ export const MainLayout = () => {
 
   const getNavLinks = () => {
     if (!user) return [];
-    
+
     switch (user.role) {
       case Role.PATIENT:
         return [
-          { label: 'Dashboard', path: '/patient-dashboard' },
-          { label: 'Find Specialist', path: '/patient-dashboard/doctors' },
-          { label: 'Appointments', path: '/patient-dashboard/appointments' },
-          { label: 'Health Profile', path: '/patient-dashboard/profile' },
+          { label: 'Overview', path: '/patient-dashboard', icon: <LayoutDashboard size={18} /> },
+          { label: 'Find Specialist', path: '/patient-dashboard/doctors', icon: <Search size={18} /> },
+          { label: 'Appointments', path: '/patient-dashboard/appointments', icon: <CalendarDays size={18} /> },
+          { label: 'Health Profile', path: '/patient-dashboard/profile', icon: <FileText size={18} /> },
         ];
       case Role.DOCTOR:
         return [
-          { label: 'Workspace', path: '/doctor-dashboard' },
-          { label: 'Appointments', path: '/doctor-dashboard/appointments' },
-          { label: 'Manage Slots', path: '/doctor-dashboard/slots' },
-          { label: 'Profile Settings', path: '/doctor-dashboard/profile' },
+          { label: 'Workspace', path: '/doctor-dashboard', icon: <LayoutDashboard size={18} /> },
+          { label: 'Appointments', path: '/doctor-dashboard/appointments', icon: <Users size={18} /> },
+          { label: 'Manage Slots', path: '/doctor-dashboard/slots', icon: <CalendarClock size={18} /> },
+          { label: 'Profile Settings', path: '/doctor-dashboard/profile', icon: <Settings size={18} /> },
         ];
       case Role.ADMIN:
         return [
-          { label: 'Admin Dashboard', path: '/admin-dashboard' },
+          { label: 'Admin Dashboard', path: '/admin-dashboard', icon: <LayoutDashboard size={18} /> },
         ];
       default:
         return [];
@@ -48,150 +61,195 @@ export const MainLayout = () => {
     return location.pathname === path;
   };
 
+  const roleLabel =
+    user?.role === Role.PATIENT
+      ? 'Patient Portal'
+      : user?.role === Role.DOCTOR
+      ? 'Doctor Workspace'
+      : 'Admin Console';
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafafa] font-sans selection:bg-orange-200">
-      
-      {/* Navbar header */}
-      <nav className="bg-white/70 backdrop-blur-xl border-b border-zinc-200 sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
-            
-            {/* Logo and Desktop Nav Links */}
-            <div className="flex items-center gap-8">
-              <Link to="/" className="flex items-center text-zinc-900 font-extrabold text-2xl tracking-tight gap-2 group">
-                <div className="p-2 bg-orange-100 rounded-xl group-hover:scale-105 transition-transform">
-                   <Activity className="h-6 w-6 text-primary" />
-                </div>
-                Docco360
-              </Link>
+    <div className="bg-white text-black antialiased min-h-screen flex selection:bg-zinc-200">
 
-              {/* Desktop Nav Links */}
-              {user && (
-                <div className="hidden md:flex items-center gap-1 pt-1">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.path}
-                      to={link.path}
-                      className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                        isLinkActive(link.path)
-                          ? 'bg-orange-50 text-primary border border-orange-100 shadow-sm'
-                          : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
+      {/* ── Desktop Sidebar ── */}
+      <nav
+        aria-label="Sidebar"
+        className="hidden lg:flex flex-col h-screen py-6 bg-[#f7f7f5] border-r border-[#e1e1e1] w-[260px] fixed left-0 top-0 z-50"
+      >
+        {/* Logo */}
+        <div className="px-4 mb-8 flex flex-col gap-2">
+          <Link to="/" className="flex items-center gap-2 px-2">
+            <div className="w-8 h-8 rounded border border-[#e1e1e1] bg-white flex items-center justify-center">
+              <Activity className="text-black" size={16} />
             </div>
-            
-            {/* Right-side Actions */}
-            {user ? (
-              <div className="flex items-center gap-4">
-                
-                {/* Desktop metadata */}
-                <div className="hidden sm:flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-primary font-bold shadow-sm border border-orange-100">
-                     <UserIcon size={18} />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="text-sm font-extrabold text-zinc-800 leading-tight">{user.name}</span>
-                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{user.role}</span>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block h-8 w-px bg-zinc-200"></div>
-
-                {/* Desktop Logout */}
-                <button 
-                  onClick={handleLogout}
-                  className="hidden sm:flex items-center justify-center h-10 w-10 bg-zinc-50 hover:bg-red-50 text-zinc-500 hover:text-red-500 rounded-xl transition-colors border border-zinc-200 hover:border-red-200"
-                  title="Logout"
-                >
-                  <LogOut size={18} />
-                </button>
-
-                {/* Mobile Menu Toggle button */}
-                <button 
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="flex md:hidden items-center justify-center h-10 w-10 bg-zinc-50 text-zinc-600 hover:bg-zinc-100 rounded-xl border border-zinc-250 transition-colors"
-                >
-                  {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-4">
-                <Link to="/login" className="text-sm font-bold text-zinc-600 hover:text-zinc-900">Sign in</Link>
-                <Link to="/register" className="px-4 py-2 bg-primary hover:bg-primary/95 text-white text-sm font-bold rounded-xl shadow-lg shadow-primary/10">Sign up</Link>
-              </div>
-            )}
-          </div>
+            <div>
+              <h1 className="text-xl text-black font-semibold tracking-tight leading-tight">Docco360</h1>
+              <p className="text-xs text-[#555555]">{roleLabel}</p>
+            </div>
+          </Link>
         </div>
 
-        {/* Mobile Slide-down Menu */}
-        {mobileMenuOpen && user && (
-          <div className="md:hidden border-t border-zinc-200 bg-white/95 backdrop-blur-xl px-4 py-6 space-y-4 shadow-xl absolute top-20 left-0 right-0 z-40 border-b">
-            
-            {/* User metadata */}
-            <div className="flex items-center gap-3 px-2 pb-4 border-b border-zinc-100">
-              <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center text-primary font-bold shadow-sm border border-orange-100">
-                 <UserIcon size={18} />
-              </div>
-              <div className="flex flex-col text-left">
-                <span className="text-sm font-extrabold text-zinc-800 leading-tight">{user.name}</span>
-                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider">{user.role}</span>
-              </div>
-            </div>
-
-            {/* Mobile Nav Links */}
-            <div className="flex flex-col gap-1.5">
-              {navLinks.map((link) => (
+        {/* Nav Items */}
+        <ul className="flex-1 px-3 space-y-1 overflow-y-auto">
+          {navLinks.map((item) => {
+            const isActive = isLinkActive(item.path);
+            return (
+              <li key={item.path}>
                 <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`w-full px-4 py-3 rounded-xl text-sm font-bold transition-all text-left block ${
-                    isLinkActive(link.path)
-                      ? 'bg-orange-50 text-primary border border-orange-100 shadow-sm'
-                      : 'text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50'
+                  to={item.path}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors relative cursor-pointer ${
+                    isActive
+                      ? 'text-black bg-[#efefef] font-medium'
+                      : 'text-[#555555] hover:bg-[#efefef] hover:text-black'
                   }`}
                 >
-                  {link.label}
+                  {item.icon}
+                  <span>{item.label}</span>
                 </Link>
-              ))}
+              </li>
+            );
+          })}
+        </ul>
+
+        {/* Sidebar Footer */}
+        <div className="px-4 mt-auto pt-4 border-t border-[#e1e1e1] mb-4 space-y-3">
+          {/* User info */}
+          <div className="px-2 flex items-center gap-2">
+            <div className="w-7 h-7 rounded border border-[#e1e1e1] bg-white flex items-center justify-center shrink-0">
+              <UserIcon size={14} className="text-[#555555]" />
             </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-black truncate leading-tight">{user?.name}</p>
+              <p className="text-[10px] text-[#777777] truncate">{user?.email}</p>
+            </div>
+          </div>
+          {/* Logout */}
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-[#555555] hover:bg-[#efefef] hover:text-black transition-colors cursor-pointer"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </div>
+      </nav>
 
-            <hr className="border-zinc-150" />
+      {/* ── Mobile Sidebar Overlay ── */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 lg:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
 
-            {/* Mobile Logout Button */}
+      {/* ── Mobile Sidebar Drawer ── */}
+      <nav
+        className={`w-[260px] h-screen fixed left-0 top-0 bg-[#f7f7f5] border-r border-[#e1e1e1] flex flex-col py-6 z-50 transform transition-transform duration-300 lg:hidden ${
+          mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <div className="px-4 mb-8 flex flex-col gap-2 relative">
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="absolute right-4 top-0 text-[#555555] hover:text-black p-1 rounded hover:bg-[#efefef] cursor-pointer"
+          >
+            <X size={20} />
+          </button>
+          <Link to="/" className="flex items-center gap-2 px-2">
+            <div className="w-8 h-8 rounded border border-[#e1e1e1] bg-white flex items-center justify-center">
+              <Activity className="text-black" size={16} />
+            </div>
+            <div>
+              <h1 className="text-xl text-black font-semibold tracking-tight leading-tight">Docco360</h1>
+              <p className="text-xs text-[#555555]">{roleLabel}</p>
+            </div>
+          </Link>
+        </div>
+
+        <ul className="flex-1 px-3 space-y-1 overflow-y-auto">
+          {navLinks.map((item) => {
+            const isActive = isLinkActive(item.path);
+            return (
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  onClick={() => setMobileSidebarOpen(false)}
+                  className={`w-full flex items-center gap-2 px-3 py-2 rounded text-sm transition-colors relative cursor-pointer ${
+                    isActive
+                      ? 'text-black bg-[#efefef] font-medium'
+                      : 'text-[#555555] hover:bg-[#efefef] hover:text-black'
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+
+        <div className="px-4 mt-auto pt-4 border-t border-[#e1e1e1] mb-4 space-y-3">
+          <div className="px-2 flex items-center gap-2">
+            <div className="w-7 h-7 rounded border border-[#e1e1e1] bg-white flex items-center justify-center shrink-0">
+              <UserIcon size={14} className="text-[#555555]" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-black truncate leading-tight">{user?.name}</p>
+              <p className="text-[10px] text-[#777777] truncate">{user?.email}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-2 py-1.5 rounded text-sm text-[#555555] hover:bg-[#efefef] hover:text-black transition-colors cursor-pointer"
+          >
+            <LogOut size={18} />
+            <span>Logout</span>
+          </button>
+        </div>
+      </nav>
+
+      {/* ── Main Content Area ── */}
+      <div className="flex-1 lg:ml-[260px] flex flex-col min-w-0 bg-white">
+
+        {/* ── Top Header ── */}
+        <header className="sticky top-0 w-full flex justify-between items-center px-6 py-4 h-[64px] bg-white z-40 border-b border-[#e1e1e1]">
+          {/* Mobile hamburger */}
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="lg:hidden text-black hover:bg-[#efefef] p-1 rounded transition-colors mr-2 cursor-pointer"
+          >
+            <Menu size={20} />
+          </button>
+
+          {/* Page breadcrumb label (desktop) */}
+          <div className="hidden lg:block">
+            <span className="text-sm text-[#555555] font-medium">
+              {navLinks.find((l) => isLinkActive(l.path))?.label ?? 'Dashboard'}
+            </span>
+          </div>
+
+          {/* Right actions */}
+          <div className="flex items-center gap-3 ml-auto">
+            <div className="hidden sm:flex items-center gap-2 text-sm text-[#555555]">
+              <div className="w-2 h-2 bg-black rounded-full" />
+              <span className="font-medium">{user?.name}</span>
+            </div>
+            <div className="w-px h-5 bg-[#e1e1e1] hidden sm:block" />
             <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handleLogout();
-              }}
-              className="w-full h-12 flex items-center justify-center gap-2 bg-red-50 hover:bg-red-100 text-red-650 rounded-xl font-bold text-sm transition-colors border border-red-200"
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-[#e1e1e1] text-sm text-[#555555] hover:bg-[#efefef] hover:text-black transition-colors cursor-pointer"
             >
-              <LogOut size={16} /> Logout
+              <LogOut size={14} />
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
-        )}
-      </nav>
-      
-      {/* Content wrapper */}
-      <main className="flex-1 w-full pb-16">
-        <Outlet />
-      </main>
-      
-      {/* Footer */}
-      <footer className="bg-white border-t border-zinc-200 py-6 mt-auto">
-        <div className="max-w-6xl mx-auto px-4 text-center flex flex-col sm:flex-row items-center justify-between text-zinc-500 font-medium text-sm gap-2">
-           <div className="flex items-center gap-2">
-             <Activity className="h-4 w-4 text-primary" />
-             <span>© 2026 Docco360 Platform.</span>
-           </div>
-           <div>Trusted by 25,000+ Patients & Doctors</div>
-         </div>
-      </footer>
+        </header>
+
+        {/* ── Page Content ── */}
+        <main className="flex-1 p-6 lg:p-8 overflow-x-hidden">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

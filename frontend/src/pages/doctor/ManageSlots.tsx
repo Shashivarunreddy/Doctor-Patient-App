@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { type TimeSlot } from '../../types/appointment';
 import { ChevronLeft, CalendarClock, Clock, CheckCircle } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+
+const inputCls = 'h-10 bg-white border border-[#e1e1e1] rounded-sm px-3 text-sm text-black focus:outline-none focus:border-black transition-colors';
+const labelCls = 'text-[11px] font-semibold text-[#555555] uppercase tracking-wider block mb-1.5';
 
 const ManageSlots = () => {
   const today = new Date().toISOString().split('T')[0];
@@ -44,110 +43,117 @@ const ManageSlots = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 font-sans px-4 py-8">
+    <div className="max-w-3xl space-y-6">
       <Link
         to="/doctor-dashboard"
-        className="inline-flex items-center text-sm font-bold text-zinc-500 hover:text-primary transition-colors bg-white hover:bg-orange-50 px-4 py-2 rounded-full border border-zinc-200"
+        className="inline-flex items-center text-sm font-medium text-[#555555] hover:text-black transition-colors border border-[#e1e1e1] bg-white hover:bg-[#efefef] px-3 py-1.5 rounded-sm"
       >
-        <ChevronLeft size={16} className="mr-1" /> Back to Dashboard
+        <ChevronLeft size={14} className="mr-1" /> Back to Workspace
       </Link>
 
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-zinc-200 flex items-center gap-4">
-        <div className="p-4 bg-orange-50 text-primary rounded-2xl">
-          <CalendarClock className="h-8 w-8" />
+      {/* Page header */}
+      <div className="mb-2">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-6 h-6 flex items-center justify-center text-black">
+            <CalendarClock size={18} />
+          </div>
+          <h2 className="text-2xl text-black font-semibold leading-tight tracking-tight">Manage Availability</h2>
         </div>
-        <div>
-          <h1 className="text-2xl font-extrabold text-zinc-900">Manage Availability</h1>
-          <p className="text-zinc-500 font-medium mt-1">
-            Set a date and time range to auto-generate 30-minute slots.
-          </p>
-        </div>
+        <p className="text-sm text-[#555555] mt-1">
+          Set a date and time range to auto-generate 30-minute appointment slots.
+        </p>
       </div>
 
       {message && (
-        <div
-          className={`p-4 rounded-xl border font-semibold flex items-center gap-2 ${
-            message.type === 'success'
-              ? 'bg-green-50 text-green-700 border-green-200'
-              : 'bg-red-50 text-red-700 border-red-200'
-          }`}
-        >
-          {message.type === 'success' && <CheckCircle className="h-5 w-5" />}
+        <div className={`p-4 border rounded-sm text-sm font-medium flex items-center gap-2 ${
+          message.type === 'success'
+            ? 'bg-white border-[#e1e1e1] text-black'
+            : 'bg-white border-black text-black'
+        }`}>
+          {message.type === 'success' && <CheckCircle size={14} />}
           {message.text}
         </div>
       )}
 
-      <Card className="rounded-3xl border-zinc-200 shadow-sm">
-        <CardContent className="p-8">
-          <form onSubmit={handleGenerate} className="space-y-6">
-            <div className="space-y-2">
-              <Label className="text-zinc-700 font-bold">Date</Label>
-              <Input
+      {/* Form panel */}
+      <div className="bg-white border border-[#e1e1e1] rounded-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-[#e1e1e1] bg-[#fafafa]">
+          <h3 className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">Generate Slots</h3>
+        </div>
+        <div className="p-4">
+          <form onSubmit={handleGenerate} className="space-y-5">
+            <div>
+              <label className={labelCls}>Date</label>
+              <input
                 type="date"
                 min={today}
                 required
                 value={date}
                 onChange={e => setDate(e.target.value)}
-                className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl max-w-xs"
+                className={`${inputCls} max-w-xs`}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label className="text-zinc-700 font-bold flex items-center gap-2">
-                <Clock size={16} className="text-primary" /> Time Range
-              </Label>
-              <div className="flex items-center gap-4">
-                <Input
+            <div>
+              <label className={`${labelCls} flex items-center gap-1`}>
+                <Clock size={10} /> Time Range
+              </label>
+              <div className="flex items-center gap-3">
+                <input
                   type="time"
                   required
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl flex-1 max-w-[160px]"
+                  className={`${inputCls} max-w-[150px]`}
                 />
-                <span className="text-zinc-400 font-bold text-sm">TO</span>
-                <Input
+                <span className="text-[#777777] font-mono text-sm">to</span>
+                <input
                   type="time"
                   required
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="h-12 bg-zinc-50 border-zinc-200 focus-visible:ring-primary rounded-xl flex-1 max-w-[160px]"
+                  className={`${inputCls} max-w-[150px]`}
                 />
               </div>
-              <p className="text-xs text-zinc-400 font-medium">
+              <p className="text-[11px] text-[#777777] font-mono mt-1.5">
                 30-minute slots will be generated within this window.
               </p>
             </div>
 
-            <Button
+            <button
               type="submit"
               disabled={isLoading}
-              className="px-8 h-12 bg-primary hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-primary/20"
+              className="flex items-center gap-2 px-5 py-2.5 bg-black text-white text-sm font-medium rounded-sm hover:bg-[#222] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Generating...' : 'Generate Slots'}
-            </Button>
+            </button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
+      {/* Generated slots */}
       {generatedSlots.length > 0 && (
-        <Card className="rounded-3xl border-zinc-200 shadow-sm">
-          <CardContent className="p-8">
-            <h2 className="text-lg font-extrabold text-zinc-900 mb-4">
+        <div className="bg-white border border-[#e1e1e1] rounded-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-[#e1e1e1] bg-[#fafafa] flex justify-between items-center">
+            <h3 className="text-[11px] font-semibold text-[#555555] uppercase tracking-wider">
               Generated Slots — {date}
-            </h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            </h3>
+            <span className="font-mono text-[11px] text-[#555555]">{generatedSlots.length} slots</span>
+          </div>
+          <div className="p-4">
+            <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
               {generatedSlots.map(slot => (
                 <div
                   key={slot.id}
-                  className="p-3 rounded-xl text-sm font-bold border bg-orange-50 text-primary border-orange-100 text-center"
+                  className="p-2 border border-[#e1e1e1] rounded-sm text-[12px] font-mono text-black bg-[#fafafa] text-center hover:bg-[#efefef] transition-colors"
                 >
                   {slot.startTime}
-                  <span className="block text-xs text-zinc-400 font-medium">–{slot.endTime}</span>
+                  <span className="block text-[10px] text-[#777777]">–{slot.endTime}</span>
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Link } from 'react-router-dom';
-import { User, Briefcase, Award, ArrowRight } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { User, Briefcase, Award, ArrowRight, Search, X } from 'lucide-react';
 
 interface DoctorItem {
   user: {
@@ -18,6 +17,7 @@ interface DoctorItem {
 
 const DoctorsList = () => {
   const [doctors, setDoctors] = useState<DoctorItem[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -36,79 +36,125 @@ const DoctorsList = () => {
     fetchDoctors();
   }, []);
 
+  const filtered = doctors.filter(doc => {
+    const q = searchQuery.toLowerCase();
+    return (
+      doc.user.name.toLowerCase().includes(q) ||
+      doc.profile?.specializations?.some(s => s.toLowerCase().includes(q))
+    );
+  });
+
   if (isLoading) {
     return (
       <div className="flex justify-center p-12">
-        <div className="animate-spin rounded-full h-10 w-10 border-4 border-primary border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-black border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 font-sans px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center justify-between bg-white p-8 rounded-3xl shadow-sm border border-zinc-200">
-        <div>
-          <h1 className="text-3xl font-extrabold text-zinc-900 tracking-tight">Available Specialists</h1>
-          <p className="text-zinc-500 mt-2 text-lg">Browse our network of top-tier verified professionals.</p>
+    <div className="max-w-5xl space-y-6">
+      {/* Page header */}
+      <div className="mb-2">
+        <h2 className="text-2xl text-black font-semibold leading-tight tracking-tight">Available Specialists</h2>
+        <p className="text-sm text-[#555555] mt-1">Browse our network of top-tier verified professionals.</p>
+      </div>
+
+      {/* Search + stats bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
+        <div className="flex items-center rounded-sm border border-[#e1e1e1] px-2 py-1.5 bg-white hover:border-[#cccccc] transition-colors">
+          <Search size={16} className="text-[#555555] shrink-0" />
+          <input
+            type="text"
+            placeholder="Search by name or specialty..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="bg-transparent border-none focus:ring-0 text-sm text-black w-[220px] px-2 outline-none placeholder:text-[#999999]"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="text-[#777777] hover:text-black">
+              <X size={14} />
+            </button>
+          )}
         </div>
+        <span className="text-[13px] text-[#555555] font-mono">{filtered.length} specialist{filtered.length !== 1 ? 's' : ''}</span>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {doctors.length === 0 ? (
-          <div className="col-span-full text-center p-16 bg-white rounded-3xl shadow-sm border border-zinc-200">
-            <p className="text-zinc-500 font-medium text-lg">No specialists are currently available on Docco360.</p>
+      {/* Table */}
+      {filtered.length === 0 ? (
+        <div className="bg-white border border-[#e1e1e1] rounded-sm p-12 text-center">
+          <div className="w-10 h-10 border border-[#e1e1e1] rounded-sm flex items-center justify-center mx-auto mb-4 bg-[#f5f5f5]">
+            <User size={20} className="text-[#555555]" />
           </div>
-        ) : (
-          doctors.map((doc) => (
-            <Card key={doc.user.id} className="rounded-3xl border-zinc-200 shadow-sm hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all overflow-hidden relative group bg-white flex flex-col h-full">
-              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-orange-400 to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-              <CardContent className="p-6 flex flex-col h-full">
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="h-14 w-14 rounded-2xl bg-orange-50 text-primary flex items-center justify-center flex-shrink-0">
-                    <User size={24} />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-zinc-900 leading-tight">Dr. {doc.user.name}</h3>
-                    <div className="flex items-center text-sm font-medium text-zinc-500 mt-1.5">
-                      <Briefcase size={14} className="mr-1.5 text-zinc-400" />
-                      {doc.profile?.experience || 0} Years Exp
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mb-8 flex-1">
-                  <div className="flex items-center text-xs font-bold text-zinc-400 uppercase tracking-wider mb-3">
-                    <Award size={14} className="mr-1.5 text-primary" />
-                    Specializations
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {doc.profile?.specializations && doc.profile.specializations.length > 0 ? (
-                      doc.profile.specializations.map((spec, idx) => (
-                        <span key={idx} className="bg-zinc-100 text-zinc-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-zinc-200/50">
-                          {spec}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-sm text-zinc-400 italic font-medium">No specializations listed</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mt-auto pt-4 border-t border-zinc-100">
-                  <Link
-                    to={`/patient-dashboard/doctor/${doc.user.id}`}
-                    className="w-full h-12 flex justify-center items-center bg-zinc-50 hover:bg-primary text-zinc-700 hover:text-white font-bold rounded-xl transition-colors group/btn"
-                  >
-                    View Full Profile <ArrowRight className="ml-2 h-4 w-4 text-zinc-400 group-hover/btn:text-white group-hover/btn:translate-x-1 transition-all" />
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+          <p className="text-black font-medium">No specialists found</p>
+          <p className="text-[#777777] text-sm mt-1">
+            {searchQuery ? 'Try a different search term.' : 'No verified specialists are currently available.'}
+          </p>
+        </div>
+      ) : (
+        <div className="bg-white border border-[#e1e1e1] rounded-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr className="bg-[#fafafa] text-[#555555] text-[11px] font-semibold uppercase tracking-wider border-b border-[#e1e1e1]">
+                  <th className="px-4 py-3">Practitioner</th>
+                  <th className="px-4 py-3">Specializations</th>
+                  <th className="px-4 py-3">Experience</th>
+                  <th className="px-4 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody className="text-[13px] divide-y divide-[#e1e1e1]">
+                {filtered.map(doc => (
+                  <tr key={doc.user.id} className="hover:bg-[#fcfcfc] transition-colors group">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-7 h-7 rounded-sm border border-[#e1e1e1] bg-[#f5f5f5] flex-shrink-0 flex items-center justify-center text-black text-xs font-medium">
+                          {doc.user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium text-black">Dr. {doc.user.name}</div>
+                          <div className="font-mono text-[#777777] text-[11px]">{doc.user.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1.5">
+                        {doc.profile?.specializations && doc.profile.specializations.length > 0 ? (
+                          doc.profile.specializations.map((spec, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-flex items-center gap-1 px-2 py-0.5 border border-[#e1e1e1] rounded-sm text-[11px] font-medium bg-[#f5f5f5] text-black"
+                            >
+                              <Award size={9} />
+                              {spec}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[#999999] font-mono text-[11px]">—</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5 text-[#555555]">
+                        <Briefcase size={12} />
+                        <span className="font-mono">{doc.profile?.experience ?? 0} yrs</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link
+                        to={`/patient-dashboard/doctor/${doc.user.id}`}
+                        className="inline-flex items-center gap-1.5 text-[13px] px-3 py-1 border border-[#e1e1e1] rounded-sm hover:bg-[#f0f0f0] transition-colors text-black font-medium"
+                      >
+                        View Profile <ArrowRight size={12} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
