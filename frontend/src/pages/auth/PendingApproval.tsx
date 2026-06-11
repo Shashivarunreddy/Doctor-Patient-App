@@ -25,7 +25,7 @@ const PendingApproval: React.FC = () => {
         {/* Content */}
         <div className="space-y-3">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-orange-50 text-primary border border-orange-100">
-            <ShieldAlert size={12} /> Phase 1 Review
+            <ShieldAlert size={12} /> Account Verification
           </span>
           <h1 className="text-3xl font-extrabold text-zinc-900 tracking-tight">
             Account Pending Approval
@@ -37,10 +37,10 @@ const PendingApproval: React.FC = () => {
 
         <div className="bg-zinc-50/50 rounded-2xl p-6 border border-zinc-150 text-left space-y-4">
           <p className="text-zinc-600 text-sm leading-relaxed">
-            Your application is currently under basic credentials review by our administration team. This is the first level of our verification procedure.
+            Your application is currently under review by our administration team. This is to ensure all credentials and practice details are verified.
           </p>
           <p className="text-zinc-500 text-xs leading-relaxed border-t border-zinc-200/80 pt-4">
-            * This step typically takes <strong>1–2 business days</strong>. You will receive an email confirmation once your account has been approved and unlocked for Phase 2 setup.
+            * This step typically takes <strong>1–2 business days</strong>. You will receive an email confirmation once your account has been approved and unlocked.
           </p>
         </div>
 
