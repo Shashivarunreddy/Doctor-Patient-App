@@ -2,7 +2,7 @@ name: Deploy to EC2
 
 on:
   workflow_run:
-    workflows: ["Backend CI", "Frontend CI"]
+    workflows: ["Backend CI"]
     branches: ["main"]
     types:
       - completed
@@ -59,52 +59,4 @@ jobs:
             echo "Backend deployed: \$BACKEND_IMAGE"
           EOF
 
-  deploy-frontend:
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main' &&
-       github.event.workflow_run.name == 'Frontend CI')
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-      - name: Add EC2 to known hosts
-        run: |
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Copy docker-compose to EC2
-        run: |
-          scp docker-compose.yaml ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/doctoroncall/docker-compose.yaml
-
-      - name: Deploy frontend on EC2
-        run: |
-          IMAGE_SHA="${{ github.event.workflow_run.head_sha || github.sha }}"
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
-            cd doctoroncall
-            echo "Deploying frontend SHA: ${IMAGE_SHA}"
-
-            # Try SHA tag first, fallback to latest
-            if docker pull ${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${IMAGE_SHA}; then
-              export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:${IMAGE_SHA}
-              echo "Using SHA image: ${IMAGE_SHA}"
-            else
-              export FRONTEND_IMAGE=${{ secrets.DOCKERHUB_USERNAME }}/doc-frontend:latest
-              echo "SHA not found, falling back to latest"
-              docker pull \$FRONTEND_IMAGE
-            fi
-
-            # Only recreate frontend container
-            docker compose up -d --force-recreate --no-deps frontend
-
-            docker image prune -f
-            echo "Frontend deployed: \$FRONTEND_IMAGE"
-          EOF
+  

@@ -1,0 +1,60 @@
+name: Monitoring CI/CD
+
+on:
+  push:
+    branches: ["main", "staging"]
+    paths:
+      - "monitoring/**"
+
+  workflow_dispatch:
+
+jobs:
+  deploy-monitoring:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Add EC2 to Known Hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Copy Monitoring Files
+        run: |
+          scp -r monitoring/* \
+          ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/doctoroncall/
+
+      - name: Deploy Monitoring Stack
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            set -e
+
+            cd ~/doctoroncall
+
+            echo "Validating docker compose..."
+            docker compose config --quiet
+
+            echo "Pulling latest monitoring images..."
+            docker compose pull prometheus grafana node-exporter cadvisor
+
+            echo "Restarting monitoring services..."
+            docker compose up -d --force-recreate --no-deps \
+              prometheus \
+              grafana \
+              node-exporter \
+              cadvisor
+
+            echo "Pruning unused images..."
+            docker image prune -f
+
+            echo "Deployment completed."
+
+            docker compose ps
+          EOF
