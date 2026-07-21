@@ -17,3 +17,11 @@ node_modules/
 dist/
 build/
 .cache/
+
+# Terraform local state and variable files
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!.tfvars.example
