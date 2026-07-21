@@ -26,7 +26,7 @@ variable "backend_sg_id" {
 variable "instance_type" {
   description = "EC2 instance type for Backend node"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.micro"
 }
 
 variable "ssh_public_key" {

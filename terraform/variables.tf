@@ -43,11 +43,11 @@ variable "admin_ip" {
 variable "instance_type" {
   description = "Backend EC2 instance type"
   type        = string
-  default     = "t3.medium"
+  default     = "t3.micro"
 }
 
 variable "ssh_public_key" {
-  description = "SSH public key string for EC2 instances"
+  description = "Optional custom SSH public key string (if omitted, Terraform auto-generates a key pair)"
   type        = string
   default     = ""
 }

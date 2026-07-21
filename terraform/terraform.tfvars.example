@@ -9,11 +9,11 @@ private_app_subnet_cidrs = ["10.1.3.0/24", "10.1.4.0/24"]
 private_db_subnet_cidrs  = ["10.1.5.0/24", "10.1.6.0/24"]
 
 # Security & Access (Replace with your IP address)
-admin_ip       = "203.0.113.5/32"
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ..."
+admin_ip = "203.0.113.5/32"
+# ssh_public_key = "ssh-rsa AAAAB3Nza..." # Optional: Terraform automatically generates docco-v2-key.pem locally
 
-# Compute Sizing
-instance_type = "t3.medium"
+# Compute Sizing (Free Tier Eligible)
+instance_type = "t3.micro"
 
 # Database Configuration
 db_name     = "docco360"
