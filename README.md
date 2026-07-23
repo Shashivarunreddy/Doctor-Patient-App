@@ -1,459 +1,99 @@
-# Docco360
+# Docco360: Cloud-Hosted Doctor-Patient Consultation Platform
 
-Docco360 is a real-time doctor–patient consultation platform built as an engineering-first cloud project that demonstrates how a local application evolves into a production-style AWS deployment.
+Docco360 is a secure, real-time doctor-patient consultation platform built as a production-grade cloud case study. The project demonstrates the evolution of a local full-stack application into a decoupled, secure, and highly available AWS environment.
 
-Rather than stopping at a working application, the focus of this project is infrastructure evolution, deployment maturity, architecture refactoring, and cloud engineering practices.
-
-The project progressively evolved through multiple deployment stages:
-
-**Local Development → Docker → EC2 Deployment → Amazon RDS Integration → CI/CD Automation → Cloud Architecture Evolution**
+The focus of this project is infrastructure maturity, security hardening, automated deployments, and comprehensive system observability.
 
 ---
 
-# Why Docco360?
+## 🏗️ Production System Architecture
 
-Most portfolio projects stop after "it works on localhost."
-
-Docco360 focuses on what happens after that:
-
-* Packaging applications for reproducible deployment
-* Moving from monolithic hosting to decoupled architecture
-* Introducing managed cloud services
-* Improving deployment workflows
-* Applying DevOps principles progressively
-
-The objective was not building another consultation app.
-
-The objective was understanding how systems mature from development environments into cloud-hosted deployments.
-
----
-
-# Features
-
-## Application Layer
-
-* Real-time doctor-patient consultation workflow
-* WebRTC-based communication
-* Full-stack application architecture
-* Secure session handling
-* Role-based access control
-* Appointment management workflow
-
----
-
-## DevOps & Cloud Layer
-
-* Dockerized deployment workflow
-* Amazon EC2 hosted infrastructure
-* Amazon RDS PostgreSQL integration
-* SSL-secured database connectivity
-* Decoupled application and database architecture
-* GitHub Actions CI/CD pipelines
-* Docker Hub image registry
-* Environment-based deployment configuration
-
----
-
-# Architecture
-
-Current deployment follows a decoupled cloud architecture:
-
-- Frontend hosted through S3 + CloudFront
-- Backend containerized and deployed on EC2
-- Backend isolated in private subnet
-- Traffic routed through Application Load Balancer
-- Persistent data handled through Amazon RDS
+The Docco360 production architecture is fully decoupled, separating static asset delivery from containerized dynamic API compute and isolating persistence systems behind private security groups inside an AWS Virtual Private Cloud (VPC).
 
 ```text
-                         Internet
-                             |
-                         HTTPS
-                             |
-                     +---------------+
-                     | CloudFront    |
-                     +-------+-------+
-                             |
-                             |
-                     +---------------+
-                     | S3 Frontend   |
-                     +---------------+
-
-Browser -------------------------> API Requests
-                                   |
-                                   v
-
-+-----------------------------------------------------------+
-|                         AWS VPC                           |
-|                                                           |
-| Public Subnet                                             |
-|                                                           |
-|   +---------------------------------------------+         |
-|   | Application Load Balancer                   |         |
-|   +----------------+----------------------------+         |
-|                    |                                      |
-|                    |                                      |
-|                    v                                      |
-|                                                           |
-| Private Subnet                                            |
-|                                                           |
-|   +---------------------------------------------+         |
-|   | EC2 Containerized Backend                   |         |
-|   +----------------+----------------------------+         |
-|                    |                                      |
-|                    v                                      |
-|                                                           |
-|   +---------------------------------------------+         |
-|   | Amazon RDS                                  |         |
-|   +---------------------------------------------+         |
-|                                                           |
-+-----------------------------------------------------------+
+                           [ Browser / Client ]
+                                    |
+                    +---------------+---------------+
+                    | (HTTPS)                       | (API Requests)
+                    v                               v
+          +------------------+             +------------------+
+          |  Amazon Route 53 |             |  Amazon Route 53 |
+          +--------+---------+             +--------+---------+
+                   |                                |
+                   v                                v
+         +--------------------+           +-------------------+
+         | Amazon CloudFront  |           | Application Load  |
+         |        CDN         |           |   Balancer (ALB)  |
+         +--------+-----------+           +--------+----------+
+                  |                                |
+                  v                                | (Reverse Proxy)
+         +--------------------+                    v
+         |     Amazon S3      |           +-------------------+
+         | (Static Frontend)  |           |   Amazon EC2      |
+         +--------------------+           | (Private Backend) |
+                                          +--------+----------+
+                                                   |
+                                                   +-------+
+                                                   |       | (SQL Port 5432)
+                                                   v       v
+                                           +-----------+ +-----------+
+                                           |  Amazon   | |   AWS     |
+                                           |    RDS    | |   EBS     |
+                                           | (Postgres)| | (Metrics) |
+                                           +-----------+ +-----------+
 ```
 
 ---
 
-# Tech Stack
+## 🛠️ Tech Stack & Infrastructure
 
-## Frontend
+### Application Components
+* **Frontend**: React SPA, TypeScript, Vite.
+* **Backend**: Python, Flask, Gunicorn WSGI.
+* **Database**: PostgreSQL (Amazon RDS).
+* **Consultations**: WebRTC via Agora RTC SDK.
 
-* React
-* TypeScript
-* Vite
-
----
-
-## Backend
-
-* Node.js
-* Express.js
-* TypeScript
-* Prisma ORM
+### Infrastructure & Operations
+* **Compute**: Amazon EC2, Docker, Docker Compose.
+* **Storage**: Amazon S3 (static assets), Amazon EBS (observability databases).
+* **Delivery**: Amazon CloudFront CDN, Amazon Route 53 DNS, AWS ACM.
+* **Pipelines**: GitHub Actions, Docker Hub.
+* **Monitoring**: Prometheus, Grafana, Node Exporter, cAdvisor.
 
 ---
 
-## Database
+## 📂 Documentation Directory Layout
 
-* PostgreSQL
-* Amazon RDS
+The project documentation is structured into specialized engineering guides. Navigate through the files below to review the implementation details:
 
----
+### 1. [System Architecture & Request Flow](docs/architecture.md)
+*High-level architecture layout, design justifications, WebRTC token exchanges, and client-server request flows.*
 
-## Real-Time Communication
+### 2. [Cloud Infrastructure & Networking (AWS)](docs/infrastructure.md)
+*VPC configurations, private/public subnet allocations, NAT Gateway routing policies, Bastion Host setups, and least-privilege security group rules.*
 
-* WebRTC
-* Agora
+### 3. [Production Deployment Setup](docs/deployment.md)
+*Docker configurations, Gunicorn workers configuration, Nginx upstream reverse-proxy routes, and server environment parameters.*
 
----
+### 4. [CI/CD Pipelines & Independent Deployments](docs/cicd.md)
+*Continuous integration and continuous deployment pipelines using GitHub Actions, Docker Hub triggers, and configuration synchronization.*
 
-## Containerization
+### 5. [Observability Stack (Prometheus & Grafana)](docs/monitoring.md)
+*Host metrics scrapes, container resource audits, custom Prometheus alerts, and AWS EBS persistent disk volume configuration.*
 
-* Docker
-* Docker Compose
+### 6. [Troubleshooting & Operational Resolutions](docs/troubleshooting.md)
+*Historical engineering challenges solved, including CORS errors, container health check migration dependencies, and network routing configurations.*
 
----
+### 7. [Cloud Cost Analysis & Optimization](docs/cost-analysis.md)
+*AWS monthly billing estimates and automated suspension schedules to minimize dev environment costs.*
 
-## Cloud Infrastructure
-
-* Amazon EC2
-* Amazon RDS
-* Security Groups
-
----
-
-## CI/CD
-
-* GitHub Actions
-* Docker Hub
+### 8. [Future Improvements & Scaling Roadmap](docs/future-improvements.md)
+*Infrastructure as Code (Terraform), AWS ECS/Fargate container orchestration, and Blue-Green zero-downtime deployment pipelines.*
 
 ---
 
-## Supporting Services
-
-* NGINX
-* Prisma
-* PostgreSQL
-* Git
-
----
-
-# Deployment Evolution
-
-## V1 — Initial Internet Deployment
-
-Initial application deployment focused on taking the project from local development to public accessibility.
-
-Implemented:
-
-* Local development workflow
-* Docker containerization
-* Docker Hub image publishing
-* Amazon EC2 deployment
-
----
-
-## V2 — Data Layer Modernization
-
-Infrastructure improvements focused on separating compute and persistent storage.
-
-Implemented:
-
-* Migration from containerized PostgreSQL to Amazon RDS PostgreSQL
-* SSL-secured database connectivity
-* Separation of application and database layers
-* Reduced infrastructure coupling
-* Improved persistence and operational reliability
-
-
-## V3 — Cloud Architecture Refactor
-
-Infrastructure improvements focused on network isolation, security hardening, and service separation.
-
-Implemented:
-
-* Amazon S3 integration for object and file storage
-* CloudFront CDN integration for content delivery
-* Custom VPC architecture
-* Public and private subnet segregation
-* Internet Gateway (IGW) configuration
-* NAT Gateway deployment
-* Route table configuration
-* Bastion Host deployment
-* Backend migration to private EC2
-* RDS migration to private subnets
-* Security Group redesign and least-privilege access controls
-* Application Load Balancer (ALB) integration
-* Target Group configuration
-* End-to-end HTTPS/TLS implementation
-
----
-
-## V4 — Observability & Operations Platform
-
-Infrastructure improvements focused on monitoring, visibility, operational readiness, and production observability.
-
-Implemented:
-
-* Amazon CloudWatch integration
-* Centralized application logging
-* Infrastructure metrics collection
-* CloudWatch alarms and monitoring
-* Prometheus deployment
-* Grafana deployment
-* EC2 monitoring dashboards
-* Container monitoring dashboards
-* Database monitoring dashboards
-* Application health monitoring
-* Performance and resource utilization tracking
-* Alerting and incident visibility workflows
-* Operational observability layer for infrastructure and services
-
-
-Result:
-
-```text
-Before
-
-Frontend Container
-Backend Container
-PostgreSQL Container
-
-After
-
-Frontend Container
-Backend Container
-Amazon RDS PostgreSQL
-```
-
----
-
-# Deployment Workflow
-```
-Local Development
-        |
-        v
-
-Docker Build
-        |
-        v
-
-Docker Hub
-        |
-        v
-
-GitHub Actions CI/CD
-        |
-        v
-
-Amazon EC2 (Backend)
-        |
-        +----------------------+
-        |                      |
-        v                      v
-
-Amazon RDS            Amazon S3
-PostgreSQL            Object Storage
-        |                      |
-        +----------+-----------+
-                   |
-                   v
-
-CloudFront CDN
-                   |
-                   v
-
-Application Load Balancer
-                   |
-                   v
-
-Internet Users
-```
----
-
-# Engineering Problems Solved
-
-## Runtime Drift
-
-Applications behaved differently inside Docker compared to local development environments.
-
-Solved through:
-
-* Environment standardization
-* Container debugging
-* Consistent deployment workflows
-
----
-
-## Container Reachability
-
-Container availability did not automatically guarantee public accessibility.
-
-Required investigation of:
-
-* Security groups
-* Exposed ports
-* Inbound rules
-* Docker networking
-* EC2 networking
-
----
-
-## Database Migration
-
-Migrated from a self-hosted PostgreSQL container to Amazon RDS PostgreSQL without changing application business logic.
-
-Required:
-
-* Infrastructure refactoring
-* Prisma reconfiguration
-* SSL database connectivity
-* Environment migration
-* Deployment updates
-
----
-
-## Service Decoupling
-
-Separated persistent data storage from application compute resources.
-
-Benefits:
-
-* Independent lifecycle management
-* Improved maintainability
-* Better production readiness
-* Reduced operational risk
-
----
-
-# Project Scope
-
-This project demonstrates:
-
-✓ AWS deployment experience
-
-✓ Docker workflows
-
-✓ CI/CD implementation
-
-✓ PostgreSQL administration
-
-✓ Amazon RDS integration
-
-✓ Infrastructure migration
-
-✓ Cloud engineering practices
-
-✓ Deployment automation
-
-✓ Production-oriented architecture thinking
-
----
-
-# Engineering Highlights
-
-* Successfully migrated application data from a containerized PostgreSQL instance to Amazon RDS PostgreSQL.
-* Implemented SSL-secured connectivity between application services and managed database infrastructure.
-* Reduced infrastructure coupling by separating compute and persistent storage layers.
-* Built automated deployment workflows using Docker, Docker Hub, GitHub Actions, and AWS services.
-* Applied cloud architecture principles through progressive infrastructure evolution and service separation.
-
-Docco360 serves as both an application platform and an ongoing cloud engineering project focused on practical infrastructure modernization.
-
----
-
-# Contributors
-
-## Sri Harsha
-
-**Cloud & DevOps Engineer**
-
-Responsibilities:
-
-* AWS Infrastructure
-* Docker Deployment Architecture
-* CI/CD Pipelines
-* Cloud Operations
-* System Architecture
-* Amazon RDS Migration
-* Infrastructure Evolution
-
-GitHub: https://github.com/sriharshareddy6464
-
----
-
-## Shashi Varun Reddy
-
-**Backend & DevOps Engineer**
-
-Responsibilities:
-
-* Backend Development
-* API Architecture
-* Database Integration
-* Service Implementation
-* Business Logic Development
-
-GitHub: https://github.com/Shashivarunreddy
-
----
-
-## Vivek Varma
-
-**Frontend & UI Engineer**
-
-Responsibilities:
-
-* Frontend Development
-* User Interface Engineering
-* User Experience Design
-* React Implementation
-
-GitHub: https://github.com/vivekvarma-01
-
----
-
-# Project Philosophy
-
-Building software is only the beginning.
-
-Making software deployable, maintainable, observable, and production-ready requires a completely different set of engineering decisions.
-
-Docco360 was built to explore that transition through practical cloud infrastructure, deployment workflows, and system architecture evolution.
+## 💡 Key Solved Engineering Problems
+
+* **Zero-Downtime Deployment Separation**: Built independent CI/CD pipelines so that static UI pushes target Amazon S3 directly without triggering container restarts on the EC2 instances.
+* **Race Condition Prevention in Scheduling**: Employed database transactions with atomic checks to ensure doctor time-slots cannot be double-booked by concurrent requests.
+* **Strict Network Isolation**: Secured the PostgreSQL data cluster inside subnets with no route to the internet, allowing socket access exclusively from backend container nodes.
